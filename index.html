@@ -3,423 +3,606 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Murphy — @httpsmurphy</title>
-<meta name="description" content="Tools, bots and cook groups I use for Pokémon TCG.">
+<title>murphy@httpsmurphy:~</title>
+<meta name="description" content="UK ACO · TCG · sneakers · collectables.">
 
-<!-- Social share -->
 <meta property="og:title" content="Murphy — @httpsmurphy">
-<meta property="og:description" content="Tools, bots and cook groups I use for Pokémon TCG.">
+<meta property="og:description" content="Best automated UK ACO for TCG, sneakers/apparel and collectables.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://httpsmurphy.co.uk/">
 <meta name="twitter:card" content="summary">
 
-<!-- Favicon (emoji) — keeps things simple, no asset file needed -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23ff8a2b'/%3E%3Ctext x='50' y='73' text-anchor='middle' font-size='62' font-family='monospace' font-weight='700' fill='%230a0a0a'%3E%26gt;%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="avatar.png">
 
 <style>
-  /* -------- reset & base -------- */
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0a0a0a;
-    --bg-soft: #141414;
-    --text: #f5f5f5;
-    --text-dim: #9a9a9a;
-    --border: rgba(255,255,255,0.08);
-    --accent: #ff8a2b;        /* orange */
+    --bg: #0a0c10;
+    --bg-soft: #11151c;
+    --text: #e6edf3;
+    --text-dim: #7d8590;
+    --accent: #ff8a2b;
     --accent-soft: #ff6a00;
+    --green: #3fb950;
+    --cyan: #58a6ff;
+    --red: #f85149;
+    --yellow: #f0c060;
+    --mono: ui-monospace, "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
   }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    font-family: var(--mono);
     background: var(--bg);
     color: var(--text);
     min-height: 100dvh;
-    overflow-x: hidden;
-    position: relative;
+    overflow: hidden;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    position: relative;
   }
-  /* Animated aurora background — two soft orange blobs slowly drifting */
-  body::before, body::after {
-    content: "";
-    position: fixed;
-    pointer-events: none;
-    z-index: -1;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.55;
-    will-change: transform;
-  }
-  body::before {
-    width: 600px; height: 600px;
-    top: -260px; left: 50%;
-    margin-left: -300px;
-    background: radial-gradient(circle, rgba(255,138,43,0.55) 0%, rgba(255,106,0,0.25) 35%, transparent 70%);
-    animation: aurora-1 14s ease-in-out infinite alternate;
-  }
+
+  /* Faint CRT scanlines */
   body::after {
-    width: 420px; height: 420px;
-    top: -120px; left: 50%;
-    margin-left: -210px;
-    background: radial-gradient(circle, rgba(255,106,0,0.45) 0%, transparent 65%);
-    animation: aurora-2 11s ease-in-out infinite alternate;
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(255,255,255,0.015) 2px,
+      rgba(255,255,255,0.015) 3px
+    );
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: overlay;
   }
-  @keyframes aurora-1 {
-    0%   { transform: translate(-60px, -20px) scale(1);    opacity: 0.55; }
-    50%  { transform: translate(40px, 30px) scale(1.15);   opacity: 0.7;  }
-    100% { transform: translate(80px, -10px) scale(0.95);  opacity: 0.5;  }
-  }
-  @keyframes aurora-2 {
-    0%   { transform: translate(40px, 10px) scale(1.1);    opacity: 0.55; }
-    50%  { transform: translate(-30px, -25px) scale(0.95); opacity: 0.7;  }
-    100% { transform: translate(-70px, 15px) scale(1.05);  opacity: 0.4;  }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    body::before, body::after { animation: none; }
-  }
-
-  /* Stagger entry — each top-level child of main fades+rises in sequence */
-  main > * {
-    opacity: 0;
-    transform: translateY(14px);
-    animation: rise-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
-  }
-  main > *:nth-child(1) { animation-delay: 0.05s; }
-  main > *:nth-child(2) { animation-delay: 0.15s; }
-  main > *:nth-child(3) { animation-delay: 0.25s; }
-  main > *:nth-child(4) { animation-delay: 0.35s; }
-  main > *:nth-child(5) { animation-delay: 0.45s; }
-  main > *:nth-child(6) { animation-delay: 0.55s; }
-  @keyframes rise-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    main > * { opacity: 1; transform: none; animation: none; }
+  /* Subtle vignette */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 1;
   }
 
-  /* -------- layout -------- */
-  main {
-    max-width: 540px;
+  /* ---------- Terminal window ---------- */
+  .term {
+    max-width: 820px;
     margin: 0 auto;
-    padding: 36px 18px 48px;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    position: relative;
+    z-index: 3;
   }
-  @media (max-width: 480px) {
-    main { padding: 28px 16px 40px; gap: 18px; }
-  }
-
-  /* -------- header (left: identity, right: ACO CTA) -------- */
-  .top {
+  .term-bar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .identity {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
-  .avatar {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    box-shadow:
-      0 6px 20px rgba(255,138,43,0.28),
-      0 0 0 2px rgba(255,138,43,0.5),
-      0 0 0 4px rgba(255,138,43,0.08);
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
-  }
-  .ident-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  h1 {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-  }
-  .handle {
-    color: var(--text-dim);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1;
-  }
-
-  /* ACO pill in the top right */
-  .aco-cta {
-    display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 14px 9px 9px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(255,138,43,0.20) 0%, rgba(255,106,0,0.12) 100%);
-    border: 1px solid rgba(255,138,43,0.45);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 700;
+    padding: 10px 14px;
+    background: #1a1f27;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(255,138,43,0.16);
-    transition: transform 0.15s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   }
-  .aco-cta img {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-  .aco-cta .label { line-height: 1; }
-  .aco-cta .label small {
-    display: block;
-    font-size: 10px;
+  .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .term-title {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 12px;
     color: var(--text-dim);
-    font-weight: 500;
-    margin-top: 2px;
     letter-spacing: 0.02em;
-  }
-  .aco-cta:hover {
-    border-color: rgba(255,138,43,0.75);
-    box-shadow: 0 6px 22px rgba(255,138,43,0.3);
-    transform: translateY(-1px);
+    padding-left: 32px; /* counteract the dot weight on the left */
   }
 
-  /* Mobile — keep the pill but compact (just the icon + "ACO") */
-  @media (max-width: 420px) {
-    .avatar { width: 56px; height: 56px; }
-    h1 { font-size: 20px; }
-    .aco-cta .label small { display: none; }
-    .aco-cta { padding: 8px 12px 8px 8px; font-size: 12px; }
+  /* ---------- Screen ---------- */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 8px;
+    font-size: 14px;
+    line-height: 1.55;
+    background:
+      radial-gradient(ellipse 800px 400px at 50% 0%, rgba(255,138,43,0.06), transparent 70%),
+      var(--bg);
+    scroll-behavior: smooth;
+    cursor: text;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #2a2f3a transparent;
+  }
+  .screen::-webkit-scrollbar { width: 6px; }
+  .screen::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 3px; }
+  .screen::-webkit-scrollbar-track { background: transparent; }
+  @media (max-width: 480px) {
+    .screen { font-size: 13px; padding: 12px 14px 6px; }
   }
 
-  /* -------- sections -------- */
-  section { display: flex; flex-direction: column; gap: 8px; }
-  .section-label {
-    font-size: 10px;
+  .screen pre {
+    font-family: var(--mono);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .line { display: block; min-height: 1.55em; }
+
+  /* Prompt & syntax colors */
+  .prompt { color: var(--accent); font-weight: 700; }
+  .user   { color: var(--green); }
+  .at     { color: var(--text-dim); }
+  .host   { color: var(--cyan); }
+  .path   { color: var(--yellow); }
+  .ok     { color: var(--green); }
+  .warn   { color: var(--yellow); }
+  .err    { color: var(--red); }
+  .dim    { color: var(--text-dim); }
+  .accent { color: var(--accent); }
+  .name   { color: var(--text); font-weight: 700; }
+  .sub    { color: var(--text-dim); }
+  .label  {
+    display: inline-block;
+    color: var(--accent);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-dim);
-    padding-left: 4px;
-    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255,138,43,0.3);
+    padding-bottom: 1px;
+    margin-bottom: 4px;
   }
 
-  /* -------- link buttons -------- */
-  .link {
+  /* ASCII art header */
+  .ascii {
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1.05;
+    font-size: 11px;
+    text-shadow: 0 0 8px rgba(255,138,43,0.4);
+    margin: 6px 0 10px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  @media (max-width: 480px) { .ascii { font-size: 8px; } }
+
+  /* Service entry — tappable card-line */
+  .svc {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 12px;
-    background: var(--bg-soft);
-    border: 1px solid var(--border);
-    color: var(--text);
+    gap: 10px;
+    padding: 6px 8px;
+    margin: 2px -8px;
+    border-radius: 6px;
     text-decoration: none;
-    font-size: 15px;
-    font-weight: 600;
-    transition: transform 0.12s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease, opacity 0.35s ease;
     position: relative;
-    overflow: hidden;
+    opacity: 0;
+    transform: translateY(4px);
   }
-  .link::after {
-    /* arrow */
-    content: "→";
-    margin-left: auto;
-    color: var(--text-dim);
-    font-weight: 600;
-    transition: color 0.18s ease, transform 0.18s ease;
+  .svc.in {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .link:hover {
-    border-color: rgba(255,138,43,0.45);
-    box-shadow: 0 8px 24px rgba(255,138,43,0.12);
-    background: #181818;
+  .label.fade {
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
-  /* 3D tilt — set via JS on mousemove. CSS just supplies the transform. */
-  .link {
-    transform: perspective(600px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0px));
-    transform-style: preserve-3d;
+  .label.fade.in { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .svc { opacity: 1; transform: none; }
+    .label.fade { opacity: 1; }
   }
-  .link:hover { --ty: -2px; }
-  /* Shine sweep on hover */
-  .link::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(110deg, transparent 30%, rgba(255,138,43,0.18) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-    pointer-events: none;
+  .svc:hover, .svc:focus-visible {
+    background: rgba(255,138,43,0.08);
+    outline: none;
   }
-  .link:hover::before { transform: translateX(100%); }
-  .link:hover::after { color: var(--accent); transform: translateX(3px); }
-  .link:active { transform: translateY(0); }
-  .link .icon {
-    width: 34px; height: 34px;
-    border-radius: 8px;
-    overflow: hidden;
+  .svc:active { transform: scale(0.98); }
+  .svc::before {
+    content: "▸ ";
+    color: var(--accent);
+    flex-shrink: 0;
+    font-weight: 700;
+    margin-right: 2px;
+  }
+  .svc:hover::before { content: "▶ "; }
+  .svc-icon {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    object-fit: cover;
     flex-shrink: 0;
     background: rgba(255,255,255,0.04);
-    display: flex; align-items: center; justify-content: center;
   }
-  .link .icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .link .meta {
-    display: flex; flex-direction: column; gap: 2px;
-    min-width: 0;
+  .svc-name { color: var(--text); font-weight: 600; }
+  .svc-url { color: var(--text-dim); font-size: 12px; margin-left: auto; }
+  @media (max-width: 480px) { .svc-url { display: none; } }
+
+  /* Blinking cursor */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 1.05s steps(1) infinite;
   }
-  .link .name { line-height: 1.2; }
-  .link .sub {
-    font-size: 12px;
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- Input bar at the bottom ---------- */
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  @media (max-width: 480px) { .input-row { padding: 8px 14px 12px; } }
+  .input-row .ip {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    caret-color: var(--accent);
+    padding: 4px 0;
+  }
+  @media (max-width: 480px) { .input-row .ip { font-size: 13px; } }
+  .input-row .ip::placeholder { color: var(--text-dim); font-style: italic; opacity: 0.7; }
+  .hint {
+    font-size: 11px;
     color: var(--text-dim);
-    font-weight: 500;
-    line-height: 1.35;
+    padding: 0 18px 8px;
+    text-align: center;
+  }
+  @media (max-width: 480px) { .hint { padding: 0 14px 6px; font-size: 10px; } }
+  .key {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    font-size: 10px;
+    color: var(--text);
+    margin: 0 2px;
   }
 
-  /* -------- footer -------- */
-  footer {
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 12px;
-    margin-top: 16px;
+  /* Skip intro hint */
+  .skip-hint {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,138,43,0.4);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    z-index: 4;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
-  footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .skip-hint.hide { opacity: 0; pointer-events: none; }
 </style>
 </head>
 
 <body>
-<main>
-  <div class="top">
-    <div class="identity">
-      <img class="avatar" src="avatar.png" alt="Murphy" width="64" height="64">
-      <div class="ident-text">
-        <h1>Murphy</h1>
-        <p class="handle">@httpsmurphy</p>
-      </div>
-    </div>
-    <a class="aco-cta" href="https://discord.gg/MvPV2FuJSg" target="_blank" rel="noopener noreferrer" aria-label="Join Murph ACO on Discord">
-      <img src="icons/murphaco.webp" alt="">
-      <span class="label">Murph ACO<small>Join Discord</small></span>
-    </a>
+<div class="term" id="term">
+  <div class="term-bar">
+    <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+    <span class="term-title">murphy@httpsmurphy:~</span>
   </div>
+  <div class="screen" id="screen" tabindex="0"></div>
+  <div class="hint">
+    type <span class="key">help</span> · or tap any service to open · <span class="key">clear</span> resets
+  </div>
+  <form class="input-row" id="form" autocomplete="off">
+    <span class="prompt">$</span>
+    <input class="ip" id="cmd" type="text" placeholder="type a command..." spellcheck="false" autocapitalize="none" autocorrect="off" autocomplete="off">
+  </form>
+</div>
 
-  <section>
-    <p class="section-label">Bots</p>
-    <a class="link" href="https://whop.com/stellaraio/stellaraio?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/stellar.jpg" alt=""></span>
-      <span class="meta">
-        <span class="name">Stellar AIO</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/hidden-society/hidden-society?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/hidden.jpg" alt=""></span>
-      <span class="meta">
-        <span class="name">Hidden AIO</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/brute-aio/brute-aio?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/brute.png" alt=""></span>
-      <span class="meta">
-        <span class="name">Brute AIO</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/nikeshoebot/nikeshoebot?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/nikeshoebot.png" alt=""></span>
-      <span class="meta">
-        <span class="name">NikeShoeBot</span>
-      </span>
-    </a>
-  </section>
-
-  <section>
-    <p class="section-label">Cook Groups</p>
-    <a class="link" href="https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/resellers.jpg" alt=""></span>
-      <span class="meta">
-        <span class="name">Resellers Paradise</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/lunarfba/lunar-fba?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/lunar.svg" alt=""></span>
-      <span class="meta">
-        <span class="name">Lunar FBA</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/hidden-society/hidden-society?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/hiddensoc.png" alt=""></span>
-      <span class="meta">
-        <span class="name">Hidden Society</span>
-      </span>
-    </a>
-    <a class="link" href="https://whop.com/pokenotify/pokenotify?a=bypass-link" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/pokenotify.png" alt=""></span>
-      <span class="meta">
-        <span class="name">PokeNotify</span>
-      </span>
-    </a>
-  </section>
-
-  <section>
-    <p class="section-label">Tools / Proxies</p>
-    <a class="link" href="https://my.hyonix.com/aff.php?aff=5617" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/hyonix.png" alt=""></span>
-      <span class="meta">
-        <span class="name">Hyonix</span>
-        <span class="sub">VPS HS-4+</span>
-      </span>
-    </a>
-    <!-- TODO: swap href="#" for the Immaculate referral link once Murphy has it -->
-    <a class="link" href="#" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/immaculate.png" alt=""></span>
-      <span class="meta">
-        <span class="name">Immaculate Proxies</span>
-        <span class="sub">PKC ISPs + day-to-day resis</span>
-      </span>
-    </a>
-    <a class="link" href="https://iceyproxies.xyz/?r=HTTPSMURPHY" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/icey.ico" alt=""></span>
-      <span class="meta">
-        <span class="name">Icey Proxies</span>
-        <span class="sub">PKC ISPs + day-to-day resis</span>
-      </span>
-    </a>
-    <a class="link" href="https://www.onestopproxies.com/register?ref=AUGRVK78" target="_blank" rel="noopener noreferrer">
-      <span class="icon"><img src="icons/onestop.ico" alt=""></span>
-      <span class="meta">
-        <span class="name">OneStop Proxies</span>
-        <span class="sub">Premium resis</span>
-      </span>
-    </a>
-  </section>
-
-  <footer>
-    <p>© <span id="y"></span> · <a href="https://httpsmurphy.co.uk">httpsmurphy.co.uk</a></p>
-  </footer>
-</main>
+<div class="skip-hint" id="skip">tap to skip intro</div>
 
 <script>
-  document.getElementById('y').textContent = new Date().getFullYear();
+const screen = document.getElementById('screen');
+const form = document.getElementById('form');
+const input = document.getElementById('cmd');
+const skip = document.getElementById('skip');
 
-  // 3D tilt on link hover (skipped on touch devices + when reduced-motion)
-  (function() {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isTouch = window.matchMedia('(hover: none)').matches;
-    if (reduced || isTouch) return;
-    const MAX = 6; // degrees
-    document.querySelectorAll('.link').forEach(el => {
-      el.addEventListener('mousemove', e => {
-        const r = el.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width  - 0.5;  // -0.5 .. 0.5
-        const y = (e.clientY - r.top)  / r.height - 0.5;
-        el.style.setProperty('--ry', (x * MAX).toFixed(2) + 'deg');
-        el.style.setProperty('--rx', (-y * MAX).toFixed(2) + 'deg');
+// --- service catalogue ---
+const SERVICES = {
+  aco: {
+    label: 'ACO',
+    items: [
+      { id: 'murphaco', name: 'Murph ACO',         url: 'https://discord.gg/MvPV2FuJSg', icon: 'icons/murphaco.webp', short: 'discord.gg/MvPV2FuJSg' },
+    ],
+  },
+  bots: {
+    label: 'Bots',
+    items: [
+      { id: 'stellar',     name: 'Stellar AIO',   url: 'https://whop.com/stellaraio/stellaraio?a=bypass-link',         icon: 'icons/stellar.jpg',     short: 'whop.com/stellaraio' },
+      { id: 'hidden',      name: 'Hidden AIO',    url: 'https://whop.com/hidden-society/hidden-society?a=bypass-link', icon: 'icons/hidden.jpg',      short: 'whop.com/hidden-society' },
+      { id: 'brute',       name: 'Brute AIO',     url: 'https://whop.com/brute-aio/brute-aio?a=bypass-link',           icon: 'icons/brute.png',       short: 'whop.com/brute-aio' },
+      { id: 'nikeshoebot', name: 'NikeShoeBot',   url: 'https://whop.com/nikeshoebot/nikeshoebot?a=bypass-link',       icon: 'icons/nikeshoebot.png', short: 'whop.com/nikeshoebot' },
+    ],
+  },
+  cookgroups: {
+    label: 'Cook Groups',
+    items: [
+      { id: 'resellers',  name: 'Resellers Paradise', url: 'https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link', icon: 'icons/resellers.jpg',  short: 'whop.com/resellers-paradise' },
+      { id: 'lunar',      name: 'Lunar FBA',          url: 'https://whop.com/lunarfba/lunar-fba?a=bypass-link',                         icon: 'icons/lunar.svg',      short: 'whop.com/lunarfba' },
+      { id: 'hiddensoc',  name: 'Hidden Society',     url: 'https://whop.com/hidden-society/hidden-society?a=bypass-link',              icon: 'icons/hiddensoc.png',  short: 'whop.com/hidden-society' },
+      { id: 'pokenotify', name: 'PokeNotify',         url: 'https://whop.com/pokenotify/pokenotify?a=bypass-link',                       icon: 'icons/pokenotify.png', short: 'whop.com/pokenotify' },
+    ],
+  },
+  tools: {
+    label: 'Tools / Proxies',
+    items: [
+      { id: 'hyonix',     name: 'Hyonix',             url: 'https://my.hyonix.com/aff.php?aff=5617',                  icon: 'icons/hyonix.png',     short: 'hyonix.com · HS-4+' },
+      { id: 'immaculate', name: 'Immaculate Proxies', url: '#',                                                       icon: 'icons/immaculate.png', short: 'PKC ISPs + resis' },
+      { id: 'icey',       name: 'Icey Proxies',       url: 'https://iceyproxies.xyz/?r=HTTPSMURPHY',                  icon: 'icons/icey.ico',       short: 'PKC ISPs + resis' },
+      { id: 'onestop',    name: 'OneStop Proxies',    url: 'https://www.onestopproxies.com/register?ref=AUGRVK78',    icon: 'icons/onestop.ico',    short: 'premium resis' },
+    ],
+  },
+};
+
+// flat lookup for commands like `stellar` to open the service
+const FLAT = {};
+Object.values(SERVICES).forEach(cat => cat.items.forEach(it => { FLAT[it.id] = it; FLAT[it.name.toLowerCase().replace(/\s+/g,'')] = it; }));
+
+// --- helpers ---
+function append(html) {
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = html;
+  screen.appendChild(div);
+  screen.scrollTop = screen.scrollHeight;
+  return div;
+}
+function appendPrompt(cmd) {
+  append('<span class="user">murphy</span><span class="at">@</span><span class="host">httpsmurphy</span><span class="dim">:</span><span class="path">~</span><span class="prompt">$ </span>' + (cmd || ''));
+}
+function appendBlank() { append('&nbsp;'); }
+function appendASCII() {
+  const art =
+`  ███╗   ███╗██╗   ██╗██████╗ ██████╗ ██╗  ██╗██╗   ██╗
+  ████╗ ████║██║   ██║██╔══██╗██╔══██╗██║  ██║╚██╗ ██╔╝
+  ██╔████╔██║██║   ██║██████╔╝██████╔╝███████║ ╚████╔╝
+  ██║╚██╔╝██║██║   ██║██╔══██╗██╔═══╝ ██╔══██║  ╚██╔╝
+  ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║     ██║  ██║   ██║
+  ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝`;
+  const pre = document.createElement('pre');
+  pre.className = 'ascii';
+  pre.textContent = art;
+  screen.appendChild(pre);
+}
+async function renderServiceList(cat) {
+  // Only the tools/proxies section shows the right-side sub (descriptions).
+  // ACO / Bots / Cook Groups are name-only.
+  const showSub = (cat === SERVICES.tools);
+
+  // Label fades in first
+  const labelLine = document.createElement('div');
+  labelLine.className = 'line';
+  labelLine.innerHTML = '<span class="label fade">[' + cat.label + ']</span>';
+  screen.appendChild(labelLine);
+  screen.scrollTop = screen.scrollHeight;
+  // next frame, kick the transition
+  requestAnimationFrame(() => labelLine.querySelector('.label').classList.add('in'));
+  if (!aborted) await sleep(120);
+
+  // Each entry fades up with a stagger
+  for (const it of cat.items) {
+    const a = document.createElement('a');
+    a.className = 'svc';
+    a.href = it.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.innerHTML =
+      '<img class="svc-icon" src="' + it.icon + '" alt="" loading="lazy">' +
+      '<span class="svc-name">' + it.name + '</span>' +
+      (showSub ? '<span class="svc-url">' + it.short + '</span>' : '');
+    if (it.url === '#') {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        append('<span class="warn">[!] link tbc — coming soon</span>');
       });
-      el.addEventListener('mouseleave', () => {
-        el.style.setProperty('--rx', '0deg');
-        el.style.setProperty('--ry', '0deg');
-      });
-    });
-  })();
+    }
+    screen.appendChild(a);
+    screen.scrollTop = screen.scrollHeight;
+    // kick the entry transition next frame
+    requestAnimationFrame(() => a.classList.add('in'));
+    if (!aborted) await sleep(90);
+  }
+  appendBlank();
+  // small breath between sections
+  if (!aborted) await sleep(180);
+}
+
+// --- typing engine ---
+let aborted = false;
+function abortBoot() { aborted = true; skip.classList.add('hide'); }
+skip.addEventListener('click', abortBoot);
+screen.addEventListener('click', e => {
+  // tapping the screen during boot also skips
+  if (!boot.done && e.target === screen) abortBoot();
+});
+input.addEventListener('focus', abortBoot);
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function type(html, cadence) {
+  if (aborted) { append(html); return; }
+  cadence = cadence || 18;
+  const div = document.createElement('div');
+  div.className = 'line';
+  screen.appendChild(div);
+  // strip-then-rebuild: type the visible chars, preserving inline HTML tags
+  const parts = html.split(/(<[^>]+>)/g);
+  for (const p of parts) {
+    if (aborted) { div.innerHTML = html; break; }
+    if (p.startsWith('<')) {
+      div.innerHTML += p;
+    } else {
+      for (const ch of p) {
+        if (aborted) { div.innerHTML = html; break; }
+        div.innerHTML += ch;
+        screen.scrollTop = screen.scrollHeight;
+        await sleep(cadence + Math.random() * 10);
+      }
+    }
+  }
+  screen.scrollTop = screen.scrollHeight;
+}
+
+// --- boot sequence ---
+const boot = { done: false };
+async function runBoot() {
+  await sleep(180);
+  await type('<span class="dim">murphd v1.0 · ' + new Date().toISOString().split('T')[0] + '</span>', 8);
+  await type('<span class="ok">[ ok ]</span> <span class="dim">connecting to httpsmurphy.co.uk...</span>', 10);
+  await sleep(140);
+  await type('<span class="ok">[ ok ]</span> <span class="dim">loading profile</span>', 10);
+  await sleep(120);
+
+  if (!aborted) appendBlank();
+  appendASCII();
+  if (!aborted) appendBlank();
+
+  appendPrompt('whoami');
+  await sleep(180);
+  await type('<span class="accent">@httpsmurphy</span>  <span class="dim">·</span>  Murphy  <span class="dim">·</span>  <span class="dim">UK ACO owner</span>', 12);
+  await type('<span class="dim">»</span> Best automated UK ACO for TCG, sneakers/apparel and collectables.', 10);
+  await type('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £100k+ secured.', 10);
+  appendBlank();
+
+  appendPrompt('ls services/');
+  await sleep(180);
+  for (const cat of Object.values(SERVICES)) {
+    await renderServiceList(cat);
+  }
+  appendBlank();
+
+  appendPrompt('');
+  // Final blinking cursor
+  const last = screen.lastElementChild;
+  last.innerHTML += '<span class="cursor"></span>';
+
+  boot.done = true;
+  skip.classList.add('hide');
+  input.focus({ preventScroll: true });
+}
+runBoot();
+
+// --- command handler ---
+const COMMANDS = {
+  help: () => {
+    append('<span class="label">[commands]</span>');
+    append('<span class="dim">  </span><span class="accent">aco</span><span class="dim">           open Murph ACO discord</span>');
+    append('<span class="dim">  </span><span class="accent">bots</span><span class="dim">          list bots</span>');
+    append('<span class="dim">  </span><span class="accent">cookgroups</span><span class="dim">    list cook groups</span>');
+    append('<span class="dim">  </span><span class="accent">tools</span><span class="dim">         list tools / proxies</span>');
+    append('<span class="dim">  </span><span class="accent">ls</span><span class="dim">            list everything</span>');
+    append('<span class="dim">  </span><span class="accent">clear</span><span class="dim">         clear screen</span>');
+    append('<span class="dim">  </span><span class="accent">whoami</span><span class="dim">        about me</span>');
+    append('<span class="dim">  </span><span class="dim">or just type a service name (e.g. </span><span class="accent">stellar</span><span class="dim">) to open it</span>');
+    appendBlank();
+  },
+  ls: async () => {
+    for (const cat of Object.values(SERVICES)) await renderServiceList(cat);
+  },
+  clear: () => {
+    // Replay the full boot sequence instead of just wiping
+    screen.innerHTML = '';
+    aborted = false;
+    boot.done = false;
+    skip.classList.remove('hide');
+    runBoot();
+  },
+  whoami: () => {
+    append('<span class="accent">@httpsmurphy</span>  <span class="dim">·</span>  Murphy  <span class="dim">·</span>  <span class="dim">UK ACO owner</span>');
+    append('<span class="dim">»</span> Best automated UK ACO for TCG, sneakers/apparel and collectables.');
+    append('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £100k+ secured.');
+    appendBlank();
+  },
+  aco: () => { window.open('https://discord.gg/MvPV2FuJSg', '_blank', 'noopener'); append('<span class="ok">[ ok ]</span> <span class="dim">opening Murph ACO discord...</span>'); appendBlank(); },
+  bots:        async () => await renderServiceList(SERVICES.bots),
+  cookgroups:  async () => await renderServiceList(SERVICES.cookgroups),
+  'cook-groups': async () => await renderServiceList(SERVICES.cookgroups),
+  cookgroup:   async () => await renderServiceList(SERVICES.cookgroups),
+  tools:       async () => await renderServiceList(SERVICES.tools),
+  proxies:     async () => await renderServiceList(SERVICES.tools),
+  // easter eggs
+  'sudo': () => append('<span class="err">murphy is not in the sudoers file. this incident will be reported.</span>'),
+  'rm -rf /': () => append('<span class="err">nice try.</span>'),
+  'rm': () => append('<span class="err">nice try.</span>'),
+  exit: () => append('<span class="dim">can\'t exit. you\'re here forever now.</span>'),
+  date: () => append('<span class="dim">' + new Date().toString() + '</span>'),
+  pwd: () => append('<span class="path">/home/murphy</span>'),
+  echo: (args) => append(args.join(' ')),
+  cat: (args) => {
+    const f = (args[0] || '').toLowerCase();
+    if (f === 'profile.txt' || f === 'profile') return COMMANDS.whoami();
+    if (f === 'services.txt' || f === 'services') return COMMANDS.ls();
+    append('<span class="err">cat: ' + (args[0] || '') + ': No such file</span>');
+  },
+};
+
+function runCommand(raw) {
+  appendPrompt(raw);
+  const [cmd, ...args] = raw.trim().split(/\s+/);
+  const lc = cmd.toLowerCase();
+  if (!lc) { /* empty enter */ return; }
+  // exact command
+  if (COMMANDS[lc]) { COMMANDS[lc](args); return; }
+  // raw rm -rf catch
+  if (raw.trim().toLowerCase().startsWith('rm -rf')) { COMMANDS['rm -rf /'](); return; }
+  // service shortcut
+  if (FLAT[lc]) {
+    const it = FLAT[lc];
+    if (it.url === '#') { append('<span class="warn">[!] ' + it.name + ' link tbc — coming soon</span>'); return; }
+    window.open(it.url, '_blank', 'noopener');
+    append('<span class="ok">[ ok ]</span> <span class="dim">opening ' + it.name + '...</span>');
+    return;
+  }
+  append('<span class="err">command not found: ' + cmd + '</span> <span class="dim">— try </span><span class="accent">help</span>');
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const val = input.value;
+  input.value = '';
+  if (!val.trim()) { appendPrompt(''); return; }
+  runCommand(val);
+});
+
+// History (up/down)
+const history = [];
+let histIdx = -1;
+input.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') {
+    if (histIdx < history.length - 1) { histIdx++; input.value = history[history.length - 1 - histIdx]; }
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    if (histIdx > 0) { histIdx--; input.value = history[history.length - 1 - histIdx]; }
+    else { histIdx = -1; input.value = ''; }
+    e.preventDefault();
+  } else if (e.key === 'Enter' && input.value.trim()) {
+    history.push(input.value);
+    histIdx = -1;
+  } else if (e.key === 'l' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    COMMANDS.clear();
+  }
+});
+
+// Auto-hide skip hint after boot fully done (safety)
+setTimeout(() => skip.classList.add('hide'), 6000);
 </script>
 </body>
 </html>
