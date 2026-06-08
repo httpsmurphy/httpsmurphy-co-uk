@@ -216,6 +216,36 @@
   .svc-url { color: var(--text-dim); font-size: 12px; margin-left: auto; }
   @media (max-width: 480px) { .svc-url { display: none; } }
 
+  /* Promo codes — rendered beneath a service that has `promos`.
+     Indented to align under the icon/name; tag in dim, code is a
+     copyable chip in mono + accent. Click chip → copy + flash. */
+  .svc-promos {
+    margin: -2px 0 6px 30px;
+    padding: 4px 0 4px 8px;
+    border-left: 1px solid rgba(255,138,43,0.18);
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .svc-promos.in { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .svc-promos { opacity: 1; } }
+  .svc-promo { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+  .svc-promo-tag { color: var(--text-dim); min-width: 96px; }
+  .svc-promo-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--accent);
+    background: rgba(255,138,43,0.10);
+    border: 1px solid rgba(255,138,43,0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    cursor: pointer;
+    user-select: all;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .svc-promo-code:hover { background: rgba(255,138,43,0.18); }
+  .svc-promo-code.copied { color: #cfffd1; background: rgba(0,200,80,0.18); border-color: rgba(0,200,80,0.35); }
+  .svc-promo-hint { color: var(--text-dim); font-size: 11px; margin-left: 4px; }
+
   /* Blinking cursor */
   .cursor {
     display: inline-block;
@@ -346,7 +376,12 @@ const SERVICES = {
     label: 'Tools / Proxies',
     items: [
       { id: 'hyonix',     name: 'Hyonix',             url: 'https://my.hyonix.com/aff.php?aff=5617',                  icon: 'icons/hyonix.png',     short: 'hyonix.com · HS-4+' },
-      { id: 'immaculate', name: 'Immaculate Proxies', url: '#',                                                       icon: 'icons/immaculate.png', short: 'PKC ISPs + resis' },
+      { id: 'immaculate', name: 'Immaculate Proxies', url: 'https://immaculateips.com/purchase',                     icon: 'icons/immaculate.png', short: 'PKC ISPs + resis',
+        promos: [
+          { tag: 'Residentials', code: 'MURPHY35' },
+          { tag: 'ISPs',         code: 'MURPHYISPS' },
+          { tag: 'PKC Resi',     code: 'MURPHYWALLY' },
+        ] },
       { id: 'icey',       name: 'Icey Proxies',       url: 'https://iceyproxies.xyz/?r=HTTPSMURPHY',                  icon: 'icons/icey.ico',       short: 'PKC ISPs + resis' },
       { id: 'onestop',    name: 'OneStop Proxies',    url: 'https://www.onestopproxies.com/register?ref=AUGRVK78',    icon: 'icons/onestop.ico',    short: 'premium resis' },
     ],
@@ -419,6 +454,43 @@ async function renderServiceList(cat) {
     screen.scrollTop = screen.scrollHeight;
     // kick the entry transition next frame
     requestAnimationFrame(() => a.classList.add('in'));
+
+    // Promo codes block — only on items with `promos`. Each code is
+    // a click-to-copy chip; falls back to text-selection if the
+    // Clipboard API is unavailable (older browsers / non-https).
+    if (Array.isArray(it.promos) && it.promos.length) {
+      const promosWrap = document.createElement('div');
+      promosWrap.className = 'svc-promos';
+      promosWrap.innerHTML = it.promos.map(p =>
+        '<div class="svc-promo">' +
+          '<span class="svc-promo-tag">' + p.tag + '</span>' +
+          '<span class="svc-promo-code" data-code="' + p.code + '" title="click to copy">' + p.code + '</span>' +
+        '</div>'
+      ).join('');
+      promosWrap.addEventListener('click', e => {
+        const chip = e.target.closest('.svc-promo-code');
+        if (!chip) return;
+        const code = chip.dataset.code;
+        const flash = () => {
+          chip.classList.add('copied');
+          const original = chip.textContent;
+          chip.textContent = 'copied!';
+          setTimeout(() => { chip.classList.remove('copied'); chip.textContent = original; }, 900);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(flash, flash);
+        } else {
+          // Fallback: select the chip text so the user can ⌘C / Ctrl+C.
+          const r = document.createRange(); r.selectNodeContents(chip);
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+          flash();
+        }
+      });
+      screen.appendChild(promosWrap);
+      screen.scrollTop = screen.scrollHeight;
+      requestAnimationFrame(() => promosWrap.classList.add('in'));
+    }
+
     if (!aborted) await sleep(90);
   }
   appendBlank();
