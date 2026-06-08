@@ -216,6 +216,67 @@
   .svc-url { color: var(--text-dim); font-size: 12px; margin-left: auto; }
   @media (max-width: 480px) { .svc-url { display: none; } }
 
+  /* Snake game overlay — full-screen modal that traps arrows + Enter.
+     ESC closes. Esc/click backdrop to dismiss. Monospace grid; same
+     orange theme as the rest of the terminal so it doesn't clash. */
+  .game-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .game-backdrop.open { display: flex; }
+  .game-box {
+    background: #0d0d0d;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 18px;
+    max-width: 100%;
+    box-shadow: 0 0 24px rgba(255,138,43,0.25);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .game-head {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 24px; margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .game-head .title { color: var(--accent); font-weight: 700; letter-spacing: 1px; }
+  .game-head .score { color: var(--text); }
+  .game-head .hi { color: var(--text-dim); }
+  .game-grid {
+    line-height: 1.0;
+    font-size: 14px;
+    white-space: pre;
+    color: var(--accent);
+    user-select: none;
+  }
+  .game-foot {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  .game-foot .key {
+    color: var(--accent);
+    background: rgba(255,138,43,0.10);
+    border: 1px solid rgba(255,138,43,0.25);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin: 0 1px;
+  }
+  .game-over {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  @media (max-width: 480px) {
+    .game-grid { font-size: 11px; }
+  }
+
   /* Promo codes — rendered beneath a service that has `promos`.
      Indented to align under the icon/name; tag in dim, code is a
      copyable chip in mono + accent. Click chip → copy + flash. */
@@ -583,6 +644,7 @@ const COMMANDS = {
     append('<span class="dim">  </span><span class="accent">ls</span><span class="dim">            list everything</span>');
     append('<span class="dim">  </span><span class="accent">clear</span><span class="dim">         clear screen</span>');
     append('<span class="dim">  </span><span class="accent">whoami</span><span class="dim">        about me</span>');
+    append('<span class="dim">  </span><span class="accent">snake</span><span class="dim">         play snake (arrows / WASD)</span>');
     append('<span class="dim">  </span><span class="dim">or just type a service name (e.g. </span><span class="accent">stellar</span><span class="dim">) to open it</span>');
     appendBlank();
   },
@@ -624,7 +686,217 @@ const COMMANDS = {
     if (f === 'services.txt' || f === 'services') return COMMANDS.ls();
     append('<span class="err">cat: ' + (args[0] || '') + ': No such file</span>');
   },
+
+  // ---- snake ----
+  snake: () => {
+    append('<span class="ok">[ ok ]</span> <span class="dim">launching snake... use </span><span class="accent">arrows</span><span class="dim"> / </span><span class="accent">WASD</span><span class="dim">, </span><span class="accent">ESC</span><span class="dim"> to quit.</span>');
+    appendBlank();
+    startSnake();
+  },
 };
+
+// =========================== SNAKE ===========================
+// Grid-based snake rendered as monospace characters inside an overlay.
+// Self-contained — one entry point (startSnake), traps arrow keys
+// only while the overlay is open so the page's tab/typing UX is
+// preserved. High score persists in localStorage.
+const SNAKE = {
+  W: 28,            // columns
+  H: 16,            // rows (mobile-friendly aspect)
+  TICK_MS: 110,     // step interval
+  CHARS: {
+    EMPTY: '·',
+    BODY:  '█',
+    HEAD:  '▓',
+    FOOD:  '●',
+  },
+};
+
+let _snakeOpen = false;
+
+function startSnake() {
+  if (_snakeOpen) return;
+  _snakeOpen = true;
+
+  // ---- build overlay ----
+  const backdrop = document.createElement('div');
+  backdrop.className = 'game-backdrop open';
+  const box = document.createElement('div');
+  box.className = 'game-box';
+  const hi0 = parseInt(localStorage.getItem('snake_hi') || '0', 10) || 0;
+  box.innerHTML =
+    '<div class="game-head">' +
+      '<span class="title">SNAKE</span>' +
+      '<span class="score">score: <b id="snk-score">0</b></span>' +
+      '<span class="hi">hi: <b id="snk-hi">' + hi0 + '</b></span>' +
+    '</div>' +
+    '<div class="game-grid" id="snk-grid"></div>' +
+    '<div class="game-foot">' +
+      '<span class="key">↑</span><span class="key">←</span>' +
+      '<span class="key">↓</span><span class="key">→</span>' +
+      ' / <span class="key">WASD</span> to move &nbsp; ' +
+      '<span class="key">ESC</span> to quit &nbsp; ' +
+      '<span class="key">Enter</span> to restart' +
+    '</div>' +
+    '<div class="game-over" id="snk-over" style="display:none"></div>';
+  backdrop.appendChild(box);
+  document.body.appendChild(backdrop);
+
+  const gridEl   = box.querySelector('#snk-grid');
+  const scoreEl  = box.querySelector('#snk-score');
+  const hiEl     = box.querySelector('#snk-hi');
+  const overEl   = box.querySelector('#snk-over');
+
+  // ---- game state ----
+  let snake, dir, nextDir, food, score, alive, tickHandle;
+
+  function spawnFood() {
+    // pick a cell not occupied by the snake
+    let f;
+    const occupied = new Set(snake.map(p => p.x + ',' + p.y));
+    do {
+      f = {
+        x: Math.floor(Math.random() * SNAKE.W),
+        y: Math.floor(Math.random() * SNAKE.H),
+      };
+    } while (occupied.has(f.x + ',' + f.y));
+    food = f;
+  }
+
+  function reset() {
+    const cx = Math.floor(SNAKE.W / 2);
+    const cy = Math.floor(SNAKE.H / 2);
+    snake = [
+      { x: cx,     y: cy },
+      { x: cx - 1, y: cy },
+      { x: cx - 2, y: cy },
+    ];
+    dir = { x: 1, y: 0 };
+    nextDir = dir;
+    score = 0;
+    alive = true;
+    spawnFood();
+    overEl.style.display = 'none';
+    scoreEl.textContent = '0';
+    render();
+  }
+
+  function render() {
+    const head = snake[0];
+    const body = new Set();
+    for (let i = 1; i < snake.length; i++) {
+      body.add(snake[i].x + ',' + snake[i].y);
+    }
+    let out = '';
+    for (let y = 0; y < SNAKE.H; y++) {
+      let row = '';
+      for (let x = 0; x < SNAKE.W; x++) {
+        if (x === head.x && y === head.y)         row += SNAKE.CHARS.HEAD;
+        else if (body.has(x + ',' + y))           row += SNAKE.CHARS.BODY;
+        else if (x === food.x && y === food.y)    row += SNAKE.CHARS.FOOD;
+        else                                       row += SNAKE.CHARS.EMPTY;
+        row += ' '; // padding so cells render as squares
+      }
+      out += row + '\n';
+    }
+    gridEl.textContent = out;
+  }
+
+  function step() {
+    if (!alive) return;
+    dir = nextDir;
+    const head = snake[0];
+    const next = { x: head.x + dir.x, y: head.y + dir.y };
+
+    // wall collision
+    if (next.x < 0 || next.x >= SNAKE.W ||
+        next.y < 0 || next.y >= SNAKE.H) {
+      gameOver();
+      return;
+    }
+    // self collision
+    for (const seg of snake) {
+      if (seg.x === next.x && seg.y === next.y) {
+        gameOver();
+        return;
+      }
+    }
+
+    snake.unshift(next);
+
+    if (next.x === food.x && next.y === food.y) {
+      score += 10;
+      scoreEl.textContent = String(score);
+      spawnFood();
+    } else {
+      snake.pop();
+    }
+
+    render();
+  }
+
+  function gameOver() {
+    alive = false;
+    clearInterval(tickHandle);
+    const prevHi = parseInt(localStorage.getItem('snake_hi') || '0', 10) || 0;
+    if (score > prevHi) {
+      localStorage.setItem('snake_hi', String(score));
+      hiEl.textContent = String(score);
+      overEl.innerHTML = 'game over — new high score! &nbsp; press <span class="key">Enter</span> to restart';
+    } else {
+      overEl.innerHTML = 'game over — final score ' + score + ' &nbsp; press <span class="key">Enter</span> to restart';
+    }
+    overEl.style.display = 'block';
+  }
+
+  // ---- input ----
+  function onKey(e) {
+    const k = e.key;
+    // Quit
+    if (k === 'Escape') {
+      e.preventDefault();
+      closeGame();
+      return;
+    }
+    // Restart on game over
+    if (!alive && (k === 'Enter' || k === ' ')) {
+      e.preventDefault();
+      reset();
+      tickHandle = setInterval(step, SNAKE.TICK_MS);
+      return;
+    }
+    // Direction — block reverse-into-self
+    let nd = null;
+    if (k === 'ArrowUp'    || k === 'w' || k === 'W') nd = { x:  0, y: -1 };
+    if (k === 'ArrowDown'  || k === 's' || k === 'S') nd = { x:  0, y:  1 };
+    if (k === 'ArrowLeft'  || k === 'a' || k === 'A') nd = { x: -1, y:  0 };
+    if (k === 'ArrowRight' || k === 'd' || k === 'D') nd = { x:  1, y:  0 };
+    if (nd) {
+      e.preventDefault();
+      // ignore 180-degree reversal
+      if (nd.x === -dir.x && nd.y === -dir.y) return;
+      nextDir = nd;
+    }
+  }
+
+  function closeGame() {
+    clearInterval(tickHandle);
+    document.removeEventListener('keydown', onKey, true);
+    backdrop.remove();
+    _snakeOpen = false;
+    // hand focus back to the prompt input
+    try { input.focus(); } catch (_) {}
+  }
+
+  // close on backdrop click
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) closeGame();
+  });
+
+  document.addEventListener('keydown', onKey, true);
+  reset();
+  tickHandle = setInterval(step, SNAKE.TICK_MS);
+}
 
 function runCommand(raw) {
   appendPrompt(raw);
