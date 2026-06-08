@@ -273,8 +273,65 @@
     margin-top: 6px;
     font-size: 13px;
   }
+  /* Tap-targets — work for both desktop and touch. Visible always so
+     users without a keyboard have a way to quit / restart. */
+  .game-btns {
+    display: flex; gap: 8px; justify-content: center;
+    margin-top: 8px;
+  }
+  .game-btn {
+    background: rgba(255,138,43,0.10);
+    border: 1px solid rgba(255,138,43,0.30);
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .game-btn:hover, .game-btn:active {
+    background: rgba(255,138,43,0.22);
+  }
+  /* D-pad — only shown on touch devices (no hover, coarse pointer).
+     Hidden on desktop because keyboard works fine. */
+  .dpad {
+    display: none;
+    margin: 10px auto 0;
+    width: 168px;
+    grid-template-columns: 56px 56px 56px;
+    grid-template-rows: 56px 56px 56px;
+    gap: 4px;
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .dpad { display: grid; }
+  }
+  .dpad button {
+    background: rgba(255,138,43,0.10);
+    border: 1px solid rgba(255,138,43,0.30);
+    color: var(--accent);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 22px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .dpad button:active { background: rgba(255,138,43,0.30); }
+  .dpad .up    { grid-column: 2; grid-row: 1; }
+  .dpad .left  { grid-column: 1; grid-row: 2; }
+  .dpad .right { grid-column: 3; grid-row: 2; }
+  .dpad .down  { grid-column: 2; grid-row: 3; }
+  /* Hide the keyboard hint on touch devices — useless without keys. */
+  .game-foot .kbd-hint { display: inline; }
+  @media (hover: none) and (pointer: coarse) {
+    .game-foot .kbd-hint { display: none; }
+    .game-foot .touch-hint { display: inline; }
+  }
+  .game-foot .touch-hint { display: none; }
   @media (max-width: 480px) {
     .game-grid { font-size: 11px; }
+    .game-box  { padding: 12px; }
   }
 
   /* Promo codes — rendered beneath a service that has `promos`.
@@ -731,14 +788,27 @@ function startSnake() {
       '<span class="hi">hi: <b id="snk-hi">' + hi0 + '</b></span>' +
     '</div>' +
     '<div class="game-grid" id="snk-grid"></div>' +
-    '<div class="game-foot">' +
-      '<span class="key">↑</span><span class="key">←</span>' +
-      '<span class="key">↓</span><span class="key">→</span>' +
-      ' / <span class="key">WASD</span> to move &nbsp; ' +
-      '<span class="key">ESC</span> to quit &nbsp; ' +
-      '<span class="key">Enter</span> to restart' +
+    '<div class="game-over" id="snk-over" style="display:none"></div>' +
+    '<div class="game-btns">' +
+      '<button class="game-btn" id="snk-restart">Restart</button>' +
+      '<button class="game-btn" id="snk-quit">Quit</button>' +
     '</div>' +
-    '<div class="game-over" id="snk-over" style="display:none"></div>';
+    '<div class="dpad" id="snk-dpad">' +
+      '<button class="up"    data-d="u" aria-label="up">↑</button>' +
+      '<button class="left"  data-d="l" aria-label="left">←</button>' +
+      '<button class="right" data-d="r" aria-label="right">→</button>' +
+      '<button class="down"  data-d="d" aria-label="down">↓</button>' +
+    '</div>' +
+    '<div class="game-foot">' +
+      '<span class="kbd-hint">' +
+        '<span class="key">↑</span><span class="key">←</span>' +
+        '<span class="key">↓</span><span class="key">→</span>' +
+        ' / <span class="key">WASD</span> to move &nbsp; ' +
+        '<span class="key">ESC</span> quit &nbsp; ' +
+        '<span class="key">Enter</span> restart' +
+      '</span>' +
+      '<span class="touch-hint">swipe the board, or use the d-pad</span>' +
+    '</div>';
   backdrop.appendChild(box);
   document.body.appendChild(backdrop);
 
@@ -849,35 +919,70 @@ function startSnake() {
     overEl.style.display = 'block';
   }
 
-  // ---- input ----
+  // ---- shared input handlers (keyboard, dpad, swipe all funnel here) ----
+  function tryRestart() {
+    if (alive) return;
+    reset();
+    tickHandle = setInterval(step, SNAKE.TICK_MS);
+  }
+  function setDir(dx, dy) {
+    // Ignore 180-degree reversals — pressing Left while moving Right
+    // would instantly kill the snake otherwise.
+    if (dx === -dir.x && dy === -dir.y) return;
+    nextDir = { x: dx, y: dy };
+  }
+
   function onKey(e) {
     const k = e.key;
-    // Quit
-    if (k === 'Escape') {
-      e.preventDefault();
-      closeGame();
-      return;
-    }
-    // Restart on game over
-    if (!alive && (k === 'Enter' || k === ' ')) {
-      e.preventDefault();
-      reset();
-      tickHandle = setInterval(step, SNAKE.TICK_MS);
-      return;
-    }
-    // Direction — block reverse-into-self
+    if (k === 'Escape')                       { e.preventDefault(); closeGame(); return; }
+    if (!alive && (k === 'Enter' || k === ' ')) { e.preventDefault(); tryRestart(); return; }
     let nd = null;
-    if (k === 'ArrowUp'    || k === 'w' || k === 'W') nd = { x:  0, y: -1 };
-    if (k === 'ArrowDown'  || k === 's' || k === 'S') nd = { x:  0, y:  1 };
-    if (k === 'ArrowLeft'  || k === 'a' || k === 'A') nd = { x: -1, y:  0 };
-    if (k === 'ArrowRight' || k === 'd' || k === 'D') nd = { x:  1, y:  0 };
-    if (nd) {
-      e.preventDefault();
-      // ignore 180-degree reversal
-      if (nd.x === -dir.x && nd.y === -dir.y) return;
-      nextDir = nd;
-    }
+    if (k === 'ArrowUp'    || k === 'w' || k === 'W') nd = [ 0, -1];
+    if (k === 'ArrowDown'  || k === 's' || k === 'S') nd = [ 0,  1];
+    if (k === 'ArrowLeft'  || k === 'a' || k === 'A') nd = [-1,  0];
+    if (k === 'ArrowRight' || k === 'd' || k === 'D') nd = [ 1,  0];
+    if (nd) { e.preventDefault(); setDir(nd[0], nd[1]); }
   }
+
+  // ---- on-screen buttons ----
+  box.querySelector('#snk-restart').addEventListener('click', tryRestart);
+  box.querySelector('#snk-quit').addEventListener('click', closeGame);
+
+  // ---- d-pad (touch devices) ----
+  const dpadDirs = { u: [0,-1], d: [0,1], l: [-1,0], r: [1,0] };
+  box.querySelectorAll('#snk-dpad button').forEach(btn => {
+    const handler = (e) => {
+      e.preventDefault();
+      const [dx, dy] = dpadDirs[btn.dataset.d];
+      setDir(dx, dy);
+    };
+    // touchstart fires before click on mobile — handle both, but
+    // preventDefault on touchstart stops the synthesised click,
+    // avoiding the ~300ms delay.
+    btn.addEventListener('touchstart', handler, { passive: false });
+    btn.addEventListener('click', handler);
+  });
+
+  // ---- swipe gestures on the grid ----
+  let touchStart = null;
+  gridEl.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    touchStart = { x: t.clientX, y: t.clientY };
+  }, { passive: true });
+  gridEl.addEventListener('touchend', (e) => {
+    if (!touchStart) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.x;
+    const dy = t.clientY - touchStart.y;
+    touchStart = null;
+    // Require a minimum travel of 20px so accidental taps don't fire
+    if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      setDir(dx > 0 ? 1 : -1, 0);
+    } else {
+      setDir(0, dy > 0 ? 1 : -1);
+    }
+  }, { passive: true });
 
   function closeGame() {
     clearInterval(tickHandle);
@@ -888,7 +993,8 @@ function startSnake() {
     try { input.focus(); } catch (_) {}
   }
 
-  // close on backdrop click
+  // close on backdrop click (mouse only — taps near the d-pad on
+  // mobile would otherwise close it accidentally)
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) closeGame();
   });
