@@ -469,7 +469,7 @@ const SERVICES = {
   aco: {
     label: 'ACO',
     items: [
-      { id: 'murphaco', name: 'Murph ACO',         url: 'https://discord.gg/MvPV2FuJSg', icon: 'icons/murphaco.webp', short: 'discord.gg/MvPV2FuJSg' },
+      { id: 'murphaco', name: 'Murph ACO',         url: 'https://discord.gg/murphaco', icon: 'icons/murphaco.webp', short: 'discord.gg/murphaco' },
     ],
   },
   bots: {
@@ -722,7 +722,7 @@ const COMMANDS = {
     append('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £100k+ secured.');
     appendBlank();
   },
-  aco: () => { window.open('https://discord.gg/MvPV2FuJSg', '_blank', 'noopener'); append('<span class="ok">[ ok ]</span> <span class="dim">opening Murph ACO discord...</span>'); appendBlank(); },
+  aco: () => { window.open('https://discord.gg/murphaco', '_blank', 'noopener'); append('<span class="ok">[ ok ]</span> <span class="dim">opening Murph ACO discord...</span>'); appendBlank(); },
   bots:        async () => await renderServiceList(SERVICES.bots),
   cookgroups:  async () => await renderServiceList(SERVICES.cookgroups),
   'cook-groups': async () => await renderServiceList(SERVICES.cookgroups),
