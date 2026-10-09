@@ -469,7 +469,8 @@ const SERVICES = {
   aco: {
     label: 'ACO',
     items: [
-      { id: 'murphaco', name: 'Murph ACO',         url: 'https://discord.gg/murphaco', icon: 'icons/murphaco.webp', short: 'discord.gg/murphaco' },
+      { id: 'murphaco', name: 'Murph ACO Discord', url: 'https://discord.gg/murph-aco', icon: 'icons/murphaco.webp', short: 'discord.gg/murph-aco' },
+      { id: 'murphapp', name: 'Murph ACO App (sign up here)', url: 'https://murphaco.co.uk', icon: 'icons/murphaco.webp', short: 'murphaco.co.uk' },
     ],
   },
   bots: {
@@ -669,7 +670,7 @@ async function runBoot() {
   await sleep(180);
   await type('<span class="accent">@httpsmurphy</span>  <span class="dim">·</span>  Murphy  <span class="dim">·</span>  <span class="dim">UK ACO owner</span>', 12);
   await type('<span class="dim">»</span> Best automated UK ACO for TCG, sneakers/apparel and collectables.', 10);
-  await type('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £100k+ secured.', 10);
+  await type('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £850k+ profit.', 10);
   appendBlank();
 
   appendPrompt('ls services/');
@@ -719,10 +720,10 @@ const COMMANDS = {
   whoami: () => {
     append('<span class="accent">@httpsmurphy</span>  <span class="dim">·</span>  Murphy  <span class="dim">·</span>  <span class="dim">UK ACO owner</span>');
     append('<span class="dim">»</span> Best automated UK ACO for TCG, sneakers/apparel and collectables.');
-    append('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £100k+ secured.');
+    append('<span class="dim">»</span> Hundreds of clients · thousands of checkouts · £850k+ profit.');
     appendBlank();
   },
-  aco: () => { window.open('https://discord.gg/murphaco', '_blank', 'noopener'); append('<span class="ok">[ ok ]</span> <span class="dim">opening Murph ACO discord...</span>'); appendBlank(); },
+  aco: () => { window.open('https://discord.gg/murph-aco', '_blank', 'noopener'); append('<span class="ok">[ ok ]</span> <span class="dim">opening Murph ACO discord...</span>'); appendBlank(); },
   bots:        async () => await renderServiceList(SERVICES.bots),
   cookgroups:  async () => await renderServiceList(SERVICES.cookgroups),
   'cook-groups': async () => await renderServiceList(SERVICES.cookgroups),
