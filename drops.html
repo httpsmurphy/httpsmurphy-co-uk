@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokémon Center UK drop history · httpsmurphy</title>
+<meta name="description" content="Every Pokémon Center UK drop on record: when the queue opened, when products went live and when they sold out.">
+<link rel="icon" href="icons/murphaco.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/drops-data.js"></script>
+<script src="assets/site.js"></script>
+</head>
+<body>
+<main>
+<section class="hero" style="padding-bottom:24px"><div class="wrap">
+  <p class="eyebrow">Drop history</p>
+  <h1>Pokémon Center UK</h1>
+  <p class="lede">When the queue opened, when each product went live and when it sold out. Use it to spot the pattern, not to predict the day.</p>
+</div></section>
+
+<section class="section" style="padding-top:8px"><div class="wrap">
+  <div class="grid two">
+    <div class="card"><h3>Drops per month</h3><p class="note" style="margin:4px 0 18px">Last 12 months</p><div class="bars" id="bars"></div></div>
+    <div class="card"><h3>When the queue opens</h3><p class="note" style="margin:4px 0 18px">Last 40 drops, by weekday and hour (UK time)</p><div class="heat" id="heat"></div></div>
+  </div>
+</div></section>
+
+<section class="section" style="padding-top:0"><div class="wrap">
+  <div class="toolbar">
+    <div class="chips" role="group" aria-label="Filter drops">
+      <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-f="pre" aria-pressed="false">Pre-orders</button>
+      <button class="chip" type="button" data-f="stock" aria-pressed="false">In-stock drops</button>
+    </div>
+    <input class="search" id="q" type="search" placeholder="Search a product or set" aria-label="Search a product or set">
+  </div>
+  <p class="note" id="count" style="margin-bottom:14px"></p>
+  <div id="list"></div>
+  <p class="note" style="margin-top:22px">Other retailers are coming. Times are UK time. Data is collected from public sources and can be incomplete.</p>
+</div></section>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var all = Drops.all(), s = Drops.stats(all);
+  var bars = document.getElementById("bars"), max = Math.max.apply(null, s.months.map(function (m) { return m.n; })) || 1;
+  s.months.forEach(function (m) {
+    var bar = el("i"); bar.style.height = Math.max(3, m.n / max * 82) + "px";
+    bars.append(el("div", {}, [el("b", { text: String(m.n) }), bar, el("span", { text: m.label })]));
+  });
+  var heat = document.getElementById("heat"), hours = [14, 15, 16, 17, 18, 19, 20, 21, 22], peak = 1;
+  for (var k in s.grid) peak = Math.max(peak, s.grid[k]);
+  heat.append(el("span"));
+  hours.forEach(function (h) { heat.append(el("span", { class: "h", text: h + ":00" })); });
+  [1, 2, 3, 4, 5].forEach(function (d) {
+    heat.append(el("span", { class: "d", text: Drops.DAYS[d].slice(0, 3) }));
+    hours.forEach(function (h) {
+      var n = s.grid[d + "-" + h] || 0, c = el("span", { class: "c", "data-n": String(n), text: n ? String(n) : "", title: Drops.DAYS[d] + " " + h + ":00, " + n + " drop" + (n === 1 ? "" : "s") });
+      if (n) c.style.background = "color-mix(in srgb, var(--accent) " + Math.round(30 + 70 * n / peak) + "%, var(--panel-2))";
+      heat.append(c);
+    });
+  });
+
+  var list = document.getElementById("list"), filter = "all", q = "";
+  function draw() {
+    list.textContent = "";
+    var shown = all.filter(function (d) {
+      if (filter === "pre" && !d.pre) return false;
+      if (filter === "stock" && d.pre) return false;
+      if (!q) return true;
+      return d.items.some(function (i) { return (i.name + " " + i.set).toLowerCase().indexOf(q) > -1; });
+    });
+    document.getElementById("count").textContent = shown.length + " of " + all.length + " drops";
+    shown.forEach(function (d) {
+      var head = el("div", { class: "drop-head" }, [el("span", { class: "date", text: Drops.niceDate(d.date) }), el("span", { class: "tag", text: "Queue " + d.queue })]);
+      if (d.pre) head.append(el("span", { class: "tag pre", text: "Pre-order" }));
+      var items = el("div", { class: "drop-items" }, d.items.map(function (i) {
+        var name = el("div", { class: "n", text: Drops.itemName(i.name) });
+        if (i.set) name.append(el("small", { text: i.set }));
+        var t = el("div", { class: "t" });
+        if (i.live) t.append(el("span", { class: "tag live", text: "Live " + i.live }));
+        if (i.oos) t.append(el("span", { class: "tag oos", text: "Sold out " + i.oos }));
+        return el("div", { class: "drop-item" }, [name, t]);
+      }));
+      list.append(el("article", { class: "drop" }, [head, items]));
+    });
+  }
+  document.querySelectorAll(".chip").forEach(function (b) {
+    b.addEventListener("click", function () {
+      filter = b.dataset.f;
+      document.querySelectorAll(".chip").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      draw();
+    });
+  });
+  document.getElementById("q").addEventListener("input", function (e) { q = e.target.value.trim().toLowerCase(); draw(); });
+  draw();
+});
+</script>
+</body>
+</html>

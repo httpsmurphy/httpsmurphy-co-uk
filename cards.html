@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card hit rates for Pokémon Center UK · httpsmurphy</title>
+<meta name="description" content="Which card providers are getting through on Pokémon Center UK and other retailers, and whether you need a sole trader or a limited company.">
+<link rel="icon" href="icons/murphaco.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<main>
+<section class="hero" style="padding-bottom:20px"><div class="wrap">
+  <p class="eyebrow">Card hit rates</p>
+  <h1>Which cards are getting through.</h1>
+  <p class="lede">These providers work really well on Pokémon Center and other retailers. I use them all. Tap one for who can get it and how to sign up.</p>
+  <p class="note" style="margin-top:14px" id="asof"></p>
+</div></section>
+
+<section class="section" style="padding-top:20px"><div class="wrap">
+  <div class="rows" id="cards"></div>
+  <div class="lock">
+    <p><b>Card ranges are part-hidden here.</b> The full ranges, and the ones to avoid, are shared with ACO members.</p>
+    <a class="btn small primary" href="aco.html">How the ACO works</a>
+  </div>
+  <p class="note" style="margin-top:18px">Hit rate is the share of our own orders on that provider that went through. It moves from drop to drop, and yours will vary with the profile behind the card. Sign-up links are my refs.</p>
+</div></section>
+</main>
+<script>
+// One line per provider. rate = % of our orders that went through. bin = first four digits shown, the rest hidden.
+var CARDS = [
+  { name: "Slash", rate: 72, who: "LTD", bin: "4413", note: "Top of the list right now.", href: "https://discord.gg/murph-aco", cta: "Sign-up is in the Discord" },
+  { name: "Wise", rate: 64, who: "Sole Trader or LTD", bin: "4596", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
+  { name: "Capital On Tap", rate: 55, who: "LTD", bin: "4397", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
+  { name: "Monzo", rate: 53, who: "Sole Trader or LTD", bin: "5373", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
+  { name: "High street banks", rate: 50, who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined.", href: "", cta: "" },
+  { name: "Tide", rate: 44, who: "Sole Trader or LTD", bin: "5599", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
+  { name: "Starling", rate: 29, who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above.", href: "", cta: "" },
+  { name: "Revolut", rate: 6, who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all.", href: "", cta: "", low: true }
+];
+var AS_OF = "16 November 2026";
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("asof").textContent = "Updated " + AS_OF + " · from our own Pokémon Center drops";
+  var box = document.getElementById("cards");
+  CARDS.forEach(function (c, i) {
+    var fill = el("i");
+    var head = el("button", { class: "row-main", type: "button", "aria-expanded": "false" }, [
+      el("span", { class: "row-ico", text: String(i + 1) }),
+      el("div", { class: "row-body" }, [el("h3", { text: c.name }), el("p", { text: c.who })]),
+      el("div", { class: "rate" }, [el("div", { class: "track" }, [fill]), el("span", { class: "num", text: c.rate + "%" })]),
+      el("span", { class: "caret", text: "▾", "aria-hidden": "true" })
+    ]);
+    var binV = el("div", { class: "v bin" });
+    if (c.bin) { binV.append(c.bin + " ", el("span", { class: "mask", text: "••" })); } else { binV.textContent = "Several"; }
+    var facts = el("div", { class: "facts" }, [
+      el("div", {}, [el("div", { class: "k", text: "Who can get it" }), el("div", { class: "v", text: c.who })]),
+      el("div", {}, [el("div", { class: "k", text: "Card range" }), binV]),
+      el("div", {}, [el("div", { class: "k", text: "Hit rate" }), el("div", { class: "v num", text: c.rate + "%" })])
+    ]);
+    var more = el("div", { class: "row-more" }, [facts, el("p", { class: "dim", text: c.note })]);
+    if (c.href) more.append(el("div", { class: "btn-row", style: "margin-top:16px" }, [el("a", { class: "btn small primary", href: c.href, target: "_blank", rel: "sponsored noopener", text: c.cta })]));
+    var row = el("div", { class: "row" + (c.low ? " low" : ""), "open-state": "0" }, [head, more]);
+    head.addEventListener("click", function () {
+      var open = row.getAttribute("open-state") === "1";
+      row.setAttribute("open-state", open ? "0" : "1"); head.setAttribute("aria-expanded", open ? "false" : "true");
+    });
+    box.append(row);
+    requestAnimationFrame(function () { setTimeout(function () { fill.style.width = c.rate + "%"; }, 60 * i); });
+  });
+});
+</script>
+</body>
+</html>
