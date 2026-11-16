@@ -605,3 +605,12 @@ ul.field-what li.more { color: var(--dim); }
 #b-sites .site.yes { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
 #b-sites .site.no { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
 @media (max-width: 640px) { .bench-dl { grid-template-columns: 1fr 1fr; } .bench-dl div:first-child { grid-column: 1 / -1; } }
+
+/* card hit rates: nothing moves when you change card */
+.bench-grid { align-items: start; }
+.bench-card { padding-top: clamp(0px, 3vw, 46px); }
+.bench-note { min-height: 4.9em; }
+.bench-dl { min-height: 118px; align-items: start; }
+.bench-act { min-height: 104px; align-content: flex-start; }
+.bench-n .disp { white-space: nowrap; }
+@media (max-width: 900px) { .bench-card { padding-top: 0; } .bench-act { min-height: 0; } .bench-dl { min-height: 0; } }

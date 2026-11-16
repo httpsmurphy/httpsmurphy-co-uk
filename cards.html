@@ -37,7 +37,7 @@
   </div>
   <div class="bench-read" aria-live="polite">
     <span class="label" id="b-rank"></span>
-    <div class="bench-n"><span class="n" id="b-rate">0</span><span class="disp">of every 100<br>went through</span></div>
+    <div class="bench-n"><span class="n" id="b-rate">0</span><span class="disp">of every 100 on<br>Pokémon Center</span></div>
     <div class="hund" id="hund" aria-hidden="true"></div>
     <p class="bench-note" id="b-note"></p>
     <dl class="bench-dl" id="b-dl">
@@ -50,7 +50,7 @@
 </div></section>
 
 <section class="rank"><div class="wrap">
-  <div class="rank-head"><span class="label">The ranking · tap one to put it on the bench</span><span class="label" id="asof"></span></div>
+  <div class="rank-head"><span class="label"><b>Pokémon Center UK</b> hit rates · tap one to put it on the bench</span><span class="label" id="asof"></span></div>
   <div id="rank"></div>
   <p class="war-note">Hit rate is the share of our own Pokémon Center orders on that provider that went through. It moves from drop to drop, and yours will vary with the profile behind the card. The two at the top, the full card ranges and the ones to avoid are shared with ACO members.</p>
 </div></section>
@@ -107,8 +107,10 @@ document.addEventListener("DOMContentLoaded", function () {
     else if (c.href) { cta.href = c.href; cta.textContent = c.cta; cta.setAttribute("target", "_blank"); }
     $("b-again").hidden = !!c.locked;
     var su = $("b-setup"); su.hidden = !c.setup; if (c.setup) su.href = "setup.html#" + c.setup;
-    $("b-dl").hidden = !!c.locked;
-    if (!c.locked) {
+    if (c.locked) {
+      $("b-sites").textContent = ""; $("b-sites").append(el("span", { class: "site", text: "Members only" }));
+      $("b-count").textContent = "Members only"; $("b-count").classList.add("tbc"); $("b-who").textContent = "Members only";
+    } else {
       var known = {}; (c.sites || [["Pokémon Center", c.rate >= 25 ? "yes" : "no"]]).forEach(function (x) { known[x[0]] = x[1]; });
       var sb = $("b-sites"); sb.textContent = "";
       SITES.forEach(function (n) { var st = known[n] || "tbc"; sb.append(el("span", { class: "site " + st, text: (st === "yes" ? "✓ " : st === "no" ? "✕ " : "") + n + (st === "tbc" ? " · to add" : "") })); });
