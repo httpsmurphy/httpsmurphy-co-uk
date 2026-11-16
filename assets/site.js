@@ -59,12 +59,13 @@
   });
 
   // ---------- drop history ----------
-  function parseDrops() {
-    if (!window.DROPS_RAW) return [];
-    return window.DROPS_RAW.trim().split("\n").map(line => {
+  function parseDrops(raw) {
+    if (raw === undefined) raw = window.DROPS_RAW;
+    if (!raw) return [];
+    return raw.trim().split("\n").map(line => {
       const [date, queue, pre, items] = line.split("|");
       return {
-        date: date, queue: queue, pre: pre === "P",
+        date: date, queue: queue, pre: pre === "P", count: Number(pre) || 0,
         items: (items || "").split(";").filter(Boolean).map(s => { const [name, set, live, oos] = s.split("~"); return { name: name, set: set, live: live, oos: oos }; }),
       };
     });
@@ -107,5 +108,5 @@
   function niceDate(s) { return new Date(utc(s)).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
   function itemName(n) { return /^\d{2}-\d+-\d+$/.test(n) ? "Unnamed product · SKU " + n : n; }
 
-  window.Drops = { all: parseDrops, stats: stats, niceDate: niceDate, itemName: itemName, DAYS: DAYS };
+  window.Drops = { all: parseDrops, parse: parseDrops, stats: stats, niceDate: niceDate, itemName: itemName, DAYS: DAYS };
 })();
