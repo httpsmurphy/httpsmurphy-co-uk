@@ -351,3 +351,8 @@ body.grabbing, body.grabbing * { user-select: none !important; -webkit-user-sele
 .steps2 li + li { padding-left: 22px; border-left: 1px solid var(--line); }
 .steps2 li b { font-size: 64px; color: var(--accent); line-height: .9; }
 .steps2 li p { color: var(--dim); font-size: 15px; }
+
+.hx-card img { object-fit: contain; }
+.sheet-text { font-size: 16px; line-height: 1.6; max-width: 52ch; }
+.sheet-text.todo { color: var(--faint); font-style: italic; }
+.sheet-grid { grid-template-columns: 1fr 1.25fr .85fr; }
