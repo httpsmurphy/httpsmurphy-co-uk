@@ -21,10 +21,7 @@
   <span class="label">Pokémon Center UK · drop history</span>
   <div class="since"><span class="n" id="c-d">0</span><span class="disp">days since<br>the last drop</span></div>
   <div class="tick" id="c-all"></div>
-  <div class="desk-line">
-    <h1 id="d-head"></h1>
-    <p>Every UK drop on record: when the queue opened, what went live, and when it sold out. Use it to spot the pattern, not to predict the day.</p>
-  </div>
+  <h1 class="dh-line" id="d-head"></h1>
 </div></section>
 
 <section class="tl"><div class="wrap">
@@ -40,21 +37,30 @@
   </div>
 </div></section>
 
-<section><div class="wrap"><div class="trio pat">
-  <div class="inst rise">
+<section class="dfacts"><div class="wrap">
+  <div class="facts-row">
+    <div><span class="label">usual day</span><b class="disp" id="f-day"></b></div>
+    <div><span class="label">queue usually opens</span><b class="disp" id="f-win"></b></div>
+    <div><span class="label">typical gap</span><b class="disp" id="f-gap"></b></div>
+    <button type="button" class="btn" id="f-more" aria-expanded="false" aria-controls="pat">Show the patterns</button>
+  </div>
+</div></section>
+
+<section id="pat" hidden><div class="wrap"><div class="trio pat">
+  <div class="inst">
     <span class="label">Pattern · 01</span>
     <h2>Are we in the window?</h2>
     <div class="win" id="win"></div>
     <span class="status" id="win-status"></span>
     <p class="sub" id="win-sub"></p>
   </div>
-  <div class="inst rise">
+  <div class="inst">
     <span class="label">Pattern · 02</span>
     <h2>Which day</h2>
     <div class="days" id="days"></div>
     <p class="sub" id="days-sub"></p>
   </div>
-  <div class="inst rise">
+  <div class="inst">
     <span class="label">Pattern · 03</span>
     <h2>How long between</h2>
     <div class="gaps" id="gaps"></div>
@@ -76,7 +82,7 @@
   </div>
   <div class="ledger-cols label" aria-hidden="true"><span>Date</span><span>Queue</span><span>What dropped</span><span>Went live</span><span>Sold out</span></div>
   <div id="rows"></div>
-  <p class="war-note" id="count"></p>
+  <div class="ledger-more"><button type="button" class="btn" id="all-btn"></button><span class="label" id="count"></span></div>
   <p class="war-note">Pokémon Center UK only for now. Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</p>
 </div></section>
 
@@ -190,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
   $("gaps-sub").textContent = "We're " + cur + " days in. " + longer + " of the last " + gaps.length + " gaps ran this long or longer. The highlighted band is where we are now.";
 
   // ---- the record ----
-  var rows = $("rows"), filter = "all", query = "", rowEls = {};
+  var rows = $("rows"), filter = "all", query = "", rowEls = {}, showAll = false, SHORT = 8;
   function dur(a, b) { var m = mins(b) - mins(a); return m <= 0 ? "" : (m >= 60 ? Math.floor(m / 60) + "h " : "") + (m % 60) + "m"; }
   function draw() {
     rows.textContent = ""; rowEls = {};
@@ -198,8 +204,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (filter === "pre" && !d.pre) return false; if (filter === "stock" && d.pre) return false;
       return !query || d.items.some(function (x) { return (x.name + " " + x.set).toLowerCase().indexOf(query) > -1; });
     });
-    $("count").textContent = shown.length + " of " + drops.length + " drops";
-    shown.forEach(function (d) {
+    var cut = !showAll && filter === "all" && !query && shown.length > SHORT;
+    $("count").textContent = (cut ? SHORT : shown.length) + " of " + drops.length + " drops";
+    $("all-btn").hidden = !cut; $("all-btn").textContent = "Show all " + drops.length + " drops";
+    (cut ? shown.slice(0, SHORT) : shown).forEach(function (d) {
       var live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
       var names = d.items.map(function (x) { return Drops.itemName(x.name); });
       var date = new Date(Date.parse(d.date));
@@ -219,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   function openRow(date) {
-    if (!rowEls[date]) { filter = "all"; query = ""; $("q").value = ""; setChips(); draw(); }
+    if (!rowEls[date]) { filter = "all"; query = ""; showAll = true; $("q").value = ""; setChips(); draw(); }
     var w = rowEls[date]; if (!w) return;
     w.classList.add("open", "flash"); w.querySelector(".lrow").setAttribute("aria-expanded", "true");
     w.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(function () { w.classList.remove("flash"); }, 1600);
@@ -227,7 +235,16 @@ document.addEventListener("DOMContentLoaded", function () {
   function setChips() { document.querySelectorAll(".ledger .hx-chips button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.f === filter ? "true" : "false"); }); }
   document.querySelectorAll(".ledger .hx-chips button").forEach(function (b) { b.addEventListener("click", function () { filter = b.dataset.f; setChips(); draw(); }); });
   $("q").addEventListener("input", function (e) { query = e.target.value.trim().toLowerCase(); draw(); });
+  $("all-btn").addEventListener("click", function () { showAll = true; draw(); });
   draw();
+
+  // headline facts, and the detail behind them
+  $("f-day").textContent = stats.topDay; $("f-win").textContent = stats.window.replace("–", " – "); $("f-gap").textContent = avg + " days";
+  $("f-more").addEventListener("click", function () {
+    var pat = $("pat"), open = pat.hidden; pat.hidden = !open;
+    this.setAttribute("aria-expanded", open ? "true" : "false"); this.textContent = open ? "Hide the patterns" : "Show the patterns";
+    pat.querySelectorAll(".inst").forEach(function (n) { n.classList.add("rise", "in"); });
+  });
 
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .15 });
   document.querySelectorAll(".rise").forEach(function (n) { io.observe(n); });
