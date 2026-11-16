@@ -45,6 +45,20 @@
   </div>
 </div></section>
 
+<section class="sheet" id="sheet"><div class="wrap">
+  <div class="sheet-head">
+    <img id="sh-ico" alt="" draggable="false">
+    <div><span class="label" id="sh-kind"></span><h2 class="disp" id="sh-name"></h2></div>
+    <a class="btn primary" id="sh-go" target="_blank" rel="sponsored noopener"></a>
+  </div>
+  <div class="sheet-offer" id="sh-offer"></div>
+  <div class="sheet-grid">
+    <div class="sheet-col"><span class="label">What it costs</span><div class="tiers" id="sh-price"></div></div>
+    <div class="sheet-col"><span class="label">What you get</span><ul class="ticks" id="sh-feats"></ul></div>
+    <div class="sheet-col"><span class="label">Good for</span><div class="tags" id="sh-tags"></div><p class="sheet-note" id="sh-note"></p></div>
+  </div>
+</div></section>
+
 <section class="index"><div class="wrap">
   <span class="label">The whole list</span>
   <div class="index-grid" id="index"></div>
@@ -55,31 +69,31 @@
 document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); };
   var ITEMS = [
-    { k: "Bots", n: "Stellar", ico: "stellar.jpg", tag: "Start here", why: "My main for Pokémon Center. Most of my PKC checkouts come off this.", href: "https://whop.com/stellaraio/stellaraio?a=bypass-link", cta: "Get Stellar",
+    { k: "Bots", n: "Stellar", spec: { offer: "", note: "", price: [["Quarterly", ["$349 to join", "$150 every 3 months"]], ["Yearly", ["$300 to join", "$599 a year"]]], feats: ["Pokémon Center UK, guest checkout", "UK and EU retail", "Topps UK", "Extra keys available"], tags: ["Pokémon Center", "John Lewis", "Very", "Argos", "Asda", "Hamleys", "Topps"] }, ico: "stellar.jpg", tag: "Start here", why: "My main for Pokémon Center. Most of my PKC checkouts come off this.", href: "https://whop.com/stellaraio/stellaraio?a=bypass-link", cta: "Get Stellar",
       pts: [["What I run on it", "every Pokémon Center UK drop, pre-orders and restocks."], ["Why this one", "it's the bot we've taken the most Pokémon Center checkouts on."], ["Good to know", "it covers UK retail too, so it works as your only bot while you start."]] },
-    { k: "Bots", n: "Hidden", ico: "hidden.jpg", why: "Second bot on retail and Topps drops, so I'm never relying on one.", href: "https://whop.com/hiddenaio/hiddenaio?a=bypass-link", cta: "Get Hidden",
+    { k: "Bots", n: "Hidden", spec: { offer: "", note: "", price: [["Monthly", ["$450 to join", "$49.99 a month"]], ["Yearly", ["$450 to join", "$499.99 a year"]]], feats: ["Retail and Topps", "Start tasks from the web app", "Support team on hand"], tags: ["Pokémon Center", "Argos", "Hamleys", "John Lewis", "Topps"] }, ico: "hidden.jpg", why: "Second bot on retail and Topps drops, so I'm never relying on one.", href: "https://whop.com/hiddenaio/hiddenaio?a=bypass-link", cta: "Get Hidden",
       pts: [["What I run on it", "retail drops and Topps."], ["Why this one", "when one bot has a bad day on a site, the other often doesn't."], ["Good to know", "tasks can be started from its web app, so you don't have to be at the machine."]] },
-    { k: "Bots", n: "Brute", ico: "brute.png", why: "Retail: John Lewis, Argos, Asda, Very, Selfridges.", href: "https://whop.com/brute-aio/brute-aio?a=bypass-link", cta: "Get Brute",
+    { k: "Bots", n: "Brute", spec: { offer: "", note: "May need to join a waitlist first.", price: [["Monthly", ["£199 to join", "£40 a month"]]], feats: ["Widest UK retail cover", "Runs on Mac and Windows", "Fast module updates"], tags: ["John Lewis", "Argos", "Asda", "Very", "Selfridges", "Hamleys", "Miniso"] }, ico: "brute.png", why: "Retail: John Lewis, Argos, Asda, Very, Selfridges.", href: "https://whop.com/brute-aio/brute-aio?a=bypass-link", cta: "Get Brute",
       pts: [["What I run on it", "John Lewis, Argos, Asda, Very, Selfridges, Hamleys and Miniso."], ["Why this one", "widest cover of UK retail sites of the three."], ["Good to know", "runs on a Mac as well as Windows."]] },
-    { k: "Cook groups", n: "Lunar", ico: "lunar.svg", tag: "Early SKUs", why: "Early SKUs for botting drops.", href: "https://whop.com/lunarfba/lunar-fba?a=bypass-link", cta: "Join Lunar",
+    { k: "Cook groups", n: "Lunar", spec: { offer: "", note: "", price: [["Monthly", ["£35 a month"]]], feats: ["Early SKUs before drops go live", "Online drops and botting info", "Monitors and alerts"], tags: ["Early SKUs", "Botting", "Online drops"] }, ico: "lunar.svg", tag: "Early SKUs", why: "Early SKUs for botting drops.", href: "https://whop.com/lunarfba/lunar-fba?a=bypass-link", cta: "Join Lunar",
       pts: [["What I use it for", "getting the product SKU before a drop goes live, so tasks are loaded in advance."], ["Who it suits", "anyone running their own bot. Without the SKU you're setting up after everyone else."]] },
-    { k: "Cook groups", n: "Pokenotify", ico: "pokenotify.png", tag: "Best for PKC", why: "The best for Pokémon Center.", href: "https://whop.com/pokenotify/pokenotify?a=bypass-link", cta: "Join Pokenotify",
+    { k: "Cook groups", n: "Pokenotify", spec: { offer: "", note: "", price: [], feats: ["Pokémon Center queue and live alerts", "Restock pings"], tags: ["Pokémon Center", "Pokémon"] }, ico: "pokenotify.png", tag: "Best for PKC", why: "The best for Pokémon Center.", href: "https://whop.com/pokenotify/pokenotify?a=bypass-link", cta: "Join Pokenotify",
       pts: [["What I use it for", "Pokémon Center alerts: queues opening, products going live, restocks."], ["Who it suits", "you, if Pokémon Center is the main thing you run."]] },
-    { k: "Cook groups", n: "Resellers Paradise", ico: "resellers.jpg", why: "Lowkey flips and in-store.", href: "https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link", cta: "Join Resellers Paradise",
+    { k: "Cook groups", n: "Resellers Paradise", spec: { offer: "", note: "", price: [], feats: ["Lowkey flips", "In-store drops", "Pokémon"], tags: ["Lowkey", "In-store", "Pokémon"] }, ico: "resellers.jpg", why: "Lowkey flips and in-store.", href: "https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link", cta: "Join Resellers Paradise",
       pts: [["What I use it for", "the smaller flips that aren't on everyone's radar, and in-store drops."], ["Who it suits", "you, if you want more than the big online releases."]] },
-    { k: "Servers + proxies", n: "Hyonix", ico: "hyonix.png", why: "Windows servers.", href: "https://my.hyonix.com/aff.php?aff=5617", cta: "Get a Hyonix server",
+    { k: "Servers + proxies", n: "Hyonix", spec: { offer: "", note: "", price: [], feats: ["Windows servers", "Bots stay open 24/7"], tags: ["Windows", "Server"] }, ico: "hyonix.png", why: "Windows servers.", href: "https://my.hyonix.com/aff.php?aff=5617", cta: "Get a Hyonix server",
       pts: [["What I use it for", "keeping bots open 24/7 without tying up my own machine."], ["When you need it", "once you're running more tasks than your own computer can hold open."]] },
-    { k: "Servers + proxies", n: "Ocean ISPs", ico: "ocean.png", why: "The ISPs I run on.", href: "", cta: "Link soon",
+    { k: "Servers + proxies", n: "Ocean ISPs", spec: { offer: "", note: "Link coming soon.", price: [], feats: ["One connection per task", "The ISPs I run on Pokémon Center"], tags: ["ISP proxies"] }, ico: "ocean.png", why: "The ISPs I run on.", href: "", cta: "Link soon",
       pts: [["What I use them for", "every bot task runs through one, so each checkout comes from its own connection."], ["When you need them", "as soon as you run more than a handful of profiles on one site."]] },
-    { k: "Cards", n: "Slash", ico: "slash.png", tag: "Top card", why: "What I use for Pokémon Center and most other UK retailers.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account",
+    { k: "Cards", n: "Slash", spec: { offer: "Priority approval through my link", note: "Limited companies only.", price: [], feats: ["1,000 cards guaranteed on a global account", "More cards added as you spend", "1.1% cashback on qualifying spend", "Bank in USD as a non-US company"], tags: ["LTD", "Virtual cards", "72% hit rate"] }, ico: "slash.png", tag: "Top card", why: "What I use for Pokémon Center and most other UK retailers.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account",
       pts: [["Who can get it", "limited companies."], ["Why this one", "1,000 cards guaranteed on a global account, with more added as you spend."], ["Hit rate", "72%, the best card I share publicly."]] },
-    { k: "Cards", n: "Wise", ico: "wise.png", why: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account",
+    { k: "Cards", n: "Wise", spec: { offer: "", note: "Sole traders and limited companies.", price: [], feats: ["Consistently one of the best on Pokémon Center"], tags: ["Sole Trader", "LTD", "64% hit rate"] }, ico: "wise.png", why: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "64%."]] },
-    { k: "Cards", n: "Capital On Tap", ico: "capitalontap.png", why: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap",
+    { k: "Cards", n: "Capital On Tap", spec: { offer: "", note: "Limited companies only.", price: [], feats: ["Up to 50 cards per employee"], tags: ["LTD", "Credit card", "55% hit rate"] }, ico: "capitalontap.png", why: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap",
       pts: [["Who can get it", "limited companies."], ["Hit rate", "55%."]] },
-    { k: "Cards", n: "Monzo", ico: "monzo.png", why: "Check which range your virtual cards are on.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account",
+    { k: "Cards", n: "Monzo", spec: { offer: "", note: "Virtual cards aren't on the free Lite plan.", price: [["Lite", ["£0 a month", "No virtual cards"]], ["Pro", ["£9 a month", "Virtual cards"]], ["Team", ["£25 a month", "Virtual cards"]]], feats: ["Check which range your virtual cards are on", "Sole traders and limited companies"], tags: ["Sole Trader", "LTD", "53% hit rate"] }, ico: "monzo.png", why: "Check which range your virtual cards are on.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "53% on the range that works."]] },
-    { k: "Cards", n: "Tide", ico: "tide.png", why: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account",
+    { k: "Cards", n: "Tide", spec: { offer: "Use code DBOLOB when you sign up", note: "Sole traders and limited companies.", price: [], feats: [], tags: ["Sole Trader", "LTD", "44% hit rate"] }, ico: "tide.png", why: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "44%."]] }
   ];
   var N = ITEMS.length, STEP = 360 / 7, RISE = 58, spin = $("hx-spin"), stage = $("hx-stage"), pos = 0, cards = [];
@@ -114,6 +128,17 @@ document.addEventListener("DOMContentLoaded", function () {
     $("hx-count").textContent = String(i + 1).padStart(2, "0") + " / " + N;
     document.querySelectorAll("#hx-chips button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.k === it.k ? "true" : "false"); });
     var box = document.querySelector(".hx-detail"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
+    var sp = it.spec || {}, sh = $("sheet");
+    $("sh-ico").src = "icons/" + it.ico; $("sh-kind").textContent = it.k; $("sh-name").textContent = it.n;
+    var sg = $("sh-go"); sg.textContent = it.cta; if (it.href) { sg.href = it.href; sg.classList.remove("off"); } else { sg.removeAttribute("href"); sg.classList.add("off"); }
+    var of = $("sh-offer"); of.textContent = sp.offer || ""; of.hidden = !sp.offer;
+    var pr = $("sh-price"); pr.textContent = "";
+    if (sp.price && sp.price.length) sp.price.forEach(function (t) { pr.append(el("div", { class: "tier" }, [el("b", { text: t[0] })].concat(t[1].map(function (l) { return el("span", { text: l }); })))); });
+    else pr.append(el("div", { class: "tier empty" }, [el("span", { text: it.k === "Cards" ? "Free to open through the link" : "Price to be added" })]));
+    var fe = $("sh-feats"); fe.textContent = ""; (sp.feats && sp.feats.length ? sp.feats : [it.why]).forEach(function (f) { fe.append(el("li", { text: f })); });
+    var tg = $("sh-tags"); tg.textContent = ""; (sp.tags || []).forEach(function (t) { tg.append(el("span", { text: t })); });
+    $("sh-note").textContent = sp.note || "";
+    sh.classList.remove("swap"); void sh.offsetWidth; sh.classList.add("swap");
   }
   var shown = -1;
   function go(i) {
@@ -123,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // drag to spin (sideways or up/down), snap to the nearest on release
   var down = null, dragged = false;
-  stage.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, p: pos }; dragged = false; });
+  stage.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, p: pos }; dragged = false; document.body.classList.add("grabbing"); });
   window.addEventListener("pointermove", function (e) {
     if (!down) return;
     var d = (down.x - e.clientX) / 110 + (down.y - e.clientY) / 90;
@@ -131,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     pos = Math.max(-.4, Math.min(N - .6, down.p + d)); layout();
     var near = Math.round(Math.max(0, Math.min(N - 1, pos))); if (near !== shown) { shown = near; detail(near); }
   });
-  window.addEventListener("pointerup", function () { if (!down) return; down = null; go(Math.round(pos)); setTimeout(function () { dragged = false; }, 0); });
+  window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!down) return; down = null; go(Math.round(pos)); setTimeout(function () { dragged = false; }, 0); });
   stage.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(Math.round(pos) + 1); e.preventDefault(); }
     if (e.key === "ArrowLeft" || e.key === "ArrowUp") { go(Math.round(pos) - 1); e.preventDefault(); }
