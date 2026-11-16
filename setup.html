@@ -3,42 +3,163 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My setup: bots, cook groups, servers · httpsmurphy</title>
-<meta name="description" content="The bots, cook groups, servers and proxies I use for UK drops, and why each one.">
+<title>Setup · what I run · httpsmurphy</title>
+<meta name="description" content="The bots, cook groups, servers, proxies and cards I run for UK drops, and why each one.">
 <link rel="icon" href="icons/murphaco.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/v2.css">
 <script src="assets/site.js"></script>
 </head>
-<body>
+<body class="v2">
 <main>
-<section class="hero" style="padding-bottom:20px"><div class="wrap">
-  <p class="eyebrow">Setup</p>
-  <h1>Everything I run.</h1>
-  <p class="lede">Want to secure checkouts on the sites ACOs don't run anymore? John Lewis, Argos, Very and the rest. This is what I use to do it.</p>
-  <p class="callout" style="margin-top:22px">All the links here are my refs. Got yours somewhere else? Cool, but don't come to me when it doesn't work. <b>No ref, no help.</b></p>
+
+<section class="setup-top"><div class="wrap">
+  <span class="label"><b>Setup</b> · 13 things, all in use</span>
+  <h1 class="disp">Everything I run.</h1>
+  <div class="setup-intro">
+    <p>Want to secure checkouts on the sites ACOs don't run anymore? John Lewis, Argos, Very and the rest. This is what I use to do it.</p>
+    <p class="rule">All the links are my refs. Got yours somewhere else? Cool, but don't come to me when it doesn't work. <b>No ref, no help.</b></p>
+  </div>
 </div></section>
 
-<section class="section" style="padding-top:28px"><div class="wrap">
-  <div class="section-head"><h2>Bots</h2><p>These are the 3 I run on pretty much every drop. If you're only getting one, get Stellar.</p></div>
-  <div class="rows"><div class="row"><div class="row-main"><img class="row-ico" src="icons/stellar.jpg" alt="" loading="lazy"><div class="row-body"><h3>Stellar <span class="pill best">Start here</span></h3><p>My main for Pokémon Center. Most of my PKC checkouts come off this.</p></div><a class="btn small primary" href="https://whop.com/stellaraio/stellaraio?a=bypass-link" rel="sponsored noopener" target="_blank">Get it</a></div><ul class="points"><li><b>What I run on it:</b> every Pokémon Center UK drop, pre-orders and restocks.</li><li><b>Why this one:</b> it is the bot our group has taken the most Pokémon Center checkouts on.</li><li><b>Good to know:</b> it also covers UK retail, so it works as your only bot while you start.</li></ul></div><div class="row"><div class="row-main"><img class="row-ico" src="icons/brute.png" alt="" loading="lazy"><div class="row-body"><h3>Brute</h3><p>Retail: John Lewis, Argos, Asda, Very, Selfridges.</p></div><a class="btn small primary" href="https://whop.com/brute-aio/brute-aio?a=bypass-link" rel="sponsored noopener" target="_blank">Get it</a></div><ul class="points"><li><b>What I run on it:</b> John Lewis, Argos, Asda, Very, Selfridges, Hamleys and Miniso.</li><li><b>Why this one:</b> widest cover of UK retail sites of the three.</li><li><b>Good to know:</b> runs on a Mac as well as Windows, and takes a single file of profiles.</li></ul></div><div class="row"><div class="row-main"><img class="row-ico" src="icons/hidden.jpg" alt="" loading="lazy"><div class="row-body"><h3>Hidden</h3><p>Second bot on retail and Topps drops, so I&#39;m never relying on one.</p></div><a class="btn small primary" href="https://whop.com/hiddenaio/hiddenaio?a=bypass-link" rel="sponsored noopener" target="_blank">Get it</a></div><ul class="points"><li><b>What I run on it:</b> the same retail drops as Brute, plus Topps.</li><li><b>Why this one:</b> when one bot has a bad day on a site, the other often does not.</li><li><b>Good to know:</b> tasks can be started from its web app, so you do not have to be at the machine.</li></ul></div></div>
+<section class="helix-wrap"><div class="wrap helix-grid">
+  <div class="hx-detail" aria-live="polite">
+    <div class="hx-chips" id="hx-chips" role="group" aria-label="Jump to a group"></div>
+    <span class="label" id="hx-kind"></span>
+    <h2 class="disp" id="hx-name"></h2>
+    <p class="hx-why" id="hx-why"></p>
+    <ul class="points" id="hx-pts"></ul>
+    <div class="hx-act">
+      <a class="btn primary" id="hx-go" target="_blank" rel="sponsored noopener"></a>
+      <div class="tl-keys"><button type="button" id="hx-prev" aria-label="Previous">←</button><button type="button" id="hx-next" aria-label="Next">→</button></div>
+      <span class="label" id="hx-count"></span>
+    </div>
+  </div>
+  <div class="hx-stage" id="hx-stage" tabindex="0" role="listbox" aria-label="Everything I run. Drag, or use the arrow keys.">
+    <div class="hx-spin" id="hx-spin"></div>
+    <span class="label hx-hint">drag · arrows · tap a card</span>
+  </div>
 </div></section>
 
-<section class="section" style="padding-top:0"><div class="wrap">
-  <div class="section-head"><h2>Cook groups</h2><p>A bot is no use if you don't know what's dropping. I'm in all three, each for a different reason.</p></div>
-  <div class="rows"><div class="row"><div class="row-main"><img class="row-ico" src="icons/lunar.svg" alt="" loading="lazy"><div class="row-body"><h3>Lunar <span class="pill best">Early SKUs</span></h3><p>Early SKUs for botting drops.</p></div><a class="btn small primary" href="https://whop.com/lunarfba/lunar-fba?a=bypass-link" rel="sponsored noopener" target="_blank">Join</a></div><ul class="points"><li><b>What I use it for:</b> getting the product SKU before a drop goes live, so tasks are loaded in advance.</li><li><b>Who it suits:</b> anyone running their own bot. Without the SKU you are setting up after everyone else.</li></ul></div><div class="row"><div class="row-main"><img class="row-ico" src="icons/pokenotify.png" alt="" loading="lazy"><div class="row-body"><h3>Pokenotify <span class="pill best">Best for PKC</span></h3><p>The best for Pokémon Center.</p></div><a class="btn small primary" href="https://whop.com/pokenotify/pokenotify?a=bypass-link" rel="sponsored noopener" target="_blank">Join</a></div><ul class="points"><li><b>What I use it for:</b> Pokémon Center alerts: queues opening, products going live, restocks.</li><li><b>Who it suits:</b> you if Pokémon Center is the main thing you run.</li></ul></div><div class="row"><div class="row-main"><img class="row-ico" src="icons/resellers.jpg" alt="" loading="lazy"><div class="row-body"><h3>Resellers Paradise <span class="pill best">Lowkey + in-store</span></h3><p>Lowkey flips and in-store.</p></div><a class="btn small primary" href="https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link" rel="sponsored noopener" target="_blank">Join</a></div><ul class="points"><li><b>What I use it for:</b> the smaller flips that are not on everyone&#39;s radar, and in-store drops.</li><li><b>Who it suits:</b> you if you want more than the big online releases.</li></ul></div></div>
+<section class="index"><div class="wrap">
+  <span class="label">The whole list</span>
+  <div class="index-grid" id="index"></div>
 </div></section>
 
-<section class="section" style="padding-top:0"><div class="wrap">
-  <div class="section-head"><h2>Servers and proxies</h2><p>Once you're running a lot you want the bots on a server and decent proxies behind them. This is what I use for both.</p></div>
-  <div class="rows"><div class="row"><div class="row-main"><img class="row-ico" src="icons/hyonix.png" alt="" loading="lazy"><div class="row-body"><h3>Hyonix</h3><p>Windows servers.</p></div><a class="btn small primary" href="https://my.hyonix.com/aff.php?aff=5617" rel="sponsored noopener" target="_blank">Get it</a></div><ul class="points"><li><b>What I use it for:</b> keeping bots open 24/7 without tying up my own machine.</li><li><b>When you need it:</b> once you are running more tasks than your own computer can hold open.</li></ul></div><div class="row"><div class="row-main"><img class="row-ico" src="icons/ocean.png" alt="" loading="lazy"><div class="row-body"><h3>Ocean ISPs</h3><p>The ISPs I run on.</p></div><span class="pill">Link soon</span></div><ul class="points"><li><b>What I use them for:</b> every bot task runs through one, so each checkout comes from its own connection.</li><li><b>When you need them:</b> as soon as you run more than a handful of profiles on one site.</li></ul></div></div>
-</div></section>
-
-<section class="section" style="padding-top:0"><div class="wrap">
-  <a class="card" href="cards.html"><p class="eyebrow">Cards</p><h3>The card decides whether a checkout sticks</h3><p>Five providers that work really well on Pokémon Center and other retailers, with hit rates.</p><span class="go">Card hit rates →</span></a>
-</div></section>
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var ITEMS = [
+    { k: "Bots", n: "Stellar", ico: "stellar.jpg", tag: "Start here", why: "My main for Pokémon Center. Most of my PKC checkouts come off this.", href: "https://whop.com/stellaraio/stellaraio?a=bypass-link", cta: "Get Stellar",
+      pts: [["What I run on it", "every Pokémon Center UK drop, pre-orders and restocks."], ["Why this one", "it's the bot we've taken the most Pokémon Center checkouts on."], ["Good to know", "it covers UK retail too, so it works as your only bot while you start."]] },
+    { k: "Bots", n: "Hidden", ico: "hidden.jpg", why: "Second bot on retail and Topps drops, so I'm never relying on one.", href: "https://whop.com/hiddenaio/hiddenaio?a=bypass-link", cta: "Get Hidden",
+      pts: [["What I run on it", "retail drops and Topps."], ["Why this one", "when one bot has a bad day on a site, the other often doesn't."], ["Good to know", "tasks can be started from its web app, so you don't have to be at the machine."]] },
+    { k: "Bots", n: "Brute", ico: "brute.png", why: "Retail: John Lewis, Argos, Asda, Very, Selfridges.", href: "https://whop.com/brute-aio/brute-aio?a=bypass-link", cta: "Get Brute",
+      pts: [["What I run on it", "John Lewis, Argos, Asda, Very, Selfridges, Hamleys and Miniso."], ["Why this one", "widest cover of UK retail sites of the three."], ["Good to know", "runs on a Mac as well as Windows."]] },
+    { k: "Cook groups", n: "Lunar", ico: "lunar.svg", tag: "Early SKUs", why: "Early SKUs for botting drops.", href: "https://whop.com/lunarfba/lunar-fba?a=bypass-link", cta: "Join Lunar",
+      pts: [["What I use it for", "getting the product SKU before a drop goes live, so tasks are loaded in advance."], ["Who it suits", "anyone running their own bot. Without the SKU you're setting up after everyone else."]] },
+    { k: "Cook groups", n: "Pokenotify", ico: "pokenotify.png", tag: "Best for PKC", why: "The best for Pokémon Center.", href: "https://whop.com/pokenotify/pokenotify?a=bypass-link", cta: "Join Pokenotify",
+      pts: [["What I use it for", "Pokémon Center alerts: queues opening, products going live, restocks."], ["Who it suits", "you, if Pokémon Center is the main thing you run."]] },
+    { k: "Cook groups", n: "Resellers Paradise", ico: "resellers.jpg", why: "Lowkey flips and in-store.", href: "https://whop.com/resellers-paradise-6/resellers-paradise-6?a=bypass-link", cta: "Join Resellers Paradise",
+      pts: [["What I use it for", "the smaller flips that aren't on everyone's radar, and in-store drops."], ["Who it suits", "you, if you want more than the big online releases."]] },
+    { k: "Servers + proxies", n: "Hyonix", ico: "hyonix.png", why: "Windows servers.", href: "https://my.hyonix.com/aff.php?aff=5617", cta: "Get a Hyonix server",
+      pts: [["What I use it for", "keeping bots open 24/7 without tying up my own machine."], ["When you need it", "once you're running more tasks than your own computer can hold open."]] },
+    { k: "Servers + proxies", n: "Ocean ISPs", ico: "ocean.png", why: "The ISPs I run on.", href: "", cta: "Link soon",
+      pts: [["What I use them for", "every bot task runs through one, so each checkout comes from its own connection."], ["When you need them", "as soon as you run more than a handful of profiles on one site."]] },
+    { k: "Cards", n: "Slash", tag: "Top card", why: "What I use for Pokémon Center and most other UK retailers.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account",
+      pts: [["Who can get it", "limited companies."], ["Why this one", "1,000 cards guaranteed on a global account, with more added as you spend."], ["Hit rate", "72%, the best card I share publicly."]] },
+    { k: "Cards", n: "Wise", why: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account",
+      pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "64%."]] },
+    { k: "Cards", n: "Capital On Tap", why: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap",
+      pts: [["Who can get it", "limited companies."], ["Hit rate", "55%."]] },
+    { k: "Cards", n: "Monzo", why: "Check which range your virtual cards are on.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account",
+      pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "53% on the range that works."]] },
+    { k: "Cards", n: "Tide", why: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account",
+      pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "44%."]] }
+  ];
+  var N = ITEMS.length, STEP = 360 / 7, RISE = 58, spin = $("hx-spin"), stage = $("hx-stage"), pos = 0, cards = [];
+
+  ITEMS.forEach(function (it, i) {
+    var face = it.ico ? el("img", { src: "icons/" + it.ico, alt: "" }) : el("span", { class: "mono", text: it.n.slice(0, 2) });
+    var c = el("button", { class: "hx-card", type: "button", role: "option", "aria-label": it.n + ", " + it.k }, [face, el("b", { text: it.n }), el("small", { text: it.k })]);
+    c.addEventListener("click", function () { if (!dragged) go(i); });
+    spin.append(c); cards.push(c);
+  });
+
+  function layout() {
+    var R = Math.min(330, stage.clientWidth * .36);
+    cards.forEach(function (c, i) {
+      var rel = i - pos, a = rel * STEP;
+      var depth0 = Math.cos(a * Math.PI / 180);
+      c.style.transform = "rotateY(" + a + "deg) translateZ(" + R + "px) rotateY(" + (-a * .78) + "deg) translateY(" + rel * RISE + "px) scale(" + (.82 + (depth0 + 1) * .09) + ")";
+      var depth = Math.cos(a * Math.PI / 180);                       // 1 = facing you, -1 = round the back
+      c.style.opacity = String(Math.max(.1, Math.min(1, .28 + (depth + 1) * .42 - Math.abs(rel) * .035)));
+      c.style.zIndex = String(Math.round((depth + 1) * 50));
+      c.classList.toggle("on", Math.abs(rel) < .5);
+    });
+  }
+  function detail(i) {
+    var it = ITEMS[i];
+    $("hx-kind").textContent = it.k + (it.tag ? " · " + it.tag : "");
+    $("hx-name").textContent = it.n; $("hx-why").textContent = it.why;
+    var ul = $("hx-pts"); ul.textContent = "";
+    it.pts.forEach(function (p) { var li = el("li"); li.append(el("b", { text: p[0] + ": " }), p[1]); ul.append(li); });
+    var a = $("hx-go"); a.textContent = it.cta;
+    if (it.href) { a.href = it.href; a.classList.remove("off"); a.removeAttribute("aria-disabled"); } else { a.removeAttribute("href"); a.classList.add("off"); a.setAttribute("aria-disabled", "true"); }
+    $("hx-count").textContent = String(i + 1).padStart(2, "0") + " / " + N;
+    document.querySelectorAll("#hx-chips button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.k === it.k ? "true" : "false"); });
+    var box = document.querySelector(".hx-detail"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
+  }
+  var shown = -1;
+  function go(i) {
+    pos = Math.max(0, Math.min(N - 1, i)); spin.classList.remove("drag"); layout();
+    if (pos !== shown) { shown = pos; detail(pos); }
+  }
+
+  // drag to spin (sideways or up/down), snap to the nearest on release
+  var down = null, dragged = false;
+  stage.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, p: pos }; dragged = false; });
+  window.addEventListener("pointermove", function (e) {
+    if (!down) return;
+    var d = (down.x - e.clientX) / 110 + (down.y - e.clientY) / 90;
+    if (Math.abs(d) > .06) { dragged = true; spin.classList.add("drag"); }
+    pos = Math.max(-.4, Math.min(N - .6, down.p + d)); layout();
+    var near = Math.round(Math.max(0, Math.min(N - 1, pos))); if (near !== shown) { shown = near; detail(near); }
+  });
+  window.addEventListener("pointerup", function () { if (!down) return; down = null; go(Math.round(pos)); setTimeout(function () { dragged = false; }, 0); });
+  stage.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(Math.round(pos) + 1); e.preventDefault(); }
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") { go(Math.round(pos) - 1); e.preventDefault(); }
+  });
+  $("hx-prev").addEventListener("click", function () { go(Math.round(pos) - 1); });
+  $("hx-next").addEventListener("click", function () { go(Math.round(pos) + 1); });
+
+  var kinds = []; ITEMS.forEach(function (it) { if (kinds.indexOf(it.k) < 0) kinds.push(it.k); });
+  kinds.forEach(function (k) {
+    var b = el("button", { type: "button", "data-k": k, text: k });
+    b.addEventListener("click", function () { for (var i = 0; i < N; i++) if (ITEMS[i].k === k) { go(i); break; } });
+    $("hx-chips").append(b);
+  });
+  window.addEventListener("resize", layout);
+  go(0);
+
+  // the plain list underneath, for anyone who just wants the links
+  var idx = $("index");
+  kinds.forEach(function (k) {
+    var col = el("div", { class: "index-col" }, [el("h3", { class: "disp", text: k })]);
+    ITEMS.forEach(function (it, i) {
+      if (it.k !== k) return;
+      var row = it.href ? el("a", { href: it.href, target: "_blank", rel: "sponsored noopener" }) : el("span", { class: "off" });
+      row.append(el("b", { text: it.n }), el("span", { text: it.why }));
+      col.append(row);
+    });
+    idx.append(col);
+  });
+});
+</script>
 </body>
 </html>
