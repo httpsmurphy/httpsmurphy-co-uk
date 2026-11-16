@@ -33,14 +33,19 @@
         <i class="pc-sheen" aria-hidden="true"></i>
       </div>
     </div>
-    <div class="bench-keys"><div class="tl-keys"><button type="button" id="b-prev" aria-label="Previous card">←</button><button type="button" id="b-next" aria-label="Next card">→</button></div><span class="label" id="b-count"></span></div>
+    <div class="bench-keys"><div class="tl-keys"><button type="button" id="b-prev" aria-label="Previous card">←</button><button type="button" id="b-next" aria-label="Next card">→</button></div><span class="label" id="b-pos"></span></div>
   </div>
   <div class="bench-read" aria-live="polite">
     <span class="label" id="b-rank"></span>
     <div class="bench-n"><span class="n" id="b-rate">0</span><span class="disp">of every 100<br>went through</span></div>
     <div class="hund" id="hund" aria-hidden="true"></div>
     <p class="bench-note" id="b-note"></p>
-    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
+    <dl class="bench-dl" id="b-dl">
+      <div><dt class="label">works on</dt><dd id="b-sites"></dd></div>
+      <div><dt class="label">cards you get</dt><dd id="b-count"></dd></div>
+      <div><dt class="label">who can get it</dt><dd id="b-who"></dd></div>
+    </dl>
+    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><a class="btn" id="b-setup">Full breakdown on Setup</a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
   </div>
 </div></section>
 
@@ -55,15 +60,17 @@
 // One line per provider. rate = % of our orders that went through. bin = first four digits shown, the rest hidden.
 var CARDS = [
   { locked: true }, { locked: true },
-  { name: "Slash", rate: 72, who: "LTD", bin: "4413", ico: "icons/slash.png", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
-  { name: "Wise", rate: 64, who: "Sole Trader or LTD", bin: "4596", ico: "icons/wise.png", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
-  { name: "Capital On Tap", rate: 55, who: "LTD", bin: "4397", ico: "icons/capitalontap.png", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
-  { name: "Monzo", rate: 53, who: "Sole Trader or LTD", bin: "5373", ico: "icons/monzo.png", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
-  { name: "High street banks", rate: 50, who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
-  { name: "Tide", rate: 44, who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
-  { name: "Starling", rate: 29, who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
-  { name: "Revolut", rate: 6, who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all." }
+  { name: "Slash", rate: 72, setup: "slash", count: "1,000 guaranteed, more as you spend", who: "LTD", bin: "4413", ico: "icons/slash.png", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
+  { name: "Wise", rate: 64, setup: "wise", count: "", who: "Sole Trader or LTD", bin: "4596", ico: "icons/wise.png", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
+  { name: "Capital On Tap", rate: 55, setup: "capital-on-tap", count: "Up to 50 per employee", who: "LTD", bin: "4397", ico: "icons/capitalontap.png", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
+  { name: "Monzo", rate: 53, setup: "monzo", count: "", who: "Sole Trader or LTD", bin: "5373", ico: "icons/monzo.png", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
+  { name: "High street banks", rate: 50, count: "Whatever your bank gives you", who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
+  { name: "Tide", rate: 44, setup: "tide", count: "", who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
+  { name: "Starling", rate: 29, count: "", who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
+  { name: "Revolut", rate: 6, count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all." }
 ];
+// Which sites each card works on. "yes" / "no" are from our own runs; anything not listed shows as "to add".
+var SITES = ["Pokémon Center", "Topps", "Other retailers"];
 var AS_OF = "16 November 2026";
 document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); }, calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -93,12 +100,21 @@ document.addEventListener("DOMContentLoaded", function () {
     $("pc-bin").textContent = c.locked ? "•••• •••• •••• ••••" : (c.bin ? c.bin + " ••·· ···· ····" : "several ranges");
     var ico = $("pc-ico"); ico.hidden = !c.ico; if (c.ico) ico.src = c.ico;
     $("b-rank").textContent = "No. " + (sel + 1) + " of " + N + (c.locked ? " · shared with members" : "");
-    $("b-count").textContent = String(sel + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+    $("b-pos").textContent = String(sel + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
     $("b-note").textContent = c.locked ? "This one beats everything listed below it. The name, the card range and the rate are in the members' app." : c.note;
     var cta = $("b-cta"); cta.hidden = !(c.locked || c.href);
     if (c.locked) { cta.href = "aco.html"; cta.textContent = "How the ACO works"; cta.removeAttribute("target"); }
     else if (c.href) { cta.href = c.href; cta.textContent = c.cta; cta.setAttribute("target", "_blank"); }
     $("b-again").hidden = !!c.locked;
+    var su = $("b-setup"); su.hidden = !c.setup; if (c.setup) su.href = "setup.html#" + c.setup;
+    $("b-dl").hidden = !!c.locked;
+    if (!c.locked) {
+      var known = {}; (c.sites || [["Pokémon Center", c.rate >= 25 ? "yes" : "no"]]).forEach(function (x) { known[x[0]] = x[1]; });
+      var sb = $("b-sites"); sb.textContent = "";
+      SITES.forEach(function (n) { var st = known[n] || "tbc"; sb.append(el("span", { class: "site " + st, text: (st === "yes" ? "✓ " : st === "no" ? "✕ " : "") + n + (st === "tbc" ? " · to add" : "") })); });
+      var cn = $("b-count"); cn.textContent = c.count || "To add"; cn.classList.toggle("tbc", !c.count);
+      $("b-who").textContent = c.who;
+    }
     rows.forEach(function (r, n) { r.setAttribute("aria-pressed", n === sel ? "true" : "false"); });
     run(c);
     if (!quiet && innerWidth < 900) document.querySelector(".bench").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });

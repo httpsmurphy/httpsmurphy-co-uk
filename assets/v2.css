@@ -594,3 +594,14 @@ ul.field-what li.more { color: var(--dim); }
   .rk { grid-template-columns: 26px minmax(0, 1fr) 54px; gap: 6px 12px; } .rk-who { grid-column: 2; grid-row: 2; } .rk-t { grid-column: 2 / -1; grid-row: 3; } .rk .num { grid-row: 1; grid-column: 3; } }
 .pc-top img[hidden] { display: none; } .pc-face.locked .pc-top { justify-content: flex-end; } .bench-n .n { color: var(--ink); } .pc-face.locked ~ * {}
 @media (max-width: 900px) { .bench-grid { grid-template-columns: minmax(0, 1fr); } } .bench-card, .bench-read { min-width: 0; }
+
+/* card hit rates: the three card facts under the note */
+.bench-dl { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px 28px; margin: 0; border-top: 1px solid var(--line); padding-top: 16px; }
+.bench-dl[hidden] { display: none; }
+.bench-dl div { display: grid; gap: 8px; align-content: start; } .bench-dl dd { margin: 0; font-size: 15px; font-weight: 600; }
+.bench-dl dd.tbc { color: var(--faint); font-weight: 500; }
+#b-sites { display: flex; flex-wrap: wrap; gap: 6px; }
+#b-sites .site { font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; color: var(--faint); white-space: nowrap; }
+#b-sites .site.yes { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
+#b-sites .site.no { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
+@media (max-width: 640px) { .bench-dl { grid-template-columns: 1fr 1fr; } .bench-dl div:first-child { grid-column: 1 / -1; } }

@@ -172,7 +172,12 @@ document.addEventListener("DOMContentLoaded", function () {
     $("hx-chips").append(b);
   });
   window.addEventListener("resize", layout);
-  go(0);
+  // cards.html links here as setup.html#slash: open on that item
+  function slug(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function fromHash() { var h = location.hash.slice(1), at = -1; ITEMS.forEach(function (it, i) { if (slug(it.n) === h) at = i; }); return at; }
+  var start = fromHash(); go(start < 0 ? 0 : start);
+  if (start >= 0) setTimeout(function () { document.querySelector(".helix-wrap").scrollIntoView({ block: "start" }); }, 60);
+  window.addEventListener("hashchange", function () { var i = fromHash(); if (i >= 0) go(i); });
 
   // the plain list underneath, for anyone who just wants the links
   var idx = $("index");
