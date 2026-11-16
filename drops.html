@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", function () {
   $("f-day").textContent = stats.topDay; $("f-win").textContent = stats.window.replace("–", " – ");
   var lb = $("list-btn"), led = $("ledger");
   function listLabel() { lb.textContent = led.hidden ? "See all " + drops.length + " drops as a list" : "Hide the list"; lb.setAttribute("aria-expanded", led.hidden ? "false" : "true"); }
-  lb.addEventListener("click", function () { led.hidden = !led.hidden; listLabel(); if (!led.hidden) led.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  lb.addEventListener("click", function () { led.hidden = !led.hidden; listLabel(); if (!led.hidden) { showAll = true; draw(); } if (!led.hidden) led.scrollIntoView({ behavior: "smooth", block: "start" }); });
   listLabel();
   $("f-more").addEventListener("click", function () {
     var pat = $("pat"), open = pat.hidden; pat.hidden = !open;
