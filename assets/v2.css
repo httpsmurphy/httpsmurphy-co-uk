@@ -377,3 +377,53 @@ body.grabbing, body.grabbing * { user-select: none !important; -webkit-user-sele
 .war-grid i.none { background: var(--line); }
 .war-note { color: var(--dim); font-size: 15px; margin-top: 16px; max-width: 70ch; }
 @media (prefers-reduced-motion: reduce) { .war-grid i.run { animation: none; } }
+
+/* ---------- drop history ---------- */
+.dh-top { padding: clamp(28px, 5vw, 56px) 0 clamp(26px, 4vw, 44px); }
+.dh-top .desk-line h1 { font: 600 clamp(22px, 2.6vw, 34px)/1.15 var(--font); letter-spacing: -.02em; max-width: 22ch; text-transform: none; }
+.tl-stage { cursor: pointer; }
+.trio.pat { grid-template-columns: 1.1fr 1fr 1fr; }
+@media (max-width: 980px) { .trio.pat { grid-template-columns: 1fr; } }
+.days, .gaps { display: grid; gap: 8px; }
+.dr { display: grid; grid-template-columns: 76px minmax(0, 1fr) 30px; gap: 12px; align-items: center; font-size: 14px; }
+.dr span { font: 600 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.dr .t { height: 16px; background: var(--panel-2); border-radius: 2px; overflow: hidden; }
+.dr .t i { display: block; height: 100%; width: 0; background: color-mix(in srgb, var(--accent) 55%, var(--panel-2)); transition: width 1s cubic-bezier(.16, 1, .3, 1); }
+.rise.in .dr .t i { width: var(--w); }
+.dr.top .t i { background: var(--accent); } .dr.top span { color: var(--ink); }
+.dr b { font: 700 13.5px var(--mono); text-align: right; }
+.ledger { padding: clamp(40px, 6vw, 80px) 0; }
+.ledger-head { display: flex; flex-wrap: wrap; gap: 18px 40px; align-items: end; justify-content: space-between; margin-bottom: 22px; }
+.ledger-head h2 { font-size: clamp(48px, 8vw, 120px); margin-top: 10px; }
+.ledger-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ledger-tools .hx-chips { margin: 0; }
+.ledger-q { padding: 9px 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 4px; font: 500 15px var(--font); min-width: 230px; }
+.ledger-cols, .lrow { display: grid; grid-template-columns: 150px 70px minmax(0, 1.5fr) minmax(0, 1fr) 190px; gap: 18px; align-items: center; }
+.ledger-cols { padding: 0 0 10px; border-bottom: 1px solid var(--line); }
+.lwrap { border-bottom: 1px solid var(--line); transition: background .3s; }
+.lwrap.flash { background: var(--accent-soft); }
+.lrow { width: 100%; padding: 14px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.lrow:hover .ld b { color: var(--accent); }
+.ld b { display: block; font-size: 30px; line-height: .95; transition: color .15s; }
+.ld small, .lw small { display: block; color: var(--faint); font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-top: 3px; }
+.lq, .ll { font-size: 14px; color: var(--dim); }
+.lw b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lo { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 10px; align-items: center; }
+.lo .lt { height: 12px; background: var(--panel-2); border-radius: 2px; overflow: hidden; }
+.lo .lt i { display: block; height: 100%; background: var(--accent); }
+.lo b { font-size: 15px; text-align: right; color: var(--accent); }
+.lo.none b { color: var(--faint); }
+.lmore { display: none; padding: 2px 0 16px 168px; }
+.lwrap.open .lmore { display: grid; gap: 6px; }
+.li { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) 100px 130px; gap: 14px; font-size: 14.5px; color: var(--dim); }
+.li span:first-child { color: var(--ink); }
+.li small { font-size: 13px; color: var(--faint); }
+.li .num { font-size: 13px; }
+@media (max-width: 900px) {
+  .ledger-cols { display: none; }
+  .lrow { grid-template-columns: 96px minmax(0, 1fr) 96px; gap: 12px; }
+  .lq, .ll { display: none; } .ld b { font-size: 24px; }
+  .lo { grid-template-columns: 1fr; } .lo .lt { display: none; }
+  .lmore { padding-left: 0; } .li { grid-template-columns: 1fr; gap: 2px; padding: 6px 0; border-top: 1px solid var(--line); }
+  .ledger-q { min-width: 0; flex: 1; }
+}
