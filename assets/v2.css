@@ -706,3 +706,4 @@ ul.field-what { min-height: 0; height: 7.4em; overflow: hidden; }
 ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; }
 @media (max-width: 900px) { .field-grid { grid-template-columns: minmax(0, 1fr); } .field-read { padding-top: 0; } }
 .field-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 310px); gap: clamp(20px, 3vw, 40px); }
+.cal { align-self: center; }
