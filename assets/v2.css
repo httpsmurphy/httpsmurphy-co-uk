@@ -718,6 +718,8 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
 }
 .sheet-offer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
+.feat-more { display: none; }
+
 /* ───────── Phones (16 Nov 2026). Kept last on purpose: several desktop rules further up were written after
    their own phone rules and quietly won, which is what broke the menu, Setup, the calendar and the home doors. ───────── */
 @media (max-width: 760px) {
@@ -735,7 +737,7 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   /* home: the number has its own fixed gap (no vh, which moves when the address bar slides), no previews on the doors */
   body.v2 .hero2.home { height: auto; min-height: 0; }
   body.v2 .hero2.home .hero2-in { gap: clamp(230px, 70vw, 300px); padding-bottom: 34px; }
-  body.v2 .hero2.home .fact { min-height: 150px; padding-top: 22px; }
+  body.v2 .hero2.home .fact { min-height: 162px; padding-top: 34px; }
   body.v2 .hero2.home .fact-cap { min-height: 0; }   /* the caption fits one line on a phone, so don't hold room for two */
   body.v2 .hero2.home .fact { align-content: start; }   /* same height for a one-line and a two-line caption, so the number never jumps */
   body.v2 .door-prev { display: none; }   /* previews made the page crowded on a phone */
@@ -777,6 +779,19 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   body.v2 .field-dl { margin-top: 6px; }
   body.v2 .field-foot { gap: 12px; }
 
+  /* aco: three of the six app points, the rest behind a button */
+  body.v2 .app-grid:not(.all) .app-cell:nth-child(n+4) { display: none; }
+  body.v2 .feat-more { display: flex; width: 100%; justify-content: center; margin-top: 12px; }
+  body.v2 .feat-more[hidden] { display: none; }
+
+  /* moving between pages: on a phone the old page faded half way and then sat waiting for the network. No hand-over
+     animation here; the new page just rises in once it has arrived. */
+  body.v2 main { animation: pagein .38s cubic-bezier(.16, 1, .3, 1) both; }
+
+  /* the two-row header slides away as you read down and comes back the moment you scroll up */
+  body.v2 .site-head { transition: transform .28s cubic-bezier(.16, 1, .3, 1); }
+  body.v2 .site-head.away { transform: translateY(-100%); }
+
   /* aco: swipe the success cards, no arrow buttons */
   body.v2 .cover-head .tl-keys { display: none; }
 
@@ -792,3 +807,7 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   body.v2 .btn { min-height: 44px; }
   body.v2 .tl-keys button { min-width: 44px; min-height: 44px; }
 }
+
+@media (max-width: 760px) { @view-transition { navigation: none; } }
+@keyframes pagein { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { body.v2 main { animation: none !important; } }

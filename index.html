@@ -87,7 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (innerWidth < 760) {            // phones: the number sits in the gap under the caption, never over it
         var fb = document.querySelector(".fact").getBoundingClientRect().bottom - host.getBoundingClientRect().top;
         var ft = document.querySelector(".hero2-foot").getBoundingClientRect().top - host.getBoundingClientRect().top;
-        fs = Math.min(fs, (ft - fb) * .72, W * .58); cy = fb + (ft - fb) / 2;   // W * .58 keeps a two-digit number from filling the screen
+        fs = Math.min(fs, (ft - fb) * .72, W * .58); cy = fb + (ft - fb) / 2;
+        o.font = "900 " + fs + "px 'Big Shoulders Display', 'Arial Narrow', sans-serif";   // the size has to be set again: the font line above ran with the big one, which is why the cap never took   // W * .58 keeps a two-digit number from filling the screen
       }
       o.fillText(text, cx, cy);
       var data = o.getImageData(0, 0, W, H).data, pts = [], step = Math.max(2, Math.round(Math.sqrt(W * H / 52000)));

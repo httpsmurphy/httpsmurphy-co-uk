@@ -70,6 +70,7 @@
     </div>
   </div>
   <div class="app-grid" id="feat"></div>
+  <button type="button" class="btn feat-more" id="feat-more" aria-expanded="false">Show all six</button>
 </div></section>
 
 <section class="steps2"><div class="wrap">
@@ -180,11 +181,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var box = $("feat");
   function draw(v) {
-    box.textContent = "";
+    box.textContent = ""; box.classList.remove("all"); $("feat-more").hidden = false; $("feat-more").setAttribute("aria-expanded", "false");   // phones start with three
     FEATS[v].forEach(function (f, i) { var c = el("div", { class: "app-cell" }, [el("span", { class: "label", text: String(i + 1).padStart(2, "0") }), el("h3", { text: f[0] }), el("p", { text: f[1] })]); c.style.animationDelay = i * .05 + "s"; box.append(c); });
     document.querySelectorAll(".switch button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.v === v ? "true" : "false"); });
   }
   document.querySelectorAll(".switch button").forEach(function (b) { b.addEventListener("click", function () { draw(b.dataset.v); }); });
+  $("feat-more").addEventListener("click", function () { box.classList.add("all"); this.hidden = true; this.setAttribute("aria-expanded", "true"); });
   draw("new");
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .15 });
   document.querySelectorAll(".rise").forEach(function (n) { io.observe(n); });

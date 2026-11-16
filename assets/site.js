@@ -56,6 +56,18 @@
   document.addEventListener("DOMContentLoaded", () => {
     document.body.prepend(header());
     document.body.append(footer());
+    // fetch the other pages quietly once this one has settled, so a tap on the menu opens from the cache
+    const warm = () => PAGES.forEach(([href]) => { if (bare(href) !== here) fetch(/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? href : (href === "index.html" ? "./" : href.replace(".html", "")), { credentials: "same-origin" }).catch(() => {}); });
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 2500);
+    // phones: the header is two rows tall, so it steps aside while you scroll down and returns as soon as you scroll up
+    let lastY = scrollY; const head = document.querySelector(".site-head"), small = matchMedia("(max-width: 760px)");
+    addEventListener("scroll", () => {
+      const y = scrollY;
+      if (!small.matches || y < 120) head.classList.remove("away");
+      else if (y > lastY + 6) head.classList.add("away");
+      else if (y < lastY - 6) head.classList.remove("away");
+      lastY = y;
+    }, { passive: true });
     // The host serves /setup and redirects /setup.html to it. Linking straight to the short address saves that hop on
     // every page change, which is what made moving between pages feel slow on a phone. (Local preview keeps .html.)
     if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.querySelectorAll('a[href]').forEach(a => {
