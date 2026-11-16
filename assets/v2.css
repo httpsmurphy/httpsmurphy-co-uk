@@ -689,3 +689,4 @@ body.v2 .soon-in { padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(60
 @media (max-width: 900px) { .field-grid { grid-template-columns: minmax(0, 1fr); } .cal { --c: 13px; } }
 @media (max-width: 1340px) and (min-width: 1101px) { .cal { --c: 13px; } }
 .field-dl dd { white-space: nowrap; font-size: 20px; } .field-dl { gap: 8px 22px; }
+.cal { grid-template-columns: minmax(0, 1fr); } .cal-year { min-width: 0; }
