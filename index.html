@@ -17,22 +17,25 @@
 <body class="v2">
 <main>
 
-<section class="desk"><div class="wrap">
-  <div class="desk-top">
-    <span class="label live"><i></i> Pokémon Center UK · since the last drop</span>
-    <span class="label" id="d-last"></span>
-  </div>
-  <div class="clock" aria-live="off">
-    <div class="unit days"><span class="n" id="c-d">00</span><span class="label">days</span></div>
-    <div class="unit small"><span class="n" id="c-h">00</span><span class="label">hrs</span></div>
-    <span class="sep" aria-hidden="true">:</span>
-    <div class="unit small"><span class="n" id="c-m">00</span><span class="label">min</span></div>
-    <span class="sep" aria-hidden="true">:</span>
-    <div class="unit small"><span class="n" id="c-s">00</span><span class="label">sec</span></div>
-  </div>
-  <div class="desk-line">
-    <h1 id="d-head"></h1>
-    <p>I run a UK checkout group. Everything on this site comes off our own drops: when they happen, what we took, and which cards got through.</p>
+<section class="desk">
+<div class="hero2" id="hero2">
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="wrap hero2-in">
+    <div class="desk-top">
+      <span class="label live"><i></i> Pokémon Center UK · live</span>
+      <span class="label" id="d-last"></span>
+    </div>
+    <div class="hero2-foot">
+      <div>
+        <div class="label fx-label" id="fx-label">days since the last drop</div>
+        <h1 id="d-head"></h1>
+        <div class="tick" id="c-all" aria-live="off"></div>
+      </div>
+      <div class="hero2-side">
+        <p>I run a UK checkout group. Everything here comes off our own drops: when they happen, what we took, and which cards got through.</p>
+        <div class="hero2-btns"><a class="btn primary" href="setup.html">What I run</a><a class="btn" href="aco.html">Or we run it for you</a></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -101,16 +104,90 @@ document.addEventListener("DOMContentLoaded", function () {
   var lastAt = guess.getTime() - ukOffsetMin(guess) * 60000;
   function tick() {
     var s = Math.max(0, Math.floor((Date.now() - lastAt) / 1000));
-    $("c-d").textContent = pad(Math.floor(s / 86400));
-    $("c-h").textContent = pad(Math.floor(s % 86400 / 3600));
-    $("c-m").textContent = pad(Math.floor(s % 3600 / 60));
-    $("c-s").textContent = pad(s % 60);
+    $("c-all").textContent = pad(Math.floor(s / 86400)) + "d " + pad(Math.floor(s % 86400 / 3600)) + "h " + pad(Math.floor(s % 3600 / 60)) + "m " + pad(s % 60) + "s";
+    return Math.floor(s / 86400);
   }
-  tick(); setInterval(tick, 1000);
+  var daysNow = tick(); setInterval(function () { var d = tick(); if (d !== daysNow) { daysNow = d; if (FX.idle) FX.set(String(d)); } }, 1000);
   $("d-last").textContent = "Last: " + Drops.niceDate(last.date) + " · queue " + last.queue;
   var over = stats.since - Math.round(stats.avgGap), head = $("d-head");
   head.append("They drop every ", el("em", { text: Math.round(stats.avgGap) + " days" }), " on average. ",
     over > 0 ? "We're " + over + " past that." : "We're " + (-over) + " short of that.");
+
+  // ---- particle field: thousands of dots that form the number, scatter from the cursor, and re-form ----
+  var FX = (function () {
+    var cv = $("fx"), host = $("hero2"), ctx = cv.getContext("2d"), N = innerWidth < 700 ? 3600 : 8200;
+    var x = new Float32Array(N), y = new Float32Array(N), vx = new Float32Array(N), vy = new Float32Array(N), tx = new Float32Array(N), ty = new Float32Array(N),
+        sz = new Float32Array(N), hue = new Float32Array(N), ph = new Float32Array(N), free = new Uint8Array(N);
+    var W = 0, H = 0, dpr = 1, mx = -9999, my = -9999, text = "", running = false, seen = true, api = { idle: true };
+    var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    for (var i = 0; i < N; i++) { sz[i] = .7 + Math.random() * 1.5; hue[i] = Math.random(); ph[i] = Math.random() * 6.283; }
+    function size() {
+      dpr = Math.min(2, devicePixelRatio || 1); W = host.clientWidth; H = host.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function targets(first) {
+      var off = document.createElement("canvas"), o = off.getContext("2d"); off.width = W; off.height = H;
+      var fs = Math.min(H * .95, W * (innerWidth < 700 ? .92 : .6) / Math.max(1.05, text.length * .47));
+      o.font = "900 " + fs + "px 'Big Shoulders Display', 'Arial Narrow', sans-serif"; o.textBaseline = "middle"; o.textAlign = "center";
+      var cx = innerWidth < 900 ? W / 2 : W * .64, cy = innerWidth < 900 ? H * .36 : H * .47;
+      o.fillText(text, cx, cy);
+      var data = o.getImageData(0, 0, W, H).data, pts = [], step = Math.max(2, Math.round(Math.sqrt(W * H / 52000)));
+      for (var py = 0; py < H; py += step) for (var px = 0; px < W; px += step) if (data[(py * W + px) * 4 + 3] > 128) pts.push(px, py);
+      var count = pts.length / 2, body = Math.floor(N * .86);
+      for (var i = 0; i < N; i++) {
+        if (i < body && count) {
+          var k = Math.floor(Math.random() * count) * 2; free[i] = 0;
+          tx[i] = pts[k] + (Math.random() - .5) * step; ty[i] = pts[k + 1] + (Math.random() - .5) * step;
+        } else {                                   // loose dust drifting round the number
+          free[i] = 1; var a = Math.random() * 6.283, r = fs * (.42 + Math.random() * .5);
+          tx[i] = cx + Math.cos(a) * r * 1.25; ty[i] = cy + Math.sin(a) * r * .8;
+        }
+        if (first) { var a2 = Math.random() * 6.283, r2 = Math.max(W, H) * (.5 + Math.random() * .6); x[i] = cx + Math.cos(a2) * r2; y[i] = cy + Math.sin(a2) * r2; }
+      }
+    }
+    function frame(t) {
+      if (!running) return;
+      ctx.clearRect(0, 0, W, H);
+      var dark = getComputedStyle(document.documentElement).colorScheme.indexOf("dark") > -1;
+      ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
+      for (var i = 0; i < N; i++) {
+        var gx = tx[i], gy = ty[i];
+        if (free[i]) { gx += Math.cos(t * .00022 + ph[i]) * 26; gy += Math.sin(t * .00031 + ph[i]) * 20; }
+        else { gx += Math.cos(t * .0011 + ph[i]) * .9; gy += Math.sin(t * .0013 + ph[i]) * .9; }
+        var dx = gx - x[i], dy = gy - y[i], k = free[i] ? .012 : .045;
+        vx[i] = (vx[i] + dx * k) * .86; vy[i] = (vy[i] + dy * k) * .86;
+        var ex = x[i] - mx, ey = y[i] - my, d2 = ex * ex + ey * ey;
+        if (d2 < 16900) { var f = (1 - d2 / 16900) * 5.2, d = Math.sqrt(d2) || 1; vx[i] += ex / d * f; vy[i] += ey / d * f; }
+        x[i] += vx[i]; y[i] += vy[i];
+        var h = hue[i], tw = .55 + .45 * Math.sin(t * .002 + ph[i] * 3);
+        if (dark) ctx.fillStyle = h < .5 ? "rgba(255,122,26," + (free[i] ? .35 : .9) * tw + ")" : h < .82 ? "rgba(255,196,120," + (free[i] ? .3 : .8) * tw + ")" : "rgba(255,246,232," + (free[i] ? .3 : .95) * tw + ")";
+        else ctx.fillStyle = h < .6 ? "rgba(214,88,4," + (free[i] ? .3 : .9) + ")" : "rgba(60,36,14," + (free[i] ? .22 : .7) + ")";
+        ctx.fillRect(x[i], y[i], sz[i], sz[i]);
+      }
+      if (still) { running = false; return; }
+      requestAnimationFrame(frame);
+    }
+    function go() { if (!running && seen && !document.hidden) { running = true; requestAnimationFrame(frame); } }
+    api.set = function (v) { if (v === text) return; text = v; targets(false); if (still) { for (var i = 0; i < N; i++) { x[i] = tx[i]; y[i] = ty[i]; } } go(); };
+    api.start = function (v) {
+      size(); text = v; targets(true);
+      if (still) for (var i = 0; i < N; i++) { x[i] = tx[i]; y[i] = ty[i]; }
+      go();
+    };
+    host.addEventListener("pointermove", function (e) { var r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+    host.addEventListener("pointerleave", function () { mx = my = -9999; });
+    new IntersectionObserver(function (es) { seen = es[0].isIntersecting; if (seen) go(); else running = false; }).observe(host);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) running = false; else go(); });
+    var rz2; window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(function () { size(); targets(false); go(); }, 150); });
+    return api;
+  })();
+  (document.fonts && document.fonts.load ? document.fonts.load("900 120px 'Big Shoulders Display'") : Promise.resolve()).then(function () { FX.start(String(daysNow)); }, function () { FX.start(String(daysNow)); });
+  var fxLabel = $("fx-label");
+  function fxDrop(d, n) {
+    if (n) { FX.idle = false; FX.set(String(n)); fxLabel.textContent = "checkouts our group took · " + Drops.niceDate(d.date); fxLabel.classList.add("hot"); }
+    else fxHome();
+  }
+  function fxHome() { FX.idle = true; FX.set(String(daysNow)); fxLabel.textContent = "days since the last drop"; fxLabel.classList.remove("hot"); }
 
   // ---- timeline ----
   var stage = $("tl"), order = drops.slice().reverse(), sel = order.length - 1;      // oldest → newest
@@ -161,11 +238,13 @@ document.addEventListener("DOMContentLoaded", function () {
     bars.forEach(function (b, k) { var g = Math.abs(b._x - x); if (g < gap) { gap = g; best = k; } });
     return best;
   }
-  stage.addEventListener("pointermove", function (e) { show(nearest(e.clientX)); });
+  stage.addEventListener("pointermove", function (e) { show(nearest(e.clientX)); fxDrop(order[sel], RES[order[sel].date]); });
+  stage.addEventListener("pointerleave", fxHome);
+  stage.addEventListener("blur", fxHome);
   stage.addEventListener("pointerdown", function (e) { show(nearest(e.clientX)); });
   stage.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowLeft") { show(sel - 1); e.preventDefault(); }
-    if (e.key === "ArrowRight") { show(sel + 1); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { show(sel - 1); fxDrop(order[sel], RES[order[sel].date]); e.preventDefault(); }
+    if (e.key === "ArrowRight") { show(sel + 1); fxDrop(order[sel], RES[order[sel].date]); e.preventDefault(); }
   });
   $("tl-prev").addEventListener("click", function () { show(sel - 1); });
   $("tl-next").addEventListener("click", function () { show(sel + 1); });
