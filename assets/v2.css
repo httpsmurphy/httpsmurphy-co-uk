@@ -716,3 +716,4 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   .rip-card { width: auto; aspect-ratio: 5 / 4; padding: 14px 16px; }
   .rip-card b { font-size: clamp(24px, 2.5vw, 36px); }
 }
+.sheet-offer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
