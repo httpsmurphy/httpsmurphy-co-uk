@@ -27,7 +27,7 @@
     </div>
     <div class="hero2-foot">
       <div>
-        <h1>UK botting, from someone who actually runs it.</h1>
+        <h1 id="head">UK botting, from someone who actually runs it.</h1>
       </div>
       <div class="hero2-side">
         <p>I run a UK checkout group. This is the setup we use, every Pokémon Center drop we've run, and the cards that got through.</p>
@@ -37,11 +37,13 @@
   </div>
 </section>
 
+<div class="ticker" aria-hidden="true"><div class="ticker-in" id="ticker"></div></div>
+
 <section class="doors"><div class="wrap">
-  <a class="door rise" href="setup.html"><span class="label">01</span><span class="disp">Setup</span><span class="door-sub">The bots, cook groups, servers and proxies I use, and why each one.</span><span class="door-go" aria-hidden="true">→</span></a>
-  <a class="door rise" href="drops.html"><span class="label">02</span><span class="disp">Drop history</span><span class="door-sub">Every Pokémon Center UK drop on record, and what our group took on each.</span><span class="door-go" aria-hidden="true">→</span></a>
-  <a class="door rise" href="cards.html"><span class="label">03</span><span class="disp">Card hit rates</span><span class="door-sub">Which cards are getting through, from thousands of our own checkouts.</span><span class="door-go" aria-hidden="true">→</span></a>
-  <a class="door rise" href="tools.html"><span class="label">04</span><span class="disp">Tools</span><span class="door-sub">Free tools built off the same data. More to come.</span><span class="door-go" aria-hidden="true">→</span></a>
+  <a class="door rise" href="setup.html"><span class="label">01</span><span class="disp">Setup</span><span class="door-sub">The bots, cook groups, servers and proxies I use, and why each one.</span><span class="door-prev" id="prev-setup" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
+  <a class="door rise" href="drops.html"><span class="label">02</span><span class="disp">Drop history</span><span class="door-sub">Every Pokémon Center UK drop on record, and what our group took on each.</span><span class="door-prev" id="prev-drops" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
+  <a class="door rise" href="cards.html"><span class="label">03</span><span class="disp">Card hit rates</span><span class="door-sub">Which cards are getting through, from thousands of our own checkouts.</span><span class="door-prev" id="prev-cards" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
+  <a class="door rise" href="tools.html"><span class="label">04</span><span class="disp">Tools</span><span class="door-sub">Free tools built off the same data. More to come.</span><span class="door-prev" id="prev-tools" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
 </div></section>
 
 <section class="band"><div class="wrap">
@@ -59,14 +61,11 @@ document.addEventListener("DOMContentLoaded", function () {
   var drops = Drops.all(), stats = Drops.stats(drops), RES = window.DROP_RESULTS || {};
 
   // the figures the particles cycle through — each one says what it is, in words, right beside it
-  var year = String(new Date().getFullYear()), total = 0, best = 0, bestDate = "";
-  for (var k in RES) { if (k.slice(0, 4) === year) total += RES[k]; if (RES[k] > best) { best = RES[k]; bestDate = k; } }
-  var bestDrop = drops.filter(function (d) { return d.date === bestDate; })[0];
   var FACTS = [
-    [total.toLocaleString("en-GB"), "Pokémon Center checkouts", "taken by our group in " + year + ", across " + Object.keys(RES).filter(function (k) { return k.slice(0, 4) === year; }).length + " UK drops"],
-    [String(best), "checkouts on one drop", (bestDrop ? Drops.itemName(bestDrop.items[0].name) + " · " : "") + Drops.niceDate(bestDate)],
-    ["72%", "of orders go through", "on the best card we share publicly. Two more are for ACO members"],
-    [String(stats.since), "days since the last drop", "Pokémon Center UK drops every " + Math.round(stats.avgGap) + " days on average"]
+    ["10k+", "orders hit", "my own checkouts and the group's, combined"],
+    [String(stats.since), "days since the last drop", "Pokémon Center UK. They come every " + Math.round(stats.avgGap) + " days on average"],
+    [String(drops.length), "drops tracked", "every Pokémon Center UK drop on record, with queue, live and sold-out times"],
+    ["72%", "hit rate", "on the best card I share publicly"]
   ];
 
   var FX = (function () {
@@ -82,9 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function targets(first) {
       var off = document.createElement("canvas"), o = off.getContext("2d"); off.width = W; off.height = H;
-      var fs = Math.min(H * .95, W * (innerWidth < 700 ? .92 : .6) / Math.max(1.05, text.length * .47));
+      var fs = Math.min(H * .7, W * (innerWidth < 700 ? .92 : .56) / Math.max(1.05, text.length * .47));
       o.font = "900 " + fs + "px 'Big Shoulders Display', 'Arial Narrow', sans-serif"; o.textBaseline = "middle"; o.textAlign = "center";
-      var cx = innerWidth < 900 ? W / 2 : W * .64, cy = innerWidth < 900 ? H * .36 : H * .47;
+      var cx = innerWidth < 900 ? W / 2 : W * .66, cy = innerWidth < 900 ? H * .4 : H * .37;
       o.fillText(text, cx, cy);
       var data = o.getImageData(0, 0, W, H).data, pts = [], step = Math.max(2, Math.round(Math.sqrt(W * H / 52000)));
       for (var py = 0; py < H; py += step) for (var px = 0; px < W; px += step) if (data[(py * W + px) * 4 + 3] > 128) pts.push(px, py);
@@ -141,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function showFact(i, user) {
     at = (i + FACTS.length) % FACTS.length;
     FX.set(FACTS[at][0]);
+    var box = $("fact-cap").parentNode; box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
     $("fact-cap").textContent = FACTS[at][1]; $("fact-sub").textContent = FACTS[at][2];
     dots.querySelectorAll("button").forEach(function (b, k) { b.setAttribute("aria-selected", k === at ? "true" : "false"); });
     clearInterval(timer); timer = setInterval(function () { showFact(at + 1); }, user ? 9000 : 5200);
@@ -151,6 +151,33 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   var begin = function () { FX.start(FACTS[0][0]); showFact(0); };
   (document.fonts && document.fonts.load ? document.fonts.load("900 120px 'Big Shoulders Display'") : Promise.resolve()).then(begin, begin);
+
+  // headline: one word at a time
+  var head = $("head"), words = head.textContent.split(" "); head.textContent = ""; head.setAttribute("aria-label", words.join(" "));
+  words.forEach(function (w, i) { var sp = el("span", { class: "w", "aria-hidden": "true", text: w }); sp.style.animationDelay = (.35 + i * .07) + "s"; head.append(sp, " "); });
+
+  // retailers strip
+  var shops = ["Pokémon Center", "Topps", "John Lewis", "Argos", "Very", "Asda", "Selfridges", "Hamleys", "Miniso"], tk = $("ticker");
+  for (var r = 0; r < 4; r++) shops.forEach(function (n) { tk.append(el("span", { text: n })); });
+
+  // door previews: a taste of each page, shown on hover
+  ["stellar.jpg", "hidden.jpg", "brute.png", "lunar.svg", "pokenotify.png", "resellers.jpg", "hyonix.png", "ocean.png"].forEach(function (f) { $("prev-setup").append(el("img", { src: "icons/" + f, alt: "" })); });
+  (function () {
+    var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg"), recent = drops.slice(0, 26).reverse(), max = 1;
+    recent.forEach(function (d) { max = Math.max(max, RES[d.date] || 0); });
+    svg.setAttribute("viewBox", "0 0 " + recent.length * 9 + " 54"); svg.setAttribute("preserveAspectRatio", "none");
+    recent.forEach(function (d, i) {
+      var n = RES[d.date] || 0, h = n ? 8 + Math.sqrt(n / max) * 46 : 4, rc = document.createElementNS(NS, "rect");
+      rc.setAttribute("x", i * 9); rc.setAttribute("y", 54 - h); rc.setAttribute("width", 5); rc.setAttribute("height", h); rc.setAttribute("rx", 1);
+      rc.setAttribute("class", n ? "has" : ""); svg.append(rc);
+    });
+    $("prev-drops").append(svg);
+  })();
+  [["Slash", 72], ["Wise", 64], ["Capital On Tap", 55]].forEach(function (c) {
+    var f = el("i"); f.style.setProperty("--w", c[1] + "%");
+    $("prev-cards").append(el("span", { class: "pb" }, [el("b", { text: c[0] }), el("span", { class: "pt" }, [f]), el("em", { text: c[1] + "%" })]));
+  });
+  ["Drop history", "Card hit rates", "More soon"].forEach(function (t) { $("prev-tools").append(el("span", { class: "chipm", text: t })); });
 
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .15 });
   document.querySelectorAll(".rise").forEach(function (n) { io.observe(n); });
