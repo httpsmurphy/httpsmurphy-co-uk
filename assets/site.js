@@ -44,7 +44,9 @@
   function footer() {
     const left = el("span");
     left.append("Links to bots, groups, servers and cards on this site are referral links. ");
-    return el("footer", { class: "site-foot" }, [el("div", { class: "wrap" }, [left])]);
+    const kids = [left], extra = document.getElementById("foot-right");   // a page can add its own note on the right (drop history: the data credit)
+    if (extra) { const right = el("span", { class: "foot-right" }); right.append(extra.content.cloneNode(true)); kids.push(right); }
+    return el("footer", { class: "site-foot" }, [el("div", { class: "wrap" }, kids)]);
   }
 
   document.addEventListener("DOMContentLoaded", () => {

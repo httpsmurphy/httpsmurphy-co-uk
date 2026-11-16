@@ -75,7 +75,7 @@
     <dl class="field-dl">
       <div><dt class="label">queue</dt><dd class="num" id="r-q"></dd></div>
       <div id="r-live-box"><dt class="label">went live</dt><dd class="num" id="r-live"></dd></div>
-      <div id="r-oos-box"><dt class="label">sold out</dt><dd class="num" id="r-oos"></dd></div>
+      <div id="r-oos-box"><dt class="label">queue wait</dt><dd class="num" id="r-oos"></dd></div>
     </dl>
     <div class="field-act">
       <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
@@ -99,16 +99,14 @@
       <input class="ledger-q" id="q" type="search" placeholder="Search a product or set" aria-label="Search a product or set">
     </div>
   </div>
-  <div class="ledger-cols label" aria-hidden="true"><span>Date</span><span>Queue</span><span>What dropped</span><span>Went live</span><span>Sold out</span></div>
+  <div class="ledger-cols label" aria-hidden="true"><span>Date</span><span>Queue</span><span>What dropped</span><span>Went live</span><span>Queue wait</span></div>
   <div id="rows"></div>
   <div class="ledger-more"><button type="button" class="btn" id="all-btn"></button><span class="label" id="count"></span></div>
 </div></section>
-<div class="wrap dh-credit">
-  <p class="war-note">Pokémon Center UK only for now. Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</p>
-</div>
 </div>
 
 </main>
+<template id="foot-right">Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</template>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -124,10 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function tick() {
     var s = Math.max(0, Math.floor((Date.now() - lastAt) / 1000));
     $("c-d").textContent = Math.floor(s / 86400);
-    $("c-all").textContent = "plus " + Math.floor(s % 86400 / 3600) + "h " + pad(Math.floor(s % 3600 / 60)) + "m " + pad(s % 60) + "s · last queue opened " + Drops.niceDate(last.date) + " at " + last.queue;
+    $("c-all").textContent = "Last queue opened " + Drops.niceDate(last.date) + " at " + last.queue;
     return s / 86400;
   }
-  var sinceDays = tick(); setInterval(tick, 1000);
+  var sinceDays = tick(); setInterval(tick, 60000);
   var avg = Math.round(stats.avgGap), over = Math.floor(sinceDays) - avg;
   $("d-head").append("They drop every ", el("em", { text: avg + " days" }), " on average. ", over > 0 ? "We're " + over + " past that." : over < 0 ? "We're " + (-over) + " short of that." : "That's today.");
 
@@ -170,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     named.slice(0, 3).forEach(function (n) { what.append(el("li", { text: n })); });
     var rest = names.length - Math.min(3, named.length);
     if (rest) what.append(el("li", { class: "more", text: (named.length ? "and " + rest + " more" : rest + (rest === 1 ? " product" : " products") + ", names not recorded") }));
-    $("r-q").textContent = d.queue; $("r-live").textContent = live ? live.live : ""; $("r-oos").textContent = oos ? oos.oos : ""; $("r-live-box").hidden = !live; $("r-oos-box").hidden = !oos;
+    $("r-q").textContent = d.queue; $("r-live").textContent = live ? live.live : ""; $("r-oos").textContent = live ? wait(d.queue, live.live) : ""; $("r-live-box").hidden = !live; $("r-oos-box").hidden = !live;
     $("r-count").textContent = String(N - i).padStart(2, "0") + " / " + N;
     var box = document.querySelector(".field-read"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
   }
@@ -272,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ---- the record ----
   var rows = $("rows"), filter = "all", query = "", rowEls = {}, showAll = false, SHORT = 8;
+  function wait(a, b) { var m = mins(b) - mins(a); return m < 0 ? "–" : m + " min"; }
   function dur(a, b) { var m = mins(b) - mins(a); return m <= 0 ? "" : (m >= 60 ? Math.floor(m / 60) + "h " : "") + (m % 60) + "m"; }
   function draw() {
     rows.textContent = ""; rowEls = {};
@@ -289,9 +288,9 @@ document.addEventListener("DOMContentLoaded", function () {
       var head = el("button", { class: "lrow", type: "button", "aria-expanded": "false" }, [
         el("span", { class: "ld" }, [el("b", { class: "disp", text: date.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }) }), el("small", { text: date.toLocaleDateString("en-GB", { weekday: "short", year: "numeric", timeZone: "UTC" }) })]),
         el("span", { class: "lq num", text: d.queue }),
-        el("span", { class: "lw" }, [el("b", { text: names[0] }), el("small", { text: (d.pre ? "Pre-order" : "In stock") + (names.length > 1 ? " · " + names.length + " products" : "") })]),
+        el("span", { class: "lw" }, [el("b", { text: names[0] }), el("small", { text: (d.pre ? "Pre-order" : "In stock") + (names.length > 1 ? " · " + names.length + " products" : "") + (oos ? " · sold out " + oos.oos : "") })]),
         el("span", { class: "ll num", text: live ? live.live : "–" }),
-        el("span", { class: "ll num", text: oos ? oos.oos + " · lasted " + dur(live ? live.live : d.queue, oos.oos) : live ? "not recorded" : "–" })
+        el("span", { class: "ll num", text: live ? wait(d.queue, live.live) : "–" })
       ]);
       var more = el("div", { class: "lmore" }, d.items.map(function (x) {
         return el("div", { class: "li" }, [el("span", { text: Drops.itemName(x.name) }), el("small", { text: x.set || "" }), el("span", { class: "num", text: x.live ? "live " + x.live : "" }), el("span", { class: "num", text: x.oos ? "sold out " + x.oos : "" })]);
