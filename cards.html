@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var su = $("b-setup"); su.hidden = !c.setup; if (c.setup) su.href = "setup.html#" + c.setup;
     if (c.locked) {
       $("b-sites").textContent = ""; $("b-sites").append(el("span", { class: "site", text: "Members only" }));
-      $("b-count").textContent = "Members only"; $("b-count").classList.add("tbc"); $("b-who").textContent = "Members only";
+      $("b-count").textContent = "Members only"; $("b-count").parentNode.hidden = false; $("b-count").classList.add("tbc"); $("b-who").textContent = "Members only";
     } else {
       var known = {}; (c.sites || [["Pokémon Center", c.rate >= 25 ? "yes" : "no"]]).forEach(function (x) { known[x[0]] = x[1]; });
       var sb = $("b-sites"); sb.textContent = "";
