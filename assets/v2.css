@@ -640,3 +640,24 @@ ul.field-what li.more { color: var(--dim); }
 @keyframes vt-out { to { opacity: 0; transform: translateY(-14px); } }
 @keyframes vt-in { from { opacity: 0; transform: translateY(34px); } }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
+/* ---------- fewer capitals: only the logo and the big headlines shout ---------- */
+body.v2 .label, body.v2 .nav a, body.v2 .btn, body.v2 .inst h2, body.v2 .inst .more, body.v2 .status, body.v2 .stack button b, body.v2 .stack button small,
+body.v2 .ticker-in span, body.v2 .chipm, body.v2 .hx-chips button, body.v2 .hx-card .mono, body.v2 .hx-card small, body.v2 .tier b, body.v2 .tags span,
+body.v2 .switch button, body.v2 .war-stats b:not(.num), body.v2 .dr span, body.v2 .ld small, body.v2 .lw small, body.v2 .sites-in button, body.v2 .bub small,
+body.v2 .rip-card small, body.v2 #b-sites .site, body.v2 .disp { text-transform: none; }
+body.v2 h1.disp, body.v2 h2.disp, body.v2 .since .disp, body.v2 .bench-n .disp, body.v2 .rip-card .disp, body.v2 .soon-in h1 { text-transform: uppercase; }
+body.v2 .label { letter-spacing: .03em; font-size: 12.5px; display: inline-block; }
+body.v2 .label::first-letter, body.v2 .rip-card small::first-letter, body.v2 .dr span::first-letter { text-transform: uppercase; }
+body.v2 .nav a { letter-spacing: .01em; font-size: 13px; }
+body.v2 .btn { letter-spacing: .01em; font-size: 13.5px; }
+body.v2 .hx-chips button, body.v2 .switch button, body.v2 #b-sites .site, body.v2 .tags span, body.v2 .chipm, body.v2 .rip-card small, body.v2 .ld small, body.v2 .lw small, body.v2 .bub small { letter-spacing: .02em; }
+body.v2 .ticker-in span { letter-spacing: .06em; font-size: 12.5px; }
+
+/* "soon" retailer page: the label sits clear of the rule above (the page gutter rule was zeroing this) */
+body.v2 .soon-in { padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(60px, 10vw, 130px); }
+
+/* theme switch lies flat: the knob bounces sideways. Right = dark (the default), left = light. */
+.v2 .theme-btn { width: 48px; height: 26px; }
+.v2 .theme-btn .knob { left: 3px; top: 3px; transform: translateX(22px); }
+:root[data-theme="light"] .v2 .theme-btn .knob { transform: translateX(0); }
