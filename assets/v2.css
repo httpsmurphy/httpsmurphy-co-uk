@@ -707,3 +707,4 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
 @media (max-width: 900px) { .field-grid { grid-template-columns: minmax(0, 1fr); } .field-read { padding-top: 0; } }
 .field-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 310px); gap: clamp(20px, 3vw, 40px); }
 .cal { align-self: center; }
+.cal-nav { min-width: 86px; text-align: center; } .cal-nav[hidden] { display: inline-block; visibility: hidden; }
