@@ -3,68 +3,232 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>httpsmurphy · UK botting: what I run and when to run it</title>
-<meta name="description" content="The bots, servers and cards I actually run for UK drops, with Pokémon Center drop history and card hit rates.">
+<title>httpsmurphy · UK drop desk</title>
+<meta name="description" content="Live Pokémon Center UK drop clock, every drop on record with what our group took, and the cards that are getting through.">
 <link rel="icon" href="icons/murphaco.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/v2.css">
 <script src="assets/drops-data.js"></script>
 <script src="assets/site.js"></script>
 </head>
-<body>
+<body class="v2">
 <main>
-<section class="hero"><div class="wrap">
-  <p class="eyebrow">UK botting · Pokémon Center · Topps · retail</p>
-  <h1>What I run, and when to run it.</h1>
-  <p class="lede">I run a UK checkout group. This is the setup behind it, the drop data I plan around, and the cards that are getting through.</p>
-  <div class="btn-row"><a class="btn primary" href="setup.html">See the setup</a><a class="btn" href="aco.html">Let us run it for you</a></div>
-</div></section>
 
-<section class="section" style="padding-top:0"><div class="wrap">
-  <div class="card pulse" id="pulse">
-    <div class="pulse-main">
-      <p class="eyebrow">Pokémon Center UK</p>
-      <div class="pulse-big"><span class="num" id="p-since">–</span><span>days since the last drop</span></div>
-      <p class="dim" id="p-last"></p>
-      <div class="meter" role="img" aria-label="Days since the last drop against the average gap"><i id="p-meter"></i></div>
-      <p class="meter-note" id="p-note"></p>
-    </div>
-    <div class="pulse-side">
-      <div class="stat"><div class="k">Average gap</div><div class="v num" id="p-gap">–</div><div class="s" id="p-range"></div></div>
-      <div class="stat"><div class="k">Usual day</div><div class="v" id="p-day">–</div><div class="s" id="p-dayn"></div></div>
-      <div class="stat"><div class="k">Queue opens</div><div class="v num" id="p-window">–</div><div class="s">UK time, most drops</div></div>
-      <div class="stat"><div class="k">On record</div><div class="v num" id="p-count">–</div><div class="s"><a class="accent" href="drops.html">Full history →</a></div></div>
-    </div>
+<section class="desk"><div class="wrap">
+  <div class="desk-top">
+    <span class="label live"><i></i> Pokémon Center UK · since the last drop</span>
+    <span class="label" id="d-last"></span>
+  </div>
+  <div class="clock" aria-live="off">
+    <div class="unit days"><span class="n" id="c-d">00</span><span class="label">days</span></div>
+    <div class="unit small"><span class="n" id="c-h">00</span><span class="label">hrs</span></div>
+    <span class="sep" aria-hidden="true">:</span>
+    <div class="unit small"><span class="n" id="c-m">00</span><span class="label">min</span></div>
+    <span class="sep" aria-hidden="true">:</span>
+    <div class="unit small"><span class="n" id="c-s">00</span><span class="label">sec</span></div>
+  </div>
+  <div class="desk-line">
+    <h1 id="d-head"></h1>
+    <p>I run a UK checkout group. Everything on this site comes off our own drops: when they happen, what we took, and which cards got through.</p>
+  </div>
+</div>
+
+<div class="tl"><div class="wrap">
+  <div class="tl-head">
+    <span class="label">Every UK drop on record · <b>bar height = checkouts our group took</b></span>
+    <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
+  </div>
+  <div class="tl-stage" id="tl" tabindex="0" role="slider" aria-label="Drop timeline. Use the arrow keys to move between drops." aria-valuemin="1"></div>
+  <div class="tl-read">
+    <div class="when"><div class="label" id="r-day"></div><div class="disp" id="r-date"></div></div>
+    <div class="what" id="r-what"></div>
+    <div class="took" id="r-took"><div class="label">our checkouts</div><div class="disp" id="r-n"></div></div>
+  </div>
+</div></div>
+</section>
+
+<section><div class="wrap"><div class="trio">
+  <div class="inst rise">
+    <span class="label">01 · Timing</span>
+    <h2>Are we in the window?</h2>
+    <div class="win" id="win"></div>
+    <span class="status" id="win-status"></span>
+    <p class="sub" id="win-sub"></p>
+    <a class="more" href="drops.html">Full drop history →</a>
+  </div>
+  <div class="inst rise">
+    <span class="label">02 · Cards</span>
+    <h2>What's getting through</h2>
+    <div class="race" id="race"></div>
+    <p class="sub">From thousands of our own checkouts, updated after every drop. The top two are for ACO members.</p>
+    <a class="more" href="cards.html">All card hit rates →</a>
+  </div>
+  <div class="inst rise">
+    <span class="label">03 · Bots</span>
+    <h2>What I run it on</h2>
+    <div class="stack" id="stack"></div>
+    <p class="stack-out" id="stack-out"></p>
+    <a class="more" href="setup.html">The whole setup →</a>
+  </div>
+</div></div></section>
+
+<section class="band"><div class="wrap">
+  <h2 class="disp rise">Or we run it <span>for you.</span></h2>
+  <div class="band-row rise">
+    <p>Murph ACO runs Pokémon Center, Topps and lowkey drops on your profiles. 20% of the profit, only on what lands.</p>
+    <a class="btn primary" href="aco.html">How the ACO works</a>
   </div>
 </div></section>
 
-<section class="section"><div class="wrap">
-  <div class="grid three">
-    <a class="card" href="setup.html"><p class="eyebrow">Setup</p><h3>The bots, servers and groups I use</h3><p>Three bots, three cook groups, and where they run. Each with the reason it earns its place.</p><span class="go">See the setup →</span></a>
-    <a class="card" href="cards.html"><p class="eyebrow">Cards</p><h3>Which cards are getting through</h3><p>Hit rates by provider from our own drops, and whether you need a sole trader or a limited company.</p><span class="go">Card hit rates →</span></a>
-    <a class="card" href="aco.html"><p class="eyebrow">ACO</p><h3>Don't want to run it yourself?</h3><p>We run Pokémon Center, Topps and lowkey drops for you. You pay a share of the profit, only on what lands.</p><span class="go">How the ACO works →</span></a>
-  </div>
-</div></section>
 </main>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  var d = Drops.all(), s = Drops.stats(d), $ = function (id) { return document.getElementById(id); };
-  $("p-since").textContent = s.since;
-  var won = (window.DROP_RESULTS || {})[s.last.date];
-  $("p-last").textContent = "Last one: " + Drops.niceDate(s.last.date) + ", queue at " + s.last.queue + "." + (won ? " Our group took " + won + " checkouts." : "");
-  $("p-gap").textContent = Math.round(s.avgGap) + " days";
-  $("p-range").textContent = "anywhere from " + s.minGap + " to " + s.maxGap;
-  $("p-day").textContent = s.topDay;
-  $("p-dayn").textContent = s.topDayN + " of the last " + s.sample + " drops";
-  $("p-window").textContent = s.window;
-  $("p-count").textContent = d.length + " drops";
-  var ratio = s.since / s.avgGap;
-  requestAnimationFrame(function () { $("p-meter").style.width = Math.min(100, ratio * 100) + "%"; });
-  $("p-note").textContent = ratio >= 1
-    ? "Past the average gap of " + Math.round(s.avgGap) + " days. Gaps have run as long as " + s.maxGap + ", so this is a pattern, not a prediction."
-    : Math.round(s.avgGap - s.since) + " days short of the average gap. This is a pattern, not a prediction.";
+  var $ = function (id) { return document.getElementById(id); };
+  var drops = Drops.all(), stats = Drops.stats(drops), RES = window.DROP_RESULTS || {};
+  var pad = function (n) { return String(n).padStart(2, "0"); };
+
+  // ---- live clock: time since the last queue opened (UK time) ----
+  var last = drops[0];
+  function ukOffsetMin(d) {                       // minutes UK is ahead of UTC on that date
+    var s = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", hour12: false, timeZoneName: "short" }).format(d);
+    return /BST|\+1/.test(s) ? 60 : 0;
+  }
+  var p = last.date.split("-").map(Number), q = last.queue.split(":").map(Number);
+  var guess = new Date(Date.UTC(p[0], p[1] - 1, p[2], q[0], q[1]));
+  var lastAt = guess.getTime() - ukOffsetMin(guess) * 60000;
+  function tick() {
+    var s = Math.max(0, Math.floor((Date.now() - lastAt) / 1000));
+    $("c-d").textContent = pad(Math.floor(s / 86400));
+    $("c-h").textContent = pad(Math.floor(s % 86400 / 3600));
+    $("c-m").textContent = pad(Math.floor(s % 3600 / 60));
+    $("c-s").textContent = pad(s % 60);
+  }
+  tick(); setInterval(tick, 1000);
+  $("d-last").textContent = "Last: " + Drops.niceDate(last.date) + " · queue " + last.queue;
+  var over = stats.since - Math.round(stats.avgGap), head = $("d-head");
+  head.append("They drop every ", el("em", { text: Math.round(stats.avgGap) + " days" }), " on average. ",
+    over > 0 ? "We're " + over + " past that." : "We're " + (-over) + " short of that.");
+
+  // ---- timeline ----
+  var stage = $("tl"), order = drops.slice().reverse(), sel = order.length - 1;      // oldest → newest
+  var t0 = Date.parse(order[0].date), t1 = Date.now(), maxRes = Math.max.apply(null, Object.keys(RES).map(function (k) { return RES[k]; }).concat([1]));
+  var NS = "http://www.w3.org/2000/svg", bars = [], cursor;
+  function svgEl(tag, attrs) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+  function build() {
+    stage.textContent = ""; bars = [];
+    var W = stage.clientWidth, H = stage.clientHeight, base = H - 26, top = 10;
+    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, "aria-hidden": "true" });
+    svg.append(svgEl("line", { x1: 0, y1: base, x2: W, y2: base, class: "axis" }));
+    for (var y = new Date(t0).getFullYear(); y <= new Date(t1).getFullYear(); y++) {
+      var xt = (Date.UTC(y, 0, 1) - t0) / (t1 - t0) * W;
+      if (xt < 0) xt = 0;
+      svg.append(svgEl("line", { x1: xt, y1: top, x2: xt, y2: base + 6, class: "axis" }));
+      var lab = svgEl("text", { x: xt + 6, y: H - 4, class: "yr" }); lab.textContent = y; svg.append(lab);
+    }
+    var bw = Math.max(3, Math.min(9, W / 150));
+    order.forEach(function (d, i) {
+      var x = (Date.parse(d.date) - t0) / (t1 - t0) * (W - bw), n = RES[d.date] || 0;
+      var h = n ? 14 + Math.sqrt(n / maxRes) * (base - top - 14) : 9;
+      var r = svgEl("rect", { x: x, y: base - h, width: bw, height: h, rx: 1.5, class: "bar" + (n ? " has" : "") });
+      r._x = x + bw / 2; svg.append(r); bars.push(r);
+    });
+    cursor = svgEl("line", { y1: 0, y2: base, class: "cursor" }); svg.append(cursor);
+    stage.append(svg); stage.setAttribute("aria-valuemax", order.length); show(sel);
+  }
+  function show(i) {
+    sel = Math.max(0, Math.min(order.length - 1, i));
+    bars.forEach(function (b, k) { b.classList.toggle("on", k === sel); });
+    cursor.setAttribute("x1", bars[sel]._x); cursor.setAttribute("x2", bars[sel]._x);
+    var d = order[sel], n = RES[d.date];
+    $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · queue " + d.queue;
+    $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit", timeZone: "UTC" });
+    var what = $("r-what"); what.textContent = "";
+    var names = d.items.map(function (x) { return Drops.itemName(x.name); });
+    what.append(el("b", { text: names[0] }));
+    if (names.length > 1) what.append(" and " + (names.length - 1) + " more product" + (names.length > 2 ? "s" : ""));
+    var live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
+    if (live) what.append(el("br"), "Live " + live.live + (oos ? ", sold out " + oos.oos : ""));
+    $("r-took").classList.toggle("none", !n);
+    $("r-n").textContent = n ? n.toLocaleString("en-GB") : "–";
+    stage.setAttribute("aria-valuenow", sel + 1);
+    stage.setAttribute("aria-valuetext", Drops.niceDate(d.date) + (n ? ", " + n + " checkouts" : ""));
+  }
+  function nearest(clientX) {
+    var x = clientX - stage.getBoundingClientRect().left, best = 0, gap = 1e9;
+    bars.forEach(function (b, k) { var g = Math.abs(b._x - x); if (g < gap) { gap = g; best = k; } });
+    return best;
+  }
+  stage.addEventListener("pointermove", function (e) { show(nearest(e.clientX)); });
+  stage.addEventListener("pointerdown", function (e) { show(nearest(e.clientX)); });
+  stage.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") { show(sel - 1); e.preventDefault(); }
+    if (e.key === "ArrowRight") { show(sel + 1); e.preventDefault(); }
+  });
+  $("tl-prev").addEventListener("click", function () { show(sel - 1); });
+  $("tl-next").addEventListener("click", function () { show(sel + 1); });
+  build();
+  var rz; window.addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(build, 120); });
+
+  // ---- window grid: when the queue has opened, and where "now" sits ----
+  var win = $("win"), hours = [14, 15, 16, 17, 18, 19, 20, 21, 22], peak = 1, k;
+  for (k in stats.grid) peak = Math.max(peak, stats.grid[k]);
+  var nowParts = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", weekday: "short", hour: "2-digit", hour12: false }).formatToParts(new Date());
+  var nowDay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(nowParts.filter(function (x) { return x.type === "weekday"; })[0].value);
+  var nowHour = Number(nowParts.filter(function (x) { return x.type === "hour"; })[0].value);
+  win.append(el("span"));
+  hours.forEach(function (h) { win.append(el("span", { class: "h", text: String(h) })); });
+  [1, 2, 3, 4, 5].forEach(function (d) {
+    win.append(el("span", { class: "d", text: Drops.DAYS[d].slice(0, 3) }));
+    hours.forEach(function (h) {
+      var n = stats.grid[d + "-" + h] || 0, c = el("span", { class: "c" + (d === nowDay && h === nowHour ? " now" : ""), title: Drops.DAYS[d] + " " + h + ":00 · " + n + " of the last " + stats.sample + " drops" });
+      if (n) c.style.background = "color-mix(in srgb, var(--accent) " + Math.round(24 + 76 * n / peak) + "%, var(--panel-2))";
+      win.append(c);
+    });
+  });
+  var here = stats.grid[nowDay + "-" + nowHour] || 0, st = $("win-status");
+  if (here >= 2) { st.textContent = "In a usual window right now"; st.classList.add("hot"); }
+  else if (nowDay >= 1 && nowDay <= 5 && nowHour < 14) st.textContent = "Too early. Queues open after 14:00";
+  else st.textContent = "Outside the usual window";
+  $("win-sub").textContent = stats.topDayN + " of the last " + stats.sample + " drops were on a " + stats.topDay + ". Most queues open between " + stats.window.replace("–", " and ") + ", UK time. The outlined square is now.";
+
+  // ---- card race ----
+  var RATES = [["Provider one", 100, true], ["Provider two", 100, true], ["Slash", 72], ["Wise", 64], ["Capital On Tap", 55], ["Monzo", 53], ["Tide", 44]];
+  var race = $("race"), fills = [];
+  RATES.forEach(function (r) {
+    var f = el("i"); fills.push([f, r[1]]);
+    race.append(el("div", { class: "r" + (r[2] ? " hid" : "") }, [el("span", { text: r[0], "aria-hidden": r[2] ? "true" : "false" }), el("div", { class: "t" }, [f]), el("b", { text: r[2] ? "🔒" : r[1] + "%" })]));
+  });
+
+  // ---- bots ----
+  var BOTS = [
+    ["Stellar", "stellar.jpg", "Pokémon Center", "My main for Pokémon Center. Most of my PKC checkouts come off this.", "https://whop.com/stellaraio/stellaraio?a=bypass-link"],
+    ["Hidden", "hidden.jpg", "Retail + Topps", "Second bot on retail and Topps drops, so I'm never relying on one.", "https://whop.com/hiddenaio/hiddenaio?a=bypass-link"],
+    ["Brute", "brute.png", "UK retail", "John Lewis, Argos, Asda, Very, Selfridges.", "https://whop.com/brute-aio/brute-aio?a=bypass-link"]
+  ];
+  var stack = $("stack"), out = $("stack-out");
+  function pick(i) {
+    stack.querySelectorAll("button").forEach(function (b, k) { b.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+    out.textContent = ""; out.append(BOTS[i][3] + " ", el("a", { href: BOTS[i][4], target: "_blank", rel: "sponsored noopener", text: "Get " + BOTS[i][0] + " →" }));
+  }
+  BOTS.forEach(function (b, i) {
+    var btn = el("button", { type: "button" }, [el("img", { src: "icons/" + b[1], alt: "" }), el("b", { text: b[0] }), el("small", { text: b[2] })]);
+    btn.addEventListener("click", function () { pick(i); }); btn.addEventListener("mouseenter", function () { pick(i); });
+    stack.append(btn);
+  });
+  pick(0);
+
+  // ---- reveal on scroll (and start the race when it's on screen) ----
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in"); io.unobserve(e.target);
+      if (e.target.contains(race)) fills.forEach(function (f, i) { setTimeout(function () { f[0].style.width = f[1] + "%"; }, 90 * i); });
+    });
+  }, { threshold: .18 });
+  document.querySelectorAll(".rise").forEach(function (n) { io.observe(n); });
 });
 </script>
 </body>
