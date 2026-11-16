@@ -56,6 +56,11 @@
   document.addEventListener("DOMContentLoaded", () => {
     document.body.prepend(header());
     document.body.append(footer());
+    // The host serves /setup and redirects /setup.html to it. Linking straight to the short address saves that hop on
+    // every page change, which is what made moving between pages feel slow on a phone. (Local preview keeps .html.)
+    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.querySelectorAll('a[href]').forEach(a => {
+      const h = a.getAttribute("href"); if (/^[a-z0-9-]+\.html(#.*)?$/i.test(h)) a.setAttribute("href", h === "index.html" ? "./" : h.replace(".html", ""));
+    });
   });
 
   // ---------- drop history ----------

@@ -61,11 +61,6 @@
   </div>
 </div></section>
 
-<section class="doors aco-runs"><div class="wrap">
-  <div class="door rise"><span class="label">01</span><span class="disp">Pokémon Center</span><span class="door-sub">Every UK drop, pre-orders and restocks, across our machines and our runners'.</span><span></span></div>
-  <div class="door rise"><span class="label">02</span><span class="disp">Topps</span><span class="door-sub">Scheduled releases on your own Topps logins. One per profile or the maximum, your choice.</span><span></span></div>
-</div></section>
-
 <section class="app"><div class="wrap">
   <div class="app-head">
     <div><span class="label">The app</span><h2 class="disp">No spreadsheets. No CSV files.</h2></div>
@@ -139,8 +134,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function go(i) { pos = (Math.round(i) + SLIPS.length) % SLIPS.length; stage.classList.remove("drag"); lay(); rest(); }
     function rest() { clearInterval(auto); if (!calm) auto = setInterval(function () { go(pos + 1); }, 3200); }
     stage.addEventListener("pointerdown", function (e) { held = { x: e.clientX, p: pos }; moved = false; clearInterval(auto); document.body.classList.add("grabbing"); });
-    window.addEventListener("pointermove", function (e) { if (!held) return; var d = (held.x - e.clientX) / 300; if (Math.abs(d) > .05) { moved = true; stage.classList.add("drag"); } pos = Math.max(0, Math.min(SLIPS.length - 1, held.p + d)); lay(); });
+    window.addEventListener("pointermove", function (e) { if (!held) return; var d = (held.x - e.clientX) / (e.pointerType === "touch" ? Math.max(120, stage.clientWidth * .45) : 300); if (Math.abs(d) > .05) { moved = true; stage.classList.add("drag"); } pos = Math.max(0, Math.min(SLIPS.length - 1, held.p + d)); lay(); });
     window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!held) return; held = null; go(pos); setTimeout(function () { moved = false; }, 0); });
+    window.addEventListener("pointercancel", function () { document.body.classList.remove("grabbing"); if (!held) return; held = null; go(pos); setTimeout(function () { moved = false; }, 0); });
     stage.addEventListener("keydown", function (e) { if (e.key === "ArrowLeft") go(pos - 1); if (e.key === "ArrowRight") go(pos + 1); });
     $("cv-prev").addEventListener("click", function () { go(pos - 1); }); $("cv-next").addEventListener("click", function () { go(pos + 1); });
     stage.addEventListener("pointerenter", function () { clearInterval(auto); }); stage.addEventListener("pointerleave", function () { if (!held) rest(); });

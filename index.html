@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var cv = $("fx"), host = $("hero2"), ctx = cv.getContext("2d"), N = innerWidth < 700 ? 3600 : 8200;
     var x = new Float32Array(N), y = new Float32Array(N), vx = new Float32Array(N), vy = new Float32Array(N), tx = new Float32Array(N), ty = new Float32Array(N),
         sz = new Float32Array(N), hue = new Float32Array(N), ph = new Float32Array(N), free = new Uint8Array(N);
-    var W = 0, H = 0, dpr = 1, mx = -9999, my = -9999, text = "", running = false, seen = true, api = { idle: true };
+    var born = 0, W = 0, H = 0, dpr = 1, mx = -9999, my = -9999, text = "", running = false, seen = true, api = { idle: true };
     var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     for (var i = 0; i < N; i++) { sz[i] = .7 + Math.random() * 1.5; hue[i] = Math.random(); ph[i] = Math.random() * 6.283; }
     function size() {
@@ -79,10 +79,16 @@ document.addEventListener("DOMContentLoaded", function () {
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     function targets(first) {
+      if (!W || !H) return;                       // page opened in a background tab: nothing to measure yet, resize redraws it
       var off = document.createElement("canvas"), o = off.getContext("2d"); off.width = W; off.height = H;
       var fs = Math.min(H * .7, W * (innerWidth < 700 ? .92 : .56) / Math.max(1.05, text.length * .47));
       o.font = "900 " + fs + "px 'Big Shoulders Display', 'Arial Narrow', sans-serif"; o.textBaseline = "middle"; o.textAlign = "center";
       var cx = innerWidth < 900 ? W / 2 : W * .66, cy = innerWidth < 900 ? H * .4 : H * .37;
+      if (innerWidth < 760) {            // phones: the number sits in the gap under the caption, never over it
+        var fb = document.querySelector(".fact").getBoundingClientRect().bottom - host.getBoundingClientRect().top;
+        var ft = document.querySelector(".hero2-foot").getBoundingClientRect().top - host.getBoundingClientRect().top;
+        fs = Math.min(fs, (ft - fb) * 1.02); cy = fb + (ft - fb) / 2;
+      }
       o.fillText(text, cx, cy);
       var data = o.getImageData(0, 0, W, H).data, pts = [], step = Math.max(2, Math.round(Math.sqrt(W * H / 52000)));
       for (var py = 0; py < H; py += step) for (var px = 0; px < W; px += step) if (data[(py * W + px) * 4 + 3] > 128) pts.push(px, py);
@@ -95,12 +101,14 @@ document.addEventListener("DOMContentLoaded", function () {
           free[i] = 1; var a = Math.random() * 6.283, r = fs * (.42 + Math.random() * .5);
           tx[i] = cx + Math.cos(a) * r * 1.25; ty[i] = cy + Math.sin(a) * r * .8;
         }
-        if (first) { var a2 = Math.random() * 6.283, r2 = Math.max(W, H) * (.5 + Math.random() * .6); x[i] = cx + Math.cos(a2) * r2; y[i] = cy + Math.sin(a2) * r2; }
+        if (first) { x[i] = tx[i] + (Math.random() - .5) * 90; y[i] = ty[i] + (Math.random() - .5) * 90; vx[i] = vy[i] = 0; }   // settle in from close by; flying in from off-screen looked like a glitch on phones
       }
     }
     function frame(t) {
       if (!running) return;
+      if (!born) born = t;
       ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = Math.min(1, (t - born) / 900);
       var dark = getComputedStyle(document.documentElement).colorScheme.indexOf("dark") > -1;
       ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
       for (var i = 0; i < N; i++) {
@@ -127,11 +135,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (still) for (var i = 0; i < N; i++) { x[i] = tx[i]; y[i] = ty[i]; }
       go();
     };
-    host.addEventListener("pointermove", function (e) { var r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+    // only a mouse pushes the dots about: a finger scrolling the page left them scattered where it lifted
+    host.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
     host.addEventListener("pointerleave", function () { mx = my = -9999; });
     new IntersectionObserver(function (es) { seen = es[0].isIntersecting; if (seen) go(); else running = false; }).observe(host);
     document.addEventListener("visibilitychange", function () { if (document.hidden) running = false; else go(); });
-    var rz2; window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(function () { size(); targets(false); go(); }, 150); });
+    // phones fire "resize" every time the address bar slides in or out mid-scroll; only a real change of width redraws the number
+    var rz2; window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(function () { if (host.clientWidth === W && Math.abs(host.clientHeight - H) < 140) return; size(); targets(false); go(); }, 150); });
     return api;
   })();
 

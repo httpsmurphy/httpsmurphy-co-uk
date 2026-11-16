@@ -45,7 +45,7 @@
       <div><dt class="label">cards you get</dt><dd id="b-count"></dd></div>
       <div><dt class="label">who can get it</dt><dd id="b-who"></dd></div>
     </dl>
-    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><a class="btn primary" id="b-cta2" target="_blank" rel="sponsored noopener" hidden></a><a class="btn" id="b-setup">Full breakdown on Setup</a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
+    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><a class="btn primary" id="b-cta2" target="_blank" rel="sponsored noopener" hidden></a><a class="btn" id="b-setup">Full breakdown on Setup</a></div>
   </div>
 </div></section>
 
@@ -106,7 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (c.locked) { cta.href = "aco.html"; cta.textContent = "How the ACO works"; cta.removeAttribute("target"); }
     else if (c.href) { cta.href = c.href; cta.textContent = c.cta; cta.setAttribute("target", "_blank"); }
     var c2 = $("b-cta2"); c2.hidden = !(c.href2 && !c.locked); if (c.href2) { c2.href = c.href2; c2.textContent = c.cta2; }
-    $("b-again").hidden = !!c.locked;
     var su = $("b-setup"); su.hidden = !c.setup; if (c.setup) su.href = "setup.html#" + c.setup;
     if (c.locked) {
       $("b-sites").textContent = ""; $("b-sites").append(el("span", { class: "site", text: "Members only" }));
@@ -119,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     rows.forEach(function (r, n) { r.setAttribute("aria-pressed", n === sel ? "true" : "false"); });
     run(c);
-    if (!quiet && innerWidth < 900) document.querySelector(".bench").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    if (!quiet && innerWidth < 900) document.querySelector(".bench-read").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
   }
 
   // the ranking
@@ -144,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   stage.addEventListener("pointerleave", function () { face.style.setProperty("--rx", "0deg"); face.style.setProperty("--ry", "0deg"); });
   $("b-prev").addEventListener("click", function () { show(sel - 1, true); }); $("b-next").addEventListener("click", function () { show(sel + 1, true); });
-  $("b-again").addEventListener("click", function () { run(CARDS[sel]); });
   document.addEventListener("keydown", function (e) { if (e.target.closest("input, textarea")) return; if (e.key === "ArrowLeft") show(sel - 1, true); if (e.key === "ArrowRight") show(sel + 1, true); });
   show(sel, true);
 });

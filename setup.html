@@ -134,21 +134,20 @@ document.addEventListener("DOMContentLoaded", function () {
   function go(i) {
     pos = Math.max(0, Math.min(N - 1, i)); spin.classList.remove("drag"); layout();
     if (pos !== shown) { shown = pos; detail(pos); }
-    if (flat && flat.matches && cards[pos]) stage.scrollTo({ left: cards[pos].offsetLeft - stage.clientWidth / 2 + cards[pos].offsetWidth / 2, behavior: "smooth" });
   }
 
   // drag to spin (sideways or up/down), snap to the nearest on release
   var down = null, dragged = false;
-  var flat = matchMedia("(max-width: 760px)");          // phones: the cards are a plain row you swipe, no ring to spin
-  stage.addEventListener("pointerdown", function (e) { if (flat.matches) return; down = { x: e.clientX, y: e.clientY, p: pos }; dragged = false; document.body.classList.add("grabbing"); });
+  stage.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, p: pos }; dragged = false; document.body.classList.add("grabbing"); });
   window.addEventListener("pointermove", function (e) {
     if (!down) return;
-    var d = (down.x - e.clientX) / 110 + (down.y - e.clientY) / 90;
+    var d = e.pointerType === "touch" ? (down.x - e.clientX) / 80 : (down.x - e.clientX) / 110 + (down.y - e.clientY) / 90;   // a finger spins it sideways, so up and down still scrolls the page
     if (Math.abs(d) > .06) { dragged = true; spin.classList.add("drag"); }
     pos = Math.max(-.4, Math.min(N - .6, down.p + d)); layout();
     var near = Math.round(Math.max(0, Math.min(N - 1, pos))); if (near !== shown) { shown = near; detail(near); }
   });
   window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!down) return; down = null; go(Math.round(pos)); setTimeout(function () { dragged = false; }, 0); });
+  window.addEventListener("pointercancel", function () { document.body.classList.remove("grabbing"); if (!down) return; down = null; go(Math.round(pos)); setTimeout(function () { dragged = false; }, 0); });
   stage.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(Math.round(pos) + 1); e.preventDefault(); }
     if (e.key === "ArrowLeft" || e.key === "ArrowUp") { go(Math.round(pos) - 1); e.preventDefault(); }

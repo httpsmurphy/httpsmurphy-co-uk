@@ -331,6 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
   view.addEventListener("pointerdown", function (e) { rheld = { x: e.clientX, last: e.clientX }; rmoved = false; goal = null; document.body.classList.add("grabbing"); kick(); });
   window.addEventListener("pointermove", function (e) { if (!rheld) return; var dx = rheld.last - e.clientX; rheld.last = e.clientX; if (Math.abs(e.clientX - rheld.x) > 5) rmoved = true; sx += dx; sv = dx; });
   window.addEventListener("pointerup", function () { if (!rheld) return; rheld = null; document.body.classList.remove("grabbing"); kick(); setTimeout(function () { rmoved = false; }, 0); });
+  window.addEventListener("pointercancel", function () { if (!rheld) return; rheld = null; document.body.classList.remove("grabbing"); kick(); setTimeout(function () { rmoved = false; }, 0); });
   view.addEventListener("wheel", function (e) { var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0; if (!d) return; e.preventDefault(); goal = null; sv += d * .12; kick(); }, { passive: false });
   view.addEventListener("keydown", function (e) { if (e.key === "ArrowRight") { goal = null; sv += 14; kick(); } if (e.key === "ArrowLeft") { goal = null; sv -= 14; kick(); } });
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(function () { sv = 16; kick(); setTimeout(function () { sv = -16; kick(); }, 520); }, 500);
