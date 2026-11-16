@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
   fit(); go(0, true); showYear(y1, false); window.addEventListener("resize", function () { fit(); showYear(yearOf[sel], false); });
 
   // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
-  var SITES = [["Pokémon Center", drops.length + " drops"], ["Argos", "soon"], ["John Lewis", "soon"], ["Very", "soon"], ["Asda", "soon"], ["Hamleys", "soon"], ["Miniso", "soon"], ["Topps", "soon"], ["Selfridges", "soon"], ["Smyths", "soon"]];
+  var SITES = [["Pokémon Center", drops.length + " drops"], ["John Lewis", "soon"], ["Very", "soon"], ["Asda", "soon"], ["Hamleys", "soon"], ["Miniso", "soon"]];
   var sbox = $("sites"), view = $("rip"), cards = [], sx = 0, sv = 0, amp = 0, rheld = null, rmoved = false, rraf = 0, goal = null;
   function pickSite(n) {
     cards.forEach(function (c, i) { c.setAttribute("aria-pressed", i === n ? "true" : "false"); });
