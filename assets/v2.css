@@ -708,3 +708,11 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
 .field-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 310px); gap: clamp(20px, 3vw, 40px); }
 .cal { align-self: center; }
 .cal-nav { min-width: 86px; text-align: center; } .cal-nav[hidden] { display: inline-block; visibility: hidden; }
+
+/* drop history retailers: six fit across, so they sit as a row of wide cards (a sideways scroller only on small screens) */
+@media (min-width: 901px) {
+  .rip-view { padding: 34px 0 40px; cursor: default; }
+  .rip-track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; width: auto; max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .rip-card { width: auto; aspect-ratio: 5 / 4; padding: 14px 16px; }
+  .rip-card b { font-size: clamp(24px, 2.5vw, 36px); }
+}
