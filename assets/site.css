@@ -212,3 +212,10 @@ button.row-main { cursor: pointer; }
 .points li b { color: var(--ink); font-weight: 650; }
 @media (max-width: 700px) { .points { padding-left: 20px; } }
 .tag.won { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); font-weight: 700; }
+
+/* members-only rows on the hit rates page */
+a.row.locked { display: block; border-style: dashed; border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+a.row.locked:hover { border-color: var(--accent); }
+.row.locked .blur { filter: blur(6px); user-select: none; }
+.row.locked .rate .track i { background: repeating-linear-gradient(135deg, var(--accent) 0 6px, color-mix(in srgb, var(--accent) 55%, transparent) 6px 12px); }
+.row.locked .caret { font-size: 13px; }

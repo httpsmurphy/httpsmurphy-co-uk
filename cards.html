@@ -18,13 +18,14 @@
   <p class="eyebrow">Card hit rates</p>
   <h1>Which cards are getting through.</h1>
   <p class="lede">These providers work really well on Pokémon Center and other retailers. I use them all. Tap one for who can get it and how to sign up.</p>
+  <p class="callout" style="margin-top:20px"><b>This is real data, not opinion.</b> It comes from thousands of our own checkouts and is updated after every drop, so we know exactly what's working.</p>
   <p class="note" style="margin-top:14px" id="asof"></p>
 </div></section>
 
 <section class="section" style="padding-top:20px"><div class="wrap">
   <div class="rows" id="cards"></div>
   <div class="lock">
-    <p><b>Card ranges are part-hidden here.</b> The full ranges, and the ones to avoid, are shared with ACO members.</p>
+    <p><b>Not everything is on this page.</b> The two providers at the top, the full card ranges and the ones to avoid are shared with ACO members.</p>
     <a class="btn small primary" href="aco.html">How the ACO works</a>
   </div>
   <p class="note" style="margin-top:18px">Hit rate is the share of our own orders on that provider that went through. It moves from drop to drop, and yours will vary with the profile behind the card. Sign-up links are my refs.</p>
@@ -33,6 +34,8 @@
 <script>
 // One line per provider. rate = % of our orders that went through. bin = first four digits shown, the rest hidden.
 var CARDS = [
+  { locked: true, who: "Higher than anything listed below" },
+  { locked: true, who: "Higher than anything listed below" },
   { name: "Slash", rate: 72, who: "LTD", bin: "4413", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
   { name: "Wise", rate: 64, who: "Sole Trader or LTD", bin: "4596", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
   { name: "Capital On Tap", rate: 55, who: "LTD", bin: "4397", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
@@ -47,6 +50,16 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("asof").textContent = "Updated " + AS_OF + " · from our own Pokémon Center drops";
   var box = document.getElementById("cards");
   CARDS.forEach(function (c, i) {
+    if (c.locked) {
+      var lf = el("i"); lf.style.width = "100%";
+      box.append(el("a", { class: "row locked", href: "aco.html", "aria-label": "A provider shared with ACO members only" }, [el("div", { class: "row-main" }, [
+        el("span", { class: "row-ico", text: String(i + 1) }),
+        el("div", { class: "row-body" }, [el("h3", {}, [el("span", { class: "blur", "aria-hidden": "true", text: i ? "Provider two" : "Provider one" }), el("span", { class: "pill best", text: "ACO members" })]), el("p", { text: c.who })]),
+        el("div", { class: "rate" }, [el("div", { class: "track" }, [lf]), el("span", { class: "num", text: "••%" })]),
+        el("span", { class: "caret", text: "🔒", "aria-hidden": "true" })
+      ])]));
+      return;
+    }
     var fill = el("i");
     var head = el("button", { class: "row-main", type: "button", "aria-expanded": "false" }, [
       el("span", { class: "row-ico", text: String(i + 1) }),
