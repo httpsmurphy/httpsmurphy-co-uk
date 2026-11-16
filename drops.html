@@ -67,7 +67,7 @@
 </div></div></section>
 
 <section class="field-wrap"><div class="wrap field-grid">
-  <div class="field" id="field" tabindex="0" role="listbox" aria-label="Every drop. Drag to move around, or use the arrow keys."></div>
+  <div class="cal" id="field" tabindex="0" aria-label="A calendar of every drop. Pick a filled square, or use the arrow keys to step through drops."></div>
   <div class="field-read" aria-live="polite">
     <span class="label" id="r-day"></span>
     <div class="disp" id="r-date"></div>
@@ -84,7 +84,7 @@
     </div>
   </div>
 </div>
-<div class="wrap field-foot"><p class="field-key label">drag the field · bigger = more products · <b>orange = pre-order</b></p><button type="button" class="btn" id="list-btn" aria-expanded="false" aria-controls="ledger"></button></div>
+<div class="wrap field-foot"><p class="field-key label">Every square is a day · <i class="k in"></i> in-stock drop · <i class="k pre"></i> pre-order · <i class="k now"></i> today</p><button type="button" class="btn" id="list-btn" aria-expanded="false" aria-controls="ledger"></button></div>
 </section>
 
 <section class="ledger" id="ledger" hidden><div class="wrap">
@@ -129,38 +129,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var avg = Math.round(stats.avgGap), over = Math.floor(sinceDays) - avg;
   $("d-head").append("They drop every ", el("em", { text: avg + " days" }), " on average. ", over > 0 ? "We're " + over + " past that." : over < 0 ? "We're " + (-over) + " short of that." : "That's today.");
 
-  // ---- the field: every drop as a bubble you drag around; the one in the middle is the one you're reading ----
-  var field = $("field"), N = drops.length, bub = [], ox = 0, oy = 0, vx = 0, vy = 0, sel = 0, held = null, moved = false, raf = 0, maxItems = 1;
-  drops.forEach(function (d) { maxItems = Math.max(maxItems, d.items.length); });
-  // hex spiral: newest in the middle, older ones wind outwards
-  var GAP = 112, spots = [[0, 0]], ring = 1;
-  while (spots.length < N) {
-    var q = ring, r = 0, dirs = [[-1, 1], [-1, 0], [0, -1], [1, -1], [1, 0], [0, 1]];
-    for (var s6 = 0; s6 < 6 && spots.length < N; s6++) for (var st = 0; st < ring && spots.length < N; st++) { spots.push([q, r]); q += dirs[s6][0]; r += dirs[s6][1]; }
-    ring++;
-  }
-  drops.forEach(function (d, i) {
-    var date = new Date(Date.parse(d.date));
-    var b = el("button", { class: "bub" + (d.pre ? " pre" : ""), type: "button", role: "option", "aria-label": Drops.niceDate(d.date) }, [
-      el("b", { text: String(date.getUTCDate()) }), el("small", { text: date.toLocaleDateString("en-GB", { month: "short", year: "2-digit", timeZone: "UTC" }) })]);
-    b._x = GAP * (spots[i][0] + spots[i][1] / 2); b._y = GAP * spots[i][1] * .866; b._s = .78 + .5 * d.items.length / maxItems;
-    b.addEventListener("click", function () { if (!moved) go(i); });
-    field.append(b); bub.push(b);
-  });
-  function paint() {
-    var W = field.clientWidth, H = field.clientHeight, R = Math.min(W, H) * .62, best = 0, bd = 1e9;
-    bub.forEach(function (b, i) {
-      var x = b._x + ox, y = b._y + oy, d = Math.sqrt(x * x + y * y), t = Math.min(1, d / R);
-      var k = 1 - t * t * .78, pull = 1 - t * .22;                 // shrink and tuck in towards the edge, like a lens
-      b.style.transform = "translate(" + (W / 2 + x * pull) + "px," + (H / 2 + y * pull) + "px) translate(-50%,-50%) scale(" + Math.max(.16, k * b._s) + ")";
-      b.style.opacity = String(Math.max(.12, 1 - t * .85)); b.style.zIndex = String(Math.round((1 - t) * 100));
-      if (d < bd) { bd = d; best = i; }
-    });
-    if (best !== sel || !field._init) { field._init = 1; sel = best; read(sel); }
-    bub.forEach(function (b, i) { b.classList.toggle("on", i === sel); });
-  }
+  // ---- the calendar: one square per day, a year per row-block, drops filled in. Weekdays run down, weeks run across. ----
+  var field = $("field"), N = drops.length, sel = 0, cells = [], byDate = {}, DAYMS = 86400000;
+  drops.forEach(function (d, i) { byDate[d.date] = i; });
+  function iso(t) { return new Date(t).toISOString().slice(0, 10); }
   function read(i) {
-    var d = drops[i], live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
+    var d = drops[i], live = d.items.filter(function (x) { return x.live; })[0];
     var names = d.items.map(function (x) { return Drops.itemName(x.name); });
     $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · " + new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" });
     $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -172,24 +146,42 @@ document.addEventListener("DOMContentLoaded", function () {
     $("r-count").textContent = String(N - i).padStart(2, "0") + " / " + N;
     var box = document.querySelector(".field-read"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
   }
-  function glide(tx, ty) {
-    cancelAnimationFrame(raf);
-    (function step() { ox += (tx - ox) * .16; oy += (ty - oy) * .16; paint(); if (Math.abs(tx - ox) + Math.abs(ty - oy) > .5) raf = requestAnimationFrame(step); else { ox = tx; oy = ty; paint(); } })();
+  var nowUK = new Date(), todayT = Date.UTC(nowUK.getFullYear(), nowUK.getMonth(), nowUK.getDate());
+  var firstT = Date.parse(drops[N - 1].date), y0 = new Date(firstT).getUTCFullYear(), y1 = new Date(todayT).getUTCFullYear();
+  for (var yr = y1; yr >= y0; yr--) {
+    // the first year starts at the month of the first drop, the current year stops at the end of this month
+    var from = yr === y0 ? Date.UTC(yr, new Date(firstT).getUTCMonth(), 1) : Date.UTC(yr, 0, 1);
+    var to = yr === y1 ? Date.UTC(yr, new Date(todayT).getUTCMonth() + 1, 0) : Date.UTC(yr, 11, 31);
+    var lead = (new Date(from).getUTCDay() + 6) % 7, grid = el("div", { class: "cal-grid" }), months = el("div", { class: "cal-months" }), count = 0;
+    for (var p = 0; p < lead; p++) grid.append(el("i", { class: "pad" }));
+    for (var t = from, n = lead; t <= to; t += DAYMS, n++) {
+      var key = iso(t), di = byDate[key], dd = new Date(t);
+      if (dd.getUTCDate() === 1) { var ml = el("span", { text: dd.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }) }); ml.style.gridColumn = String(Math.floor(n / 7) + 1); months.append(ml); }
+      if (di === undefined) { grid.append(el("i", { class: (t === todayT ? "today" : t > todayT ? "later" : "") })); continue; }
+      count++;
+      var c = el("button", { type: "button", class: "drop" + (drops[di].pre ? " pre" : ""), "aria-label": Drops.niceDate(key) + ", " + (drops[di].pre ? "pre-order" : "in-stock drop"), title: Drops.niceDate(key) });
+      (function (ix) { c.addEventListener("click", function () { go(ix); }); })(di);
+      grid.append(c); cells[di] = c;
+    }
+    var weeks = Math.ceil((lead + Math.round((to - from) / DAYMS) + 1) / 7);
+    months.style.gridTemplateColumns = "repeat(" + weeks + ", var(--c))";
+    field.append(el("div", { class: "cal-year" }, [
+      el("div", { class: "cal-head" }, [el("b", { class: "disp", text: String(yr) }), el("span", { class: "label", text: count + (count === 1 ? " drop" : " drops") })]),
+      el("div", { class: "cal-scroll" }, [el("div", { class: "cal-body" }, [el("div", { class: "cal-days", "aria-hidden": "true" }, ["Mon", "", "Wed", "", "Fri", "", "Sun"].map(function (w) { return el("span", { text: w }); })), el("div", {}, [months, grid])])])
+    ]));
   }
-  function go(i) { i = Math.max(0, Math.min(N - 1, i)); glide(-bub[i]._x, -bub[i]._y); }
-  field.addEventListener("pointerdown", function (e) { held = { x: e.clientX, y: e.clientY, ox: ox, oy: oy }; moved = false; cancelAnimationFrame(raf); document.body.classList.add("grabbing"); });
-  window.addEventListener("pointermove", function (e) {
-    if (!held) return; var dx = e.clientX - held.x, dy = e.clientY - held.y; if (Math.abs(dx) + Math.abs(dy) > 5) moved = true;
-    vx = held.ox + dx - ox; vy = held.oy + dy - oy; ox = held.ox + dx; oy = held.oy + dy; paint();
-  });
-  window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!held) return; held = null; if (moved) go(sel); setTimeout(function () { moved = false; }, 0); });
+  function go(i) {
+    sel = Math.max(0, Math.min(N - 1, i));
+    cells.forEach(function (c, n) { if (c) c.classList.toggle("on", n === sel); });
+    read(sel);
+    var sc = cells[sel] && cells[sel].closest(".cal-scroll"); if (sc && sc.scrollWidth > sc.clientWidth) sc.scrollLeft = cells[sel].offsetLeft - sc.clientWidth / 2;
+  }
   field.addEventListener("keydown", function (e) {
     if (e.key === "ArrowLeft" || e.key === "ArrowUp") { go(sel + 1); e.preventDefault(); }
     if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(sel - 1); e.preventDefault(); }
-    if (e.key === "Enter") openRow(drops[sel].date);
   });
   $("tl-prev").addEventListener("click", function () { go(sel + 1); }); $("tl-next").addEventListener("click", function () { go(sel - 1); });
-  paint(); window.addEventListener("resize", paint);
+  go(0);
 
   // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
   var SITES = [["Pokémon Center", drops.length + " drops"], ["Argos", "soon"], ["John Lewis", "soon"], ["Very", "soon"], ["Asda", "soon"], ["Hamleys", "soon"], ["Miniso", "soon"], ["Topps", "soon"], ["Selfridges", "soon"], ["Smyths", "soon"]];
