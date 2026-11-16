@@ -718,7 +718,9 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
     min-height: 0; padding: 26px 0 6px; border-top: 1px solid var(--line); }
   body.v2 .field-read #r-day { grid-area: day; }
   body.v2 .field-read #r-date { grid-area: date; }
-  body.v2 .field-read .field-what { grid-area: what; max-width: none; padding-top: 4px; }
+  body.v2 .field-read .field-what { grid-area: what; max-width: none; padding-top: 4px; font-size: clamp(19px, 1.7vw, 23px); height: 7.6em; }
+  body.v2 .field-read .field-dl dd { font-size: 26px; }
+  body.v2 .field-read .field-dl .label, body.v2 .field-read #r-day { font-size: 13px; }
   body.v2 .field-read .field-dl { grid-area: dl; border-top: 0; padding-top: 0; margin: 0; }
   body.v2 .field-read .field-act { grid-area: act; margin-top: 14px; }
   /* retailers: wide cards that run off the edge, so the row drags and ripples like it was built to */
