@@ -26,6 +26,21 @@
   <div class="feed" id="feed" aria-hidden="true"></div>
 </div></section>
 
+<section class="war"><div class="wrap">
+  <div class="war-head">
+    <div><span class="label">The war room · a demo drop, not live data</span><h2 class="disp">Watch a drop.</h2></div>
+    <div class="war-stats">
+      <div><span class="label">status</span><b id="w-status">Waiting</b></div>
+      <div><span class="label">running</span><b class="num" id="w-run">0</b></div>
+      <div><span class="label">landed</span><b class="num hot" id="w-hit">0</b></div>
+      <div><span class="label">yours</span><b class="num hot" id="w-mine">0 / 8</b></div>
+      <button type="button" class="btn" id="w-play">Run it again</button>
+    </div>
+  </div>
+  <div class="war-grid" id="w-grid" aria-hidden="true"></div>
+  <p class="war-note">Every square is a profile. In the real app you watch your own turn green as they check out. The outlined ones are yours.</p>
+</div></section>
+
 <section class="calc"><div class="wrap">
   <span class="label">Try it · what one order costs you</span>
   <div class="calc-grid">
@@ -115,6 +130,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   slip(); slip(); slip();
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(slip, 2600);
+
+  // war room demo: a made-up drop played out on a grid of profiles
+  (function () {
+    var grid = $("w-grid"), N = innerWidth < 700 ? 120 : 240, cells = [], mine = {}, timers = [], calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    for (var i = 0; i < N; i++) { var c = el("i"); grid.append(c); cells.push(c); }
+    while (Object.keys(mine).length < 8) mine[Math.floor(Math.random() * N)] = 1;
+    for (var k in mine) cells[k].classList.add("mine");
+    function set(id, v) { $(id).textContent = v; }
+    function play() {
+      timers.forEach(clearTimeout); timers = [];
+      cells.forEach(function (c) { c.className = c.classList.contains("mine") ? "mine" : ""; });
+      var run = 0, hit = 0, my = 0; set("w-run", 0); set("w-hit", 0); set("w-mine", "0 / 8"); set("w-status", "Queue open"); $("w-status").className = "";
+      var order = cells.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; });
+      order.forEach(function (ix, n) {
+        var start = calm ? 0 : 500 + n * 9 + Math.random() * 300;
+        timers.push(setTimeout(function () { cells[ix].classList.add("run"); set("w-run", ++run); if (n === 0) { set("w-status", "Live"); $("w-status").className = "hot"; } }, start));
+        var roll = Math.random(), res = roll < .58 ? "hit" : roll < .74 ? "miss" : "none";
+        timers.push(setTimeout(function () {
+          cells[ix].classList.remove("run"); cells[ix].classList.add(res); set("w-run", --run);
+          if (res === "hit") { set("w-hit", ++hit); if (mine[ix]) set("w-mine", ++my + " / 8"); }
+        }, calm ? 0 : start + 1800 + Math.random() * 4200));
+      });
+      timers.push(setTimeout(function () { set("w-status", "Sold out"); $("w-status").className = ""; }, calm ? 0 : 9200));
+    }
+    $("w-play").addEventListener("click", play);
+    var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { play(); seen.disconnect(); } }, { threshold: .35 });
+    seen.observe(grid);
+  })();
 
   // the fee, worked out live
   var gbp = function (n) { return "£" + (Math.round(n * 100) / 100).toLocaleString("en-GB", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); };
