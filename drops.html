@@ -30,39 +30,16 @@
 </div></div>
 
 <div id="pkc">
-<section class="dh-top"><div class="wrap">
-  <span class="label">Pokémon Center UK · drop history</span>
-  <div class="since"><span class="n" id="c-d">0</span><span class="disp">days since<br>the last drop</span></div>
-  <div class="tick" id="c-all"></div>
-  <h1 class="dh-line" id="d-head"></h1>
-</div></section>
-
-<section class="field-wrap"><div class="wrap field-grid">
-  <div class="field" id="field" tabindex="0" role="listbox" aria-label="Every drop. Drag to move around, or use the arrow keys."></div>
-  <div class="field-read" aria-live="polite">
-    <span class="label" id="r-day"></span>
-    <div class="disp" id="r-date"></div>
-    <p class="field-what" id="r-what"></p>
-    <dl class="field-dl">
-      <div><dt class="label">queue</dt><dd class="num" id="r-q"></dd></div>
-      <div><dt class="label">went live</dt><dd class="num" id="r-live"></dd></div>
-      <div><dt class="label">sold out</dt><dd class="num" id="r-oos"></dd></div>
-    </dl>
-    <div class="field-act">
-      <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
-      <span class="label" id="r-count"></span>
-      <button type="button" class="btn" id="r-open">See it in the record</button>
-    </div>
+<section class="dh-top"><div class="wrap dh-grid">
+  <div>
+    <span class="label">Pokémon Center UK · drop history</span>
+    <div class="since"><span class="n" id="c-d">0</span><span class="disp">days since<br>the last drop</span></div>
+    <div class="tick" id="c-all"></div>
+    <h1 class="dh-line" id="d-head"></h1>
   </div>
-</div>
-<div class="wrap"><p class="field-key label">drag the field · bigger = more products · <b>orange = pre-order</b></p></div>
-</section>
-
-<section class="dfacts"><div class="wrap">
-  <div class="facts-row">
+  <div class="dh-side">
     <div><span class="label">usual day</span><b class="disp" id="f-day"></b></div>
     <div><span class="label">queue usually opens</span><b class="disp" id="f-win"></b></div>
-    <div><span class="label">typical gap</span><b class="disp" id="f-gap"></b></div>
     <button type="button" class="btn" id="f-more" aria-expanded="false" aria-controls="pat">Show the patterns</button>
   </div>
 </div></section>
@@ -89,7 +66,28 @@
   </div>
 </div></div></section>
 
-<section class="ledger"><div class="wrap">
+<section class="field-wrap"><div class="wrap field-grid">
+  <div class="field" id="field" tabindex="0" role="listbox" aria-label="Every drop. Drag to move around, or use the arrow keys."></div>
+  <div class="field-read" aria-live="polite">
+    <span class="label" id="r-day"></span>
+    <div class="disp" id="r-date"></div>
+    <ul class="field-what" id="r-what"></ul>
+    <dl class="field-dl">
+      <div><dt class="label">queue</dt><dd class="num" id="r-q"></dd></div>
+      <div id="r-live-box"><dt class="label">went live</dt><dd class="num" id="r-live"></dd></div>
+      <div id="r-oos-box"><dt class="label">sold out</dt><dd class="num" id="r-oos"></dd></div>
+    </dl>
+    <div class="field-act">
+      <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
+      <span class="label" id="r-count"></span>
+      
+    </div>
+  </div>
+</div>
+<div class="wrap field-foot"><p class="field-key label">drag the field · bigger = more products · <b>orange = pre-order</b></p><button type="button" class="btn" id="list-btn" aria-expanded="false" aria-controls="ledger"></button></div>
+</section>
+
+<section class="ledger" id="ledger" hidden><div class="wrap">
   <div class="ledger-head">
     <div><span class="label">The record</span><h2 class="disp">Every drop.</h2></div>
     <div class="ledger-tools">
@@ -104,8 +102,10 @@
   <div class="ledger-cols label" aria-hidden="true"><span>Date</span><span>Queue</span><span>What dropped</span><span>Went live</span><span>Sold out</span></div>
   <div id="rows"></div>
   <div class="ledger-more"><button type="button" class="btn" id="all-btn"></button><span class="label" id="count"></span></div>
-  <p class="war-note">Pokémon Center UK only for now. Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</p>
 </div></section>
+<div class="wrap dh-credit">
+  <p class="war-note">Pokémon Center UK only for now. Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</p>
+</div>
 </div>
 
 </main>
@@ -164,10 +164,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function read(i) {
     var d = drops[i], live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
     var names = d.items.map(function (x) { return Drops.itemName(x.name); });
-    $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · " + names.length + (names.length === 1 ? " product" : " products");
-    $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-    $("r-what").textContent = names[0] + (names.length > 1 ? " and " + (names.length - 1) + " more" : "");
-    $("r-q").textContent = d.queue; $("r-live").textContent = live ? live.live : "–"; $("r-oos").textContent = oos ? oos.oos : "–";
+    $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · " + new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" });
+    $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    var named = names.filter(function (n) { return n.indexOf("Unnamed product") !== 0; }), what = $("r-what"); what.textContent = "";
+    named.slice(0, 3).forEach(function (n) { what.append(el("li", { text: n })); });
+    var rest = names.length - Math.min(3, named.length);
+    if (rest) what.append(el("li", { class: "more", text: (named.length ? "and " + rest + " more" : rest + (rest === 1 ? " product" : " products") + ", names not recorded") }));
+    $("r-q").textContent = d.queue; $("r-live").textContent = live ? live.live : ""; $("r-oos").textContent = oos ? oos.oos : ""; $("r-live-box").hidden = !live; $("r-oos-box").hidden = !oos;
     $("r-count").textContent = String(N - i).padStart(2, "0") + " / " + N;
     var box = document.querySelector(".field-read"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
   }
@@ -188,7 +191,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key === "Enter") openRow(drops[sel].date);
   });
   $("tl-prev").addEventListener("click", function () { go(sel + 1); }); $("tl-next").addEventListener("click", function () { go(sel - 1); });
-  $("r-open").addEventListener("click", function () { openRow(drops[sel].date); });
   paint(); window.addEventListener("resize", paint);
 
   // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
@@ -300,6 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   function openRow(date) {
+    if ($("ledger").hidden) { $("ledger").hidden = false; listLabel(); }
     if (!rowEls[date]) { filter = "all"; query = ""; showAll = true; $("q").value = ""; setChips(); draw(); }
     var w = rowEls[date]; if (!w) return;
     w.classList.add("open", "flash"); w.querySelector(".lrow").setAttribute("aria-expanded", "true");
@@ -312,7 +315,11 @@ document.addEventListener("DOMContentLoaded", function () {
   draw();
 
   // headline facts, and the detail behind them
-  $("f-day").textContent = stats.topDay; $("f-win").textContent = stats.window.replace("–", " – "); $("f-gap").textContent = avg + " days";
+  $("f-day").textContent = stats.topDay; $("f-win").textContent = stats.window.replace("–", " – ");
+  var lb = $("list-btn"), led = $("ledger");
+  function listLabel() { lb.textContent = led.hidden ? "See all " + drops.length + " drops as a list" : "Hide the list"; lb.setAttribute("aria-expanded", led.hidden ? "false" : "true"); }
+  lb.addEventListener("click", function () { led.hidden = !led.hidden; listLabel(); if (!led.hidden) led.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  listLabel();
   $("f-more").addEventListener("click", function () {
     var pat = $("pat"), open = pat.hidden; pat.hidden = !open;
     this.setAttribute("aria-expanded", open ? "true" : "false"); this.textContent = open ? "Hide the patterns" : "Show the patterns";
