@@ -153,10 +153,13 @@ document.addEventListener("DOMContentLoaded", function () {
     var sc = cells[sel] && cells[sel].closest(".cal-scroll"); if (sc && sc.scrollWidth > sc.clientWidth) sc.scrollLeft = cells[sel].offsetLeft - sc.clientWidth / 2;
   }
   // size the squares so a full year (53 weeks) fits the panel; on phones they stay tappable and the year scrolls instead
-  function fit() { var w = track.clientWidth - 40, c = Math.floor(w / 53) - 3; field.style.setProperty("--c", Math.max(innerWidth < 900 ? 13 : 8, Math.min(18, c)) + "px"); }
+  // squares are sized to the longest year this retailer has, not always to 53 weeks: a shop with five months of history
+  // (Miniso) was drawn at the size meant for a full year and sat tiny in the corner of a desktop screen
+  var maxWeeks = 53;
+  function fit() { var w = track.clientWidth - 40, c = Math.floor(w / Math.max(18, maxWeeks)) - 3; field.style.setProperty("--c", Math.max(innerWidth < 900 ? 13 : 8, Math.min(innerWidth < 900 ? 18 : 30, c)) + "px"); }
   function calendar() {
     var byDate = {}; drops.forEach(function (d, i) { byDate[d.date] = i; });
-    field.textContent = ""; cells = []; yearOf = []; panels = {};
+    field.textContent = ""; cells = []; yearOf = []; panels = {}; maxWeeks = 1;
     var nowUK = new Date(), todayT = Date.UTC(nowUK.getFullYear(), nowUK.getMonth(), nowUK.getDate());
     var firstT = Date.parse(drops[N - 1].date), y0 = new Date(firstT).getUTCFullYear(), y1 = new Date(todayT).getUTCFullYear();
     track = el("div", { class: "cal-track" }); field.append(track);
@@ -175,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         (function (ix) { c.addEventListener("click", function () { go(ix); }); })(di);
         grid.append(c); cells[di] = c; yearOf[di] = yr;
       }
-      var weeks = Math.ceil((lead + Math.round((to - from) / DAYMS) + 1) / 7);
+      var weeks = Math.ceil((lead + Math.round((to - from) / DAYMS) + 1) / 7); maxWeeks = Math.max(maxWeeks, weeks);
       months.style.gridTemplateColumns = "repeat(" + weeks + ", var(--c))";
       var back = el("button", { type: "button", class: "cal-nav", "aria-label": "Show " + (yr - 1), text: "← " + (yr - 1) }), fwd = el("button", { type: "button", class: "cal-nav", "aria-label": "Show " + (yr + 1), text: (yr + 1) + " →" });
       back.hidden = yr === y0; fwd.hidden = yr === y1;
@@ -328,11 +331,23 @@ document.addEventListener("DOMContentLoaded", function () {
     if (goal !== null || Math.abs(sv) > .05 || amp > .2 || rheld || sx < 0 || sx > limit()) rraf = requestAnimationFrame(rframe); else { rraf = 0; cards.forEach(function (c) { c.style.transform = ""; }); }
   }
   function kick() { if (!rraf) rraf = requestAnimationFrame(rframe); }
-  view.addEventListener("pointerdown", function (e) { rheld = { x: e.clientX, last: e.clientX }; rmoved = false; goal = null; document.body.classList.add("grabbing"); kick(); });
+  // Desktop: all six fit on one row, so there is nothing to scroll. The row reacts to the mouse instead:
+  // the card under the pointer lifts and its neighbours follow in a wave, then it settles when the mouse leaves.
+  var wide = matchMedia("(min-width: 901px)"), calmRow = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function swell(x) {
+    cards.forEach(function (c) {
+      var r = c.getBoundingClientRect(), d = x === null ? 9999 : Math.abs(x - (r.left + r.width / 2)), k = Math.max(0, 1 - d / 420), e = k * k * (3 - 2 * k);
+      c.style.transform = e ? "translateY(" + (-22 * e) + "px) scale(" + (1 + .07 * e) + ")" : "";
+      c.style.zIndex = e ? String(Math.round(e * 10)) : "";
+    });
+  }
+  view.addEventListener("pointermove", function (e) { if (wide.matches && !calmRow && e.pointerType === "mouse" && !rraf) swell(e.clientX); });
+  view.addEventListener("pointerleave", function () { if (wide.matches) swell(null); });
+  view.addEventListener("pointerdown", function (e) { if (wide.matches) return; rheld = { x: e.clientX, last: e.clientX }; rmoved = false; goal = null; document.body.classList.add("grabbing"); kick(); });
   window.addEventListener("pointermove", function (e) { if (!rheld) return; var dx = rheld.last - e.clientX; rheld.last = e.clientX; if (Math.abs(e.clientX - rheld.x) > 5) rmoved = true; sx += dx; sv = dx; });
   window.addEventListener("pointerup", function () { if (!rheld) return; rheld = null; document.body.classList.remove("grabbing"); kick(); setTimeout(function () { rmoved = false; }, 0); });
   window.addEventListener("pointercancel", function () { if (!rheld) return; rheld = null; document.body.classList.remove("grabbing"); kick(); setTimeout(function () { rmoved = false; }, 0); });
-  view.addEventListener("wheel", function (e) { var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0; if (!d) return; e.preventDefault(); goal = null; sv += d * .12; kick(); }, { passive: false });
+  view.addEventListener("wheel", function (e) { if (wide.matches) return; var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0; if (!d) return; e.preventDefault(); goal = null; sv += d * .12; kick(); }, { passive: false });
   view.addEventListener("keydown", function (e) { if (e.key === "ArrowRight") { goal = null; sv += 14; kick(); } if (e.key === "ArrowLeft") { goal = null; sv -= 14; kick(); } });
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(function () { sv = 16; kick(); setTimeout(function () { sv = -16; kick(); }, 520); }, 500);
 
