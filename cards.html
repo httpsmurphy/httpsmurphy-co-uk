@@ -45,7 +45,7 @@
       <div><dt class="label">cards you get</dt><dd id="b-count"></dd></div>
       <div><dt class="label">who can get it</dt><dd id="b-who"></dd></div>
     </dl>
-    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><a class="btn" id="b-setup">Full breakdown on Setup</a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
+    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><a class="btn primary" id="b-cta2" target="_blank" rel="sponsored noopener" hidden></a><a class="btn" id="b-setup">Full breakdown on Setup</a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
   </div>
 </div></section>
 
@@ -67,7 +67,7 @@ var CARDS = [
   { name: "High street banks", rate: 50, count: "Whatever your bank gives you", who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
   { name: "Tide", rate: 44, setup: "tide", count: "5 virtual, 1 physical", who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
   { name: "Starling", rate: 29, count: "", who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
-  { name: "Revolut", rate: 6, setup: "revolut-business", ico: "icons/revolut-business.png", href: "https://business.revolut.com/signup?promo=B2B-NOV2-26-AR-H2&ext=85003b05-593f-e2fd-0040-3070da042672&context=B2B_REFERRAL", cta: "Open Revolut Business", count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all. It works on other sites, and I split the referral reward with you." }
+  { name: "Revolut", rate: 6, setup: "revolut-business", ico: "icons/revolut-business.png", href: "https://business.revolut.com/signup?promo=B2B-NOV2-26-AR-H2&ext=85003b05-593f-e2fd-0040-3070da042672&context=B2B_REFERRAL", cta: "Open Revolut Business", href2: "https://revolut.com/referral/?referral-code=alexmv4f!NOV1-26-AR-H1&geo-redirect", cta2: "Open Revolut Personal", count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all. It works on other sites, and I split the referral reward with you." }
 ];
 // Which sites each card works on. "yes" / "no" are from our own runs; anything not listed is left off.
 var SITES = ["Pokémon Center", "Topps", "Other retailers"];
@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var cta = $("b-cta"); cta.hidden = !(c.locked || c.href);
     if (c.locked) { cta.href = "aco.html"; cta.textContent = "How the ACO works"; cta.removeAttribute("target"); }
     else if (c.href) { cta.href = c.href; cta.textContent = c.cta; cta.setAttribute("target", "_blank"); }
+    var c2 = $("b-cta2"); c2.hidden = !(c.href2 && !c.locked); if (c.href2) { c2.href = c.href2; c2.textContent = c.cta2; }
     $("b-again").hidden = !!c.locked;
     var su = $("b-setup"); su.hidden = !c.setup; if (c.setup) su.href = "setup.html#" + c.setup;
     if (c.locked) {
