@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
   for (var r = 0; r < 4; r++) shops.forEach(function (n) { tk.append(el("span", { text: n })); });
 
   // door previews: a taste of each page, shown on hover
-  ["stellar.jpg", "hidden.jpg", "brute.png", "lunar.svg", "pokenotify.png", "resellers.jpg", "hyonix.png", "ocean.png"].forEach(function (f) { $("prev-setup").append(el("img", { src: "icons/" + f, alt: "" })); });
+  ["stellar.jpg", "hidden.jpg", "brute.png", "lunar.svg", "pokenotify.png", "resellers.jpg", "hyonix.png", "enfra.png"].forEach(function (f) { $("prev-setup").append(el("img", { src: "icons/" + f, alt: "" })); });
   (function () {
     var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg"), recent = drops.slice(0, 26).reverse(), max = 1;
     recent.forEach(function (d) { max = Math.max(max, d.items.length); });
