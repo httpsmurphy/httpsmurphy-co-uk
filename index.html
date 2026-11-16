@@ -52,7 +52,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   var d = Drops.all(), s = Drops.stats(d), $ = function (id) { return document.getElementById(id); };
   $("p-since").textContent = s.since;
-  $("p-last").textContent = "Last one: " + Drops.niceDate(s.last.date) + ", queue at " + s.last.queue + ".";
+  var won = (window.DROP_RESULTS || {})[s.last.date];
+  $("p-last").textContent = "Last one: " + Drops.niceDate(s.last.date) + ", queue at " + s.last.queue + "." + (won ? " Our group took " + won + " checkouts." : "");
   $("p-gap").textContent = Math.round(s.avgGap) + " days";
   $("p-range").textContent = "anywhere from " + s.minGap + " to " + s.maxGap;
   $("p-day").textContent = s.topDay;

@@ -54,3 +54,5 @@ window.DROPS_RAW = `2026-10-27|15:54||10-10608-101~~~;10-10607-101~~~;10-10606-1
 2025-01-09|14:00|P|Journey Together Pokémon Center Elite Trainer Box~Journey Together~~
 2024-11-01|14:00|P|Prismatic Evolutions Pokémon Center Elite Trainer Box~Prismatic Evolutions~~
 2024-08-22|14:00|P|Surging Sparks Pokémon Center Elite Trainer Box~Surging Sparks~~`;
+// Checkouts our group recorded on each drop (orders that weren't later cancelled). Blank = before we kept records.
+window.DROP_RESULTS = {"2026-10-27": 221, "2026-10-15": 118, "2026-09-30": 212, "2026-07-20": 122, "2026-07-15": 847, "2026-06-30": 64, "2026-06-25": 79, "2026-06-10": 336, "2026-06-08": 19, "2026-06-01": 19, "2026-05-07": 64, "2026-04-29": 194, "2026-04-13": 177, "2026-04-08": 108, "2026-03-11": 61, "2026-02-26": 6};

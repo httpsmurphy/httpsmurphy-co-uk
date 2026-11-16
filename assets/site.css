@@ -204,3 +204,11 @@ button.row-main { cursor: pointer; }
 .site-foot a { color: var(--dim); text-decoration: underline; text-underline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* breakdown under a setup row */
+.points { list-style: none; margin: 0; padding: 0 20px 18px 80px; display: grid; gap: 7px; }
+.points li { position: relative; padding-left: 18px; color: var(--dim); font-size: 15px; }
+.points li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 2px; background: var(--accent); }
+.points li b { color: var(--ink); font-weight: 650; }
+@media (max-width: 700px) { .points { padding-left: 20px; } }
+.tag.won { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); font-weight: 700; }

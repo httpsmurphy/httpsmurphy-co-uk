@@ -18,7 +18,7 @@
 <section class="hero" style="padding-bottom:24px"><div class="wrap">
   <p class="eyebrow">Drop history</p>
   <h1>Pokémon Center UK</h1>
-  <p class="lede">When the queue opened, when each product went live and when it sold out. Use it to spot the pattern, not to predict the day.</p>
+  <p class="lede">When the queue opened, when each product went live and when it sold out. And what our group took on each one.</p>
 </div></section>
 
 <section class="section" style="padding-top:8px"><div class="wrap">
@@ -76,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
     shown.forEach(function (d) {
       var head = el("div", { class: "drop-head" }, [el("span", { class: "date", text: Drops.niceDate(d.date) }), el("span", { class: "tag", text: "Queue " + d.queue })]);
       if (d.pre) head.append(el("span", { class: "tag pre", text: "Pre-order" }));
+      var won = (window.DROP_RESULTS || {})[d.date];
+      if (won) head.append(el("span", { class: "tag won", text: won.toLocaleString("en-GB") + " checkouts for our group" }));
       var items = el("div", { class: "drop-items" }, d.items.map(function (i) {
         var name = el("div", { class: "n", text: Drops.itemName(i.name) });
         if (i.set) name.append(el("small", { text: i.set }));
