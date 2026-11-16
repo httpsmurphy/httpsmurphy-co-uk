@@ -175,6 +175,16 @@ document.addEventListener("DOMContentLoaded", function () {
   var shops = ["Pokémon Center", "Topps", "John Lewis", "Argos", "Very", "Asda", "Selfridges", "Hamleys", "Miniso"], tk = $("ticker");
   for (var r = 0; r < 4; r++) shops.forEach(function (n) { tk.append(el("span", { text: n })); });
 
+  // phones have no hover: the first tap on a door opens its preview, the second tap follows the link
+  document.querySelectorAll(".door").forEach(function (d) {
+    d.addEventListener("click", function (e) {
+      if (!matchMedia("(max-width: 760px)").matches || d.classList.contains("open")) return;
+      e.preventDefault();
+      document.querySelectorAll(".door.open").forEach(function (o) { o.classList.remove("open"); });
+      d.classList.add("open");
+    });
+  });
+
   // door previews: a taste of each page, shown on hover
   ["stellar.jpg", "hidden.jpg", "brute.png", "lunar.svg", "pokenotify.png", "resellers.jpg", "hyonix.png", "enfra.png"].forEach(function (f) { $("prev-setup").append(el("img", { src: "icons/" + f, alt: "" })); });
   (function () {
