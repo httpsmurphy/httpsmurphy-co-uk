@@ -247,3 +247,20 @@ body.v2 { background: var(--bg); }
 .index-col a:hover b { color: var(--accent); }
 .index-col .off { opacity: .6; }
 @media (prefers-reduced-motion: reduce) { .hx-card { transition: none; } }
+
+/* ---------- setup tweaks ---------- */
+.hx-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 18px; margin-bottom: 12px; }
+.hx-bar .hx-chips { margin-bottom: 0; }
+.hx-step { display: flex; align-items: center; gap: 12px; }
+.hx-detail { align-content: start; padding-top: clamp(34px, 9vh, 96px); min-height: min(78vh, 720px); }
+@media (max-width: 900px) { .hx-detail { min-height: 0; padding-top: 22px; } }
+.hx-card img, .door-prev img, .stack img { -webkit-user-drag: none; user-select: none; pointer-events: none; }
+.hx-card { -webkit-user-drag: none; }
+
+/* ---------- light / dark switch: the knob drops across and bounces ---------- */
+.v2 .theme-btn { width: 58px; height: 30px; border-radius: 99px; padding: 0; position: relative; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.v2 .theme-btn .knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: 12px; line-height: 1;
+  transition: transform .9s linear(0, .004, .016, .035, .063, .098, .141 13.6%, .25, .391, .563, .765, 1, .891 40.9%, .848, .813, .785, .766, .754, .75, .754, .766, .785, .813, .848, .891 68.2%, 1 72.7%, .973, .953, .941, .938, .941, .953, .973, 1, .988, .984, .988, 1); }
+:root[data-theme="light"] .v2 .theme-btn .knob { transform: translateX(28px) rotate(180deg); }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .v2 .theme-btn .knob { transform: translateX(28px) rotate(180deg); } }
+@media (prefers-reduced-motion: reduce) { .v2 .theme-btn .knob { transition: none; } }

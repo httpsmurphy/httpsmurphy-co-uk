@@ -29,7 +29,7 @@
       if (href === here) a.setAttribute("aria-current", "page");
       return a;
     }));
-    const btn = el("button", { class: "theme-btn", type: "button", "aria-label": "Switch between light and dark", text: "◐" });
+    const btn = el("button", { class: "theme-btn", type: "button", "aria-label": "Switch between light and dark" }, [el("span", { class: "knob", "aria-hidden": "true", text: "◐" })]);
     btn.addEventListener("click", () => {
       const dark = getComputedStyle(document.documentElement).colorScheme.includes("dark");
       const next = dark ? "light" : "dark";

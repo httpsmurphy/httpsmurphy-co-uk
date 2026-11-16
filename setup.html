@@ -27,15 +27,16 @@
 
 <section class="helix-wrap"><div class="wrap helix-grid">
   <div class="hx-detail" aria-live="polite">
-    <div class="hx-chips" id="hx-chips" role="group" aria-label="Jump to a group"></div>
+    <div class="hx-bar">
+      <div class="hx-chips" id="hx-chips" role="group" aria-label="Jump to a group"></div>
+      <div class="hx-step"><div class="tl-keys"><button type="button" id="hx-prev" aria-label="Previous">←</button><button type="button" id="hx-next" aria-label="Next">→</button></div><span class="label" id="hx-count"></span></div>
+    </div>
     <span class="label" id="hx-kind"></span>
     <h2 class="disp" id="hx-name"></h2>
     <p class="hx-why" id="hx-why"></p>
     <ul class="points" id="hx-pts"></ul>
     <div class="hx-act">
       <a class="btn primary" id="hx-go" target="_blank" rel="sponsored noopener"></a>
-      <div class="tl-keys"><button type="button" id="hx-prev" aria-label="Previous">←</button><button type="button" id="hx-next" aria-label="Next">→</button></div>
-      <span class="label" id="hx-count"></span>
     </div>
   </div>
   <div class="hx-stage" id="hx-stage" tabindex="0" role="listbox" aria-label="Everything I run. Drag, or use the arrow keys.">
@@ -70,21 +71,21 @@ document.addEventListener("DOMContentLoaded", function () {
       pts: [["What I use it for", "keeping bots open 24/7 without tying up my own machine."], ["When you need it", "once you're running more tasks than your own computer can hold open."]] },
     { k: "Servers + proxies", n: "Ocean ISPs", ico: "ocean.png", why: "The ISPs I run on.", href: "", cta: "Link soon",
       pts: [["What I use them for", "every bot task runs through one, so each checkout comes from its own connection."], ["When you need them", "as soon as you run more than a handful of profiles on one site."]] },
-    { k: "Cards", n: "Slash", tag: "Top card", why: "What I use for Pokémon Center and most other UK retailers.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account",
+    { k: "Cards", n: "Slash", ico: "slash.png", tag: "Top card", why: "What I use for Pokémon Center and most other UK retailers.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account",
       pts: [["Who can get it", "limited companies."], ["Why this one", "1,000 cards guaranteed on a global account, with more added as you spend."], ["Hit rate", "72%, the best card I share publicly."]] },
-    { k: "Cards", n: "Wise", why: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account",
+    { k: "Cards", n: "Wise", ico: "wise.png", why: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "64%."]] },
-    { k: "Cards", n: "Capital On Tap", why: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap",
+    { k: "Cards", n: "Capital On Tap", ico: "capitalontap.png", why: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap",
       pts: [["Who can get it", "limited companies."], ["Hit rate", "55%."]] },
-    { k: "Cards", n: "Monzo", why: "Check which range your virtual cards are on.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account",
+    { k: "Cards", n: "Monzo", ico: "monzo.png", why: "Check which range your virtual cards are on.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "53% on the range that works."]] },
-    { k: "Cards", n: "Tide", why: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account",
+    { k: "Cards", n: "Tide", ico: "tide.png", why: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account",
       pts: [["Who can get it", "sole traders and limited companies."], ["Hit rate", "44%."]] }
   ];
   var N = ITEMS.length, STEP = 360 / 7, RISE = 58, spin = $("hx-spin"), stage = $("hx-stage"), pos = 0, cards = [];
 
   ITEMS.forEach(function (it, i) {
-    var face = it.ico ? el("img", { src: "icons/" + it.ico, alt: "" }) : el("span", { class: "mono", text: it.n.slice(0, 2) });
+    var face = it.ico ? el("img", { src: "icons/" + it.ico, alt: "", draggable: "false" }) : el("span", { class: "mono", text: it.n.slice(0, 2) });
     var c = el("button", { class: "hx-card", type: "button", role: "option", "aria-label": it.n + ", " + it.k }, [face, el("b", { text: it.n }), el("small", { text: it.k })]);
     c.addEventListener("click", function () { if (!dragged) go(i); });
     spin.append(c); cards.push(c);
