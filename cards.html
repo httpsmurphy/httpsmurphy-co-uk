@@ -61,15 +61,15 @@
 var CARDS = [
   { locked: true }, { locked: true },
   { name: "Slash", rate: 72, setup: "slash", count: "1,000 guaranteed, more as you spend", who: "LTD", bin: "4413", ico: "icons/slash.png", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
-  { name: "Wise", rate: 64, setup: "wise", count: "", who: "Sole Trader or LTD", bin: "4596", ico: "icons/wise.png", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
+  { name: "Wise", rate: 64, setup: "wise", count: "3 virtual, 1 physical", who: "Sole Trader or LTD", bin: "4596", ico: "icons/wise.png", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
   { name: "Capital On Tap", rate: 55, setup: "capital-on-tap", count: "Up to 50 per employee", who: "LTD", bin: "4397", ico: "icons/capitalontap.png", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
-  { name: "Monzo", rate: 53, setup: "monzo", count: "", who: "Sole Trader or LTD", bin: "5373", ico: "icons/monzo.png", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
+  { name: "Monzo", rate: 53, setup: "monzo", count: "Virtual cards on Pro and Team", who: "Sole Trader or LTD", bin: "5373", ico: "icons/monzo.png", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
   { name: "High street banks", rate: 50, count: "Whatever your bank gives you", who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
-  { name: "Tide", rate: 44, setup: "tide", count: "", who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
+  { name: "Tide", rate: 44, setup: "tide", count: "5 virtual, 1 physical", who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
   { name: "Starling", rate: 29, count: "", who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
   { name: "Revolut", rate: 6, count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all." }
 ];
-// Which sites each card works on. "yes" / "no" are from our own runs; anything not listed shows as "to add".
+// Which sites each card works on. "yes" / "no" are from our own runs; anything not listed is left off.
 var SITES = ["Pokémon Center", "Topps", "Other retailers"];
 var AS_OF = "16 November 2026";
 document.addEventListener("DOMContentLoaded", function () {
@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       var known = {}; (c.sites || [["Pokémon Center", c.rate >= 25 ? "yes" : "no"]]).forEach(function (x) { known[x[0]] = x[1]; });
       var sb = $("b-sites"); sb.textContent = "";
-      SITES.forEach(function (n) { var st = known[n] || "tbc"; sb.append(el("span", { class: "site " + st, text: (st === "yes" ? "✓ " : st === "no" ? "✕ " : "") + n + (st === "tbc" ? " · to add" : "") })); });
-      var cn = $("b-count"); cn.textContent = c.count || "To add"; cn.classList.toggle("tbc", !c.count);
+      SITES.forEach(function (n) { var st = known[n]; if (st) sb.append(el("span", { class: "site " + st, text: (st === "yes" ? "✓ " : "✕ ") + n })); });   // only what we know from our own runs
+      var cn = $("b-count"); cn.textContent = c.count || ""; cn.classList.remove("tbc"); cn.parentNode.hidden = !c.count;
       $("b-who").textContent = c.who;
     }
     rows.forEach(function (r, n) { r.setAttribute("aria-pressed", n === sel ? "true" : "false"); });
