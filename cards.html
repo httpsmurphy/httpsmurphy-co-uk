@@ -67,7 +67,7 @@ var CARDS = [
   { name: "High street banks", rate: 50, count: "Whatever your bank gives you", who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
   { name: "Tide", rate: 44, setup: "tide", count: "5 virtual, 1 physical", who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
   { name: "Starling", rate: 29, count: "", who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
-  { name: "Revolut", rate: 6, count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all." }
+  { name: "Revolut", rate: 6, setup: "revolut-business", ico: "icons/revolut-business.png", href: "https://business.revolut.com/signup?promo=B2B-NOV2-26-AR-H2&ext=85003b05-593f-e2fd-0040-3070da042672&context=B2B_REFERRAL", cta: "Open Revolut Business", count: "", sites: [["Pokémon Center", "no"], ["Topps", "yes"]], who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all. It works on other sites, and I split the referral reward with you." }
 ];
 // Which sites each card works on. "yes" / "no" are from our own runs; anything not listed is left off.
 var SITES = ["Pokémon Center", "Topps", "Other retailers"];
