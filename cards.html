@@ -41,7 +41,7 @@
     <div class="hund" id="hund" aria-hidden="true"></div>
     <p class="bench-note" id="b-note"></p>
     <dl class="bench-dl" id="b-dl">
-      <div><dt class="label">works on</dt><dd id="b-sites"></dd></div>
+      <div><dt class="label">works on Pokémon Center</dt><dd id="b-sites"></dd></div>
       <div><dt class="label">cards you get</dt><dd id="b-count"></dd></div>
       <div><dt class="label">who can get it</dt><dd id="b-who"></dd></div>
     </dl>
@@ -111,9 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
       $("b-sites").textContent = ""; $("b-sites").append(el("span", { class: "site", text: "Members only" }));
       $("b-count").textContent = "Members only"; $("b-count").parentNode.hidden = false; $("b-count").classList.add("tbc"); $("b-who").textContent = "Members only";
     } else {
-      var known = {}; (c.sites || [["Pokémon Center", c.rate >= 25 ? "yes" : "no"]]).forEach(function (x) { known[x[0]] = x[1]; });
-      var sb = $("b-sites"); sb.textContent = "";
-      SITES.forEach(function (n) { var st = known[n]; if (st) sb.append(el("span", { class: "site " + st, text: (st === "yes" ? "✓ " : "✕ ") + n })); });   // only what we know from our own runs
+      var works = c.rate >= 25, sb = $("b-sites"); sb.textContent = "";          // under 25% we don't run it there
+      sb.append(el("span", { class: "site " + (works ? "yes" : "no"), text: works ? "✓ Yes" : "✕ No" }));
       var cn = $("b-count"); cn.textContent = c.count || ""; cn.classList.remove("tbc"); cn.parentNode.hidden = !c.count;
       $("b-who").textContent = c.who;
     }
