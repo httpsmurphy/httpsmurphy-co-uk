@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
       (function (y) { back.addEventListener("click", function () { showYear(y - 1, true); }); fwd.addEventListener("click", function () { showYear(y + 1, true); }); })(yr);
       track.append(panels[yr] = el("div", { class: "cal-year" }, [
         el("div", { class: "cal-head" }, [el("b", { class: "disp", text: String(yr) }), el("span", { class: "label", text: cnt + (cnt === 1 ? " drop" : " drops") }), el("span", { class: "cal-navs" }, [back, fwd])]),
-        el("div", { class: "cal-scroll" }, [el("div", { class: "cal-body" }, [el("div", { class: "cal-days", "aria-hidden": "true" }, ["Mon", "", "Wed", "", "Fri", "", "Sun"].map(function (w) { return el("span", { text: w }); })), el("div", {}, [months, grid])])])
+        el("div", { class: "cal-scroll" }, [el("div", { class: "cal-body" }, [el("div", { class: "cal-days", "aria-hidden": "true" }, ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(function (w) { return el("span", { text: w }); })), el("div", {}, [months, grid])])])
       ]));
     }
     fit(); go(0, true); showYear(y1, false);
