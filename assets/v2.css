@@ -427,3 +427,14 @@ body.grabbing, body.grabbing * { user-select: none !important; -webkit-user-sele
   .lmore { padding-left: 0; } .li { grid-template-columns: 1fr; gap: 2px; padding: 6px 0; border-top: 1px solid var(--line); }
   .ledger-q { min-width: 0; flex: 1; }
 }
+
+/* ---------- drop history, second pass ---------- */
+.live i { display: none; }
+.since { display: flex; align-items: flex-end; gap: clamp(12px, 2vw, 26px); margin-top: 14px; }
+.since .n { font-family: var(--display); font-weight: 900; font-size: clamp(120px, 22vw, 300px); line-height: .76; color: var(--accent); font-variant-numeric: tabular-nums; }
+.since .disp { font-size: clamp(30px, 5vw, 72px); padding-bottom: .08em; }
+.dh-top .tick { margin: 18px 0 26px; }
+.tl-read .took .disp { color: var(--ink); }
+.ledger-cols, .lrow { grid-template-columns: 150px 70px minmax(0, 1.6fr) 90px minmax(0, 1fr); }
+.war-note a { color: var(--dim); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .lrow { grid-template-columns: 96px minmax(0, 1fr); } }

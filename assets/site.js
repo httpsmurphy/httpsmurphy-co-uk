@@ -44,10 +44,7 @@
   function footer() {
     const left = el("span");
     left.append("Links to bots, groups, servers and cards on this site are referral links. ");
-    const right = el("span");
-    right.append("Drop history from ", el("a", { href: "https://www.isthereadroptoday.com/drops", text: "isthereadroptoday.com", rel: "noopener" }), ", ",
-      el("a", { href: "https://creativecommons.org/licenses/by/4.0/", text: "CC BY 4.0", rel: "noopener" }), ".");
-    return el("footer", { class: "site-foot" }, [el("div", { class: "wrap" }, [left, right])]);
+    return el("footer", { class: "site-foot" }, [el("div", { class: "wrap" }, [left])]);
   }
 
   document.addEventListener("DOMContentLoaded", () => {

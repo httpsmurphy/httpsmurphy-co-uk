@@ -41,7 +41,7 @@
 
 <section class="doors"><div class="wrap">
   <a class="door rise" href="setup.html"><span class="label">01</span><span class="disp">Setup</span><span class="door-sub">The bots, cook groups, servers and proxies I use, and why each one.</span><span class="door-prev" id="prev-setup" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
-  <a class="door rise" href="drops.html"><span class="label">02</span><span class="disp">Drop history</span><span class="door-sub">Every Pokémon Center UK drop on record, and what our group took on each.</span><span class="door-prev" id="prev-drops" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
+  <a class="door rise" href="drops.html"><span class="label">02</span><span class="disp">Drop history</span><span class="door-sub">Every Pokémon Center UK drop on record: when the queue opened, what went live, when it sold out.</span><span class="door-prev" id="prev-drops" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
   <a class="door rise" href="cards.html"><span class="label">03</span><span class="disp">Card hit rates</span><span class="door-sub">Which cards are getting through, from thousands of our own checkouts.</span><span class="door-prev" id="prev-cards" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
   <a class="door rise" href="tools.html"><span class="label">04</span><span class="disp">Tools</span><span class="door-sub">Free tools built off the same data. More to come.</span><span class="door-prev" id="prev-tools" aria-hidden="true"></span><span class="door-go" aria-hidden="true">→</span></a>
 </div></section>
@@ -58,7 +58,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); };
-  var drops = Drops.all(), stats = Drops.stats(drops), RES = window.DROP_RESULTS || {};
+  var drops = Drops.all(), stats = Drops.stats(drops);
 
   // the figures the particles cycle through — each one says what it is, in words, right beside it
   var FACTS = [
@@ -164,12 +164,12 @@ document.addEventListener("DOMContentLoaded", function () {
   ["stellar.jpg", "hidden.jpg", "brute.png", "lunar.svg", "pokenotify.png", "resellers.jpg", "hyonix.png", "ocean.png"].forEach(function (f) { $("prev-setup").append(el("img", { src: "icons/" + f, alt: "" })); });
   (function () {
     var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg"), recent = drops.slice(0, 26).reverse(), max = 1;
-    recent.forEach(function (d) { max = Math.max(max, RES[d.date] || 0); });
+    recent.forEach(function (d) { max = Math.max(max, d.items.length); });
     svg.setAttribute("viewBox", "0 0 " + recent.length * 9 + " 54"); svg.setAttribute("preserveAspectRatio", "none");
     recent.forEach(function (d, i) {
-      var n = RES[d.date] || 0, h = n ? 8 + Math.sqrt(n / max) * 46 : 4, rc = document.createElementNS(NS, "rect");
+      var h = 8 + d.items.length / max * 46, rc = document.createElementNS(NS, "rect");
       rc.setAttribute("x", i * 9); rc.setAttribute("y", 54 - h); rc.setAttribute("width", 5); rc.setAttribute("height", h); rc.setAttribute("rx", 1);
-      rc.setAttribute("class", n ? "has" : ""); svg.append(rc);
+      rc.setAttribute("class", d.pre ? "has" : ""); svg.append(rc);
     });
     $("prev-drops").append(svg);
   })();
