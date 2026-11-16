@@ -51,4 +51,5 @@ window.DROPS_RAW = `2026-10-15|17:39||30th Celebration Mini Tin – Mew (Day)~30
 2025-05-07|17:24|P|Black Bolt Pokémon Center Elite Trainer Box~Black Bolt~17:44~23:59;White Flare Pokémon Center Elite Trainer Box~White Flare~17:47~23:59
 2025-03-24|14:43|P|Destined Rivals Pokémon Center Elite Trainer Box~Destined Rivals~14:58~17:50;Destined Rivals Booster Bundle~Destined Rivals~15:14~;Destined Rivals Booster Box~Destined Rivals~15:14~;Destined Rivals Sleeved Booster~Destined Rivals~15:14~
 2025-01-09|14:00|P|Journey Together Pokémon Center Elite Trainer Box~Journey Together~~
-`;
+2024-11-01|14:00|P|Prismatic Evolutions Pokémon Center Elite Trainer Box~Prismatic Evolutions~~
+2024-08-22|14:00|P|Surging Sparks Pokémon Center Elite Trainer Box~Surging Sparks~~`;

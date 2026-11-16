@@ -148,7 +148,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   var nowUK = new Date(), todayT = Date.UTC(nowUK.getFullYear(), nowUK.getMonth(), nowUK.getDate());
   var firstT = Date.parse(drops[N - 1].date), y0 = new Date(firstT).getUTCFullYear(), y1 = new Date(todayT).getUTCFullYear();
-  for (var yr = y1; yr >= y0; yr--) {
+  var track = el("div", { class: "cal-track" }), panels = {}, yearOf = [];
+  field.append(track);
+  for (var yr = y0; yr <= y1; yr++) {
     // the first year starts at the month of the first drop, the current year stops at the end of this month
     var from = yr === y0 ? Date.UTC(yr, new Date(firstT).getUTCMonth(), 1) : Date.UTC(yr, 0, 1);
     var to = yr === y1 ? Date.UTC(yr, new Date(todayT).getUTCMonth() + 1, 0) : Date.UTC(yr, 11, 31);
@@ -161,17 +163,23 @@ document.addEventListener("DOMContentLoaded", function () {
       count++;
       var c = el("button", { type: "button", class: "drop" + (drops[di].pre ? " pre" : ""), "aria-label": Drops.niceDate(key) + ", " + (drops[di].pre ? "pre-order" : "in-stock drop"), title: Drops.niceDate(key) });
       (function (ix) { c.addEventListener("click", function () { go(ix); }); })(di);
-      grid.append(c); cells[di] = c;
+      grid.append(c); cells[di] = c; yearOf[di] = yr;
     }
     var weeks = Math.ceil((lead + Math.round((to - from) / DAYMS) + 1) / 7);
     months.style.gridTemplateColumns = "repeat(" + weeks + ", var(--c))";
-    field.append(el("div", { class: "cal-year" }, [
-      el("div", { class: "cal-head" }, [el("b", { class: "disp", text: String(yr) }), el("span", { class: "label", text: count + (count === 1 ? " drop" : " drops") })]),
+    var back = el("button", { type: "button", class: "cal-nav", "aria-label": "Show " + (yr - 1), text: "← " + (yr - 1) }), fwd = el("button", { type: "button", class: "cal-nav", "aria-label": "Show " + (yr + 1), text: (yr + 1) + " →" });
+    back.hidden = yr === y0; fwd.hidden = yr === y1;
+    (function (y) { back.addEventListener("click", function () { showYear(y - 1, true); }); fwd.addEventListener("click", function () { showYear(y + 1, true); }); })(yr);
+    track.append(panels[yr] = el("div", { class: "cal-year" }, [
+      el("div", { class: "cal-head" }, [el("b", { class: "disp", text: String(yr) }), el("span", { class: "label", text: count + (count === 1 ? " drop" : " drops") }), el("span", { class: "cal-navs" }, [back, fwd])]),
       el("div", { class: "cal-scroll" }, [el("div", { class: "cal-body" }, [el("div", { class: "cal-days", "aria-hidden": "true" }, ["Mon", "", "Wed", "", "Fri", "", "Sun"].map(function (w) { return el("span", { text: w }); })), el("div", {}, [months, grid])])])
     ]));
   }
-  function go(i) {
+  // one year on screen at a time; swipe or use the year buttons for the one before
+  function showYear(y, smooth) { if (panels[y]) track.scrollTo({ left: panels[y].offsetLeft - track.offsetLeft, behavior: smooth ? "smooth" : "auto" }); }
+  function go(i, quiet) {
     sel = Math.max(0, Math.min(N - 1, i));
+    if (!quiet) showYear(yearOf[sel], true);
     cells.forEach(function (c, n) { if (c) c.classList.toggle("on", n === sel); });
     read(sel);
     var sc = cells[sel] && cells[sel].closest(".cal-scroll"); if (sc && sc.scrollWidth > sc.clientWidth) sc.scrollLeft = cells[sel].offsetLeft - sc.clientWidth / 2;
@@ -181,7 +189,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(sel - 1); e.preventDefault(); }
   });
   $("tl-prev").addEventListener("click", function () { go(sel + 1); }); $("tl-next").addEventListener("click", function () { go(sel - 1); });
-  go(0);
+  // size the squares so a full year (53 weeks) fits the panel; on phones they stay tappable and the year scrolls instead
+  function fit() { var w = track.clientWidth - 40, c = Math.floor(w / 53) - 3; field.style.setProperty("--c", Math.max(innerWidth < 900 ? 13 : 8, Math.min(18, c)) + "px"); }
+  fit(); go(0, true); showYear(y1, false); window.addEventListener("resize", function () { fit(); showYear(yearOf[sel], false); });
 
   // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
   var SITES = [["Pokémon Center", drops.length + " drops"], ["Argos", "soon"], ["John Lewis", "soon"], ["Very", "soon"], ["Asda", "soon"], ["Hamleys", "soon"], ["Miniso", "soon"], ["Topps", "soon"], ["Selfridges", "soon"], ["Smyths", "soon"]];
