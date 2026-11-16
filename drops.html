@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function tick() {
     var s = Math.max(0, Math.floor((Date.now() - lastAt) / 1000)), last = drops[0];
     $("c-d").textContent = Math.floor(s / 86400);
-    $("c-all").textContent = (cfg.queue ? "Last queue opened " : "Last drop went live ") + Drops.niceDate(last.date) + " at " + last.queue;
+    $("c-all").textContent = (cfg.queue ? "Last queue opened " : "Last drop went live ") + Drops.niceDate(last.date).replace(/ (\d{4})$/, "\u00a0$1") + " at\u00a0" + last.queue;   // the year and the time never sit alone on a line
     return s / 86400;
   }
   setInterval(function () { if (drops) tick(); }, 60000);

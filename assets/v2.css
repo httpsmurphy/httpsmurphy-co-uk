@@ -761,6 +761,7 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   body.v2 .sheet-col { padding: 20px 0 6px; }
   body.v2 .sheet-col + .sheet-col { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   body.v2 .index { display: none; }
+  body.v2 .sheet { border-bottom: 0; padding-bottom: 8px; }   /* no empty band between the last item and the footer */
 
   /* drop history: the retailer carousel, smaller, and the calendar keeps its day names on screen */
   body.v2 .rip-view { padding: 22px 0 26px; }
