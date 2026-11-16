@@ -31,7 +31,8 @@ window.RETAIL = {
 2025-11-18|06:00|6|Phantasmal Flames Booster Display;Phantasmal Flames Elite Trainer Box~49.99;Mega Kangaskhan ex Box~21.99
 2025-11-14|00:48|4|Mega Evolution Gardevoir Elite Trainer Box;Phantasmal Flames Elite Trainer Box~49.99;Phantasmal Flames Booster Display
 2025-07-29|07:22|1|Black Bolt & White Flare Unova Mini Tin`,
-  very: `2026-11-10|06:41|12|Phantasmal Flames Elite Trainer Box~49.99;30th Celebration Booster Bundle~24.99;30th Celebration Mini Tin (Mewtwo)~12.99;30th Celebration Battle Deck~19.99;30th Celebration Mini Tin (Pikachu, Night)~12.99
+  very: `2026-11-12|06:15|11|30th Celebration Ultra Premium Collection (Night)~169.99;Delta Reign Elite Trainer Box~49.99;Delta Reign Booster Box~154.99;30th Celebration Booster Bundle~24.99;Mega Greninja ex Premium Collection~39.99
+2026-11-10|06:41|12|Phantasmal Flames Elite Trainer Box~49.99;30th Celebration Booster Bundle~24.99;30th Celebration Mini Tin (Mewtwo)~12.99;30th Celebration Battle Deck~19.99;30th Celebration Mini Tin (Pikachu, Night)~12.99
 2026-10-15|06:28|7|30th Celebration Binder Collection~37.99;30th Celebration Greninja ex Tin~21.99;30th Celebration Elite Trainer Box~49.99;30th Celebration Sylveon ex Box~21.99;30th Celebration Sylveon ex Tin~21.99
 2026-10-06|06:36|21|30th Celebration Tech Sticker Collection (Alolan Exeggutor)~16.99;30th Celebration Tech Sticker Collection (Lucario)~16.99;30th Celebration 2-Pack Blister~9.99;Destined Rivals Elite Trainer Box~49.99;Prismatic Evolutions Super-Premium Collection~89.99
 2026-09-02|06:22|13|Prismatic Evolutions;Pitch Black Elite Trainer Box;Pitch Black 3-Pack;First Partner Illustration Collection Series 2~14.99;Mega Evolution 2-Pack Blister~9.99
