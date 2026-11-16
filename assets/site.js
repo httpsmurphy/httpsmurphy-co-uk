@@ -1,6 +1,6 @@
 // Shared by every page: header, footer, theme switch, and the drop-history maths.
 (function () {
-  const PAGES = [["index.html", "Home"], ["setup.html", "Setup"], ["aco.html", "ACO"], ["drops.html", "Drop history"], ["cards.html", "Card hit rates"], ["tools.html", "Tools"]];
+  const PAGES = [["index.html", "Home"], ["setup.html", "Setup"], ["aco.html", "ACO"], ["drops.html", "Drop history"], ["cards.html", "Card hit rates"]];
   const here = (location.pathname.split("/").pop() || "index.html");
 
   function el(tag, attrs, kids) {

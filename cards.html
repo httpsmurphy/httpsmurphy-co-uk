@@ -4,86 +4,131 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Card hit rates for Pokémon Center UK · httpsmurphy</title>
-<meta name="description" content="Which card providers are getting through on Pokémon Center UK and other retailers, and whether you need a sole trader or a limited company.">
+<meta name="description" content="Which card providers are getting through on Pokémon Center UK, from our own checkouts, and whether you need a sole trader or a limited company.">
 <link rel="icon" href="icons/murphaco.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/v2.css">
 <script src="assets/site.js"></script>
 </head>
-<body>
+<body class="v2">
 <main>
-<section class="hero" style="padding-bottom:20px"><div class="wrap">
-  <p class="eyebrow">Card hit rates</p>
-  <h1>Which cards are getting through.</h1>
-  <p class="lede">These providers work really well on Pokémon Center and other retailers. I use them all. Tap one for who can get it and how to sign up.</p>
-  <p class="callout" style="margin-top:20px"><b>This is real data, not opinion.</b> It comes from thousands of our own checkouts and is updated after every drop, so we know exactly what's working.</p>
-  <p class="note" style="margin-top:14px" id="asof"></p>
+
+<section class="ch-top"><div class="wrap">
+  <span class="label">Card hit rates · Pokémon Center UK</span>
+  <h1 class="disp">Which cards get <span>through.</span></h1>
+  <p class="ch-lede">Out of every 100 orders we put on a card, this is how many went through. It's our own checkouts, thousands of them, recounted after each drop.</p>
 </div></section>
 
-<section class="section" style="padding-top:20px"><div class="wrap">
-  <div class="rows" id="cards"></div>
-  <div class="lock">
-    <p><b>Not everything is on this page.</b> The two providers at the top, the full card ranges and the ones to avoid are shared with ACO members.</p>
-    <a class="btn small primary" href="aco.html">How the ACO works</a>
+<section class="bench"><div class="wrap bench-grid">
+  <div class="bench-card">
+    <div class="pc-stage" id="pc-stage">
+      <i class="pc pc-b2" aria-hidden="true"></i><i class="pc pc-b1" aria-hidden="true"></i>
+      <div class="pc pc-face" id="pc">
+        <div class="pc-top"><img id="pc-ico" alt="" width="34" height="34"><span class="label" id="pc-who"></span></div>
+        <b class="disp" id="pc-name"></b>
+        <div class="pc-num num" id="pc-bin"></div>
+        <i class="pc-sheen" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="bench-keys"><div class="tl-keys"><button type="button" id="b-prev" aria-label="Previous card">←</button><button type="button" id="b-next" aria-label="Next card">→</button></div><span class="label" id="b-count"></span></div>
   </div>
-  <p class="note" style="margin-top:18px">Hit rate is the share of our own orders on that provider that went through. It moves from drop to drop, and yours will vary with the profile behind the card. Sign-up links are my refs.</p>
+  <div class="bench-read" aria-live="polite">
+    <span class="label" id="b-rank"></span>
+    <div class="bench-n"><span class="n" id="b-rate">0</span><span class="disp">of every 100<br>went through</span></div>
+    <div class="hund" id="hund" aria-hidden="true"></div>
+    <p class="bench-note" id="b-note"></p>
+    <div class="bench-act"><a class="btn primary" id="b-cta" target="_blank" rel="sponsored noopener"></a><button type="button" class="btn" id="b-again">Run the 100 again</button></div>
+  </div>
 </div></section>
+
+<section class="rank"><div class="wrap">
+  <div class="rank-head"><span class="label">The ranking · tap one to put it on the bench</span><span class="label" id="asof"></span></div>
+  <div id="rank"></div>
+  <p class="war-note">Hit rate is the share of our own Pokémon Center orders on that provider that went through. It moves from drop to drop, and yours will vary with the profile behind the card. The two at the top, the full card ranges and the ones to avoid are shared with ACO members.</p>
+</div></section>
+
 </main>
 <script>
 // One line per provider. rate = % of our orders that went through. bin = first four digits shown, the rest hidden.
 var CARDS = [
-  { locked: true, who: "Higher than anything listed below" },
-  { locked: true, who: "Higher than anything listed below" },
-  { name: "Slash", rate: 72, who: "LTD", bin: "4413", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
-  { name: "Wise", rate: 64, who: "Sole Trader or LTD", bin: "4596", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
-  { name: "Capital On Tap", rate: 55, who: "LTD", bin: "4397", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
-  { name: "Monzo", rate: 53, who: "Sole Trader or LTD", bin: "5373", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
-  { name: "High street banks", rate: 50, who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined.", href: "", cta: "" },
-  { name: "Tide", rate: 44, who: "Sole Trader or LTD", bin: "5599", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
-  { name: "Starling", rate: 29, who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above.", href: "", cta: "" },
-  { name: "Revolut", rate: 6, who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all.", href: "", cta: "", low: true }
+  { locked: true }, { locked: true },
+  { name: "Slash", rate: 72, who: "LTD", bin: "4413", ico: "icons/slash.png", note: "What I use for Pokémon Center and most other UK retailers. 1,000 cards guaranteed on a global account, with more added as you spend.", href: "https://app.slash.com/i/murphy", cta: "Open a Slash account" },
+  { name: "Wise", rate: 64, who: "Sole Trader or LTD", bin: "4596", ico: "icons/wise.png", note: "Consistently one of the best on Pokémon Center.", href: "https://wise.com/invite/ilpc/alexanderefremiss", cta: "Open a Wise account" },
+  { name: "Capital On Tap", rate: 55, who: "LTD", bin: "4397", ico: "icons/capitalontap.png", note: "Up to 50 cards per employee.", href: "https://cashback.capitalontap.com/referral/?promo=2REFW722R89&referrer=PLEASH", cta: "Apply for Capital On Tap" },
+  { name: "Monzo", rate: 53, who: "Sole Trader or LTD", bin: "5373", ico: "icons/monzo.png", note: "Check which range your virtual cards are on. This is the one that works.", href: "https://join.monzo.com/c/36dqxs3", cta: "Open a Monzo account" },
+  { name: "High street banks", rate: 50, who: "Anyone", bin: "", note: "Put your real billing address on the profile. Matching it to shipping usually gets declined." },
+  { name: "Tide", rate: 44, who: "Sole Trader or LTD", bin: "5599", ico: "icons/tide.png", note: "Use code DBOLOB when you sign up.", href: "https://api.tide.co/su/VjnyvR", cta: "Open a Tide account" },
+  { name: "Starling", rate: 29, who: "Sole Trader or LTD", bin: "5357", note: "Works, but well behind the ones above." },
+  { name: "Revolut", rate: 6, who: "Personal or Business", bin: "", note: "We don't run Revolut on Pokémon Center at all." }
 ];
 var AS_OF = "16 November 2026";
 document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("asof").textContent = "Updated " + AS_OF + " · from our own Pokémon Center drops";
-  var box = document.getElementById("cards");
-  CARDS.forEach(function (c, i) {
-    if (c.locked) {
-      var lf = el("i"); lf.style.width = "100%";
-      box.append(el("a", { class: "row locked", href: "aco.html", "aria-label": "A provider shared with ACO members only" }, [el("div", { class: "row-main" }, [
-        el("span", { class: "row-ico", text: String(i + 1) }),
-        el("div", { class: "row-body" }, [el("h3", {}, [el("span", { class: "blur", "aria-hidden": "true", text: i ? "Provider two" : "Provider one" }), el("span", { class: "pill best", text: "ACO members" })]), el("p", { text: c.who })]),
-        el("div", { class: "rate" }, [el("div", { class: "track" }, [lf]), el("span", { class: "num", text: "••%" })]),
-        el("span", { class: "caret", text: "🔒", "aria-hidden": "true" })
-      ])]));
-      return;
-    }
-    var fill = el("i");
-    var head = el("button", { class: "row-main", type: "button", "aria-expanded": "false" }, [
-      el("span", { class: "row-ico", text: String(i + 1) }),
-      el("div", { class: "row-body" }, [el("h3", { text: c.name }), el("p", { text: c.who })]),
-      el("div", { class: "rate" }, [el("div", { class: "track" }, [fill]), el("span", { class: "num", text: c.rate + "%" })]),
-      el("span", { class: "caret", text: "▾", "aria-hidden": "true" })
-    ]);
-    var binV = el("div", { class: "v bin" });
-    if (c.bin) { binV.append(c.bin + " ", el("span", { class: "mask", text: "••" })); } else { binV.textContent = "Several"; }
-    var facts = el("div", { class: "facts" }, [
-      el("div", {}, [el("div", { class: "k", text: "Who can get it" }), el("div", { class: "v", text: c.who })]),
-      el("div", {}, [el("div", { class: "k", text: "Card range" }), binV]),
-      el("div", {}, [el("div", { class: "k", text: "Hit rate" }), el("div", { class: "v num", text: c.rate + "%" })])
-    ]);
-    var more = el("div", { class: "row-more" }, [facts, el("p", { class: "dim", text: c.note })]);
-    if (c.href) more.append(el("div", { class: "btn-row", style: "margin-top:16px" }, [el("a", { class: "btn small primary", href: c.href, target: "_blank", rel: "sponsored noopener", text: c.cta })]));
-    var row = el("div", { class: "row" + (c.low ? " low" : ""), "open-state": "0" }, [head, more]);
-    head.addEventListener("click", function () {
-      var open = row.getAttribute("open-state") === "1";
-      row.setAttribute("open-state", open ? "0" : "1"); head.setAttribute("aria-expanded", open ? "false" : "true");
+  var $ = function (id) { return document.getElementById(id); }, calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var N = CARDS.length, sel = 2, rows = [], dots = [], timers = [], hund = $("hund");
+  $("asof").textContent = "Updated " + AS_OF;
+  for (var i = 0; i < 100; i++) { var d = el("i"); hund.append(d); dots.push(d); }
+
+  // the 100: fire them one after another, the card's share land green
+  function run(c) {
+    timers.forEach(clearTimeout); timers = []; dots.forEach(function (d) { d.className = c.locked ? "lk" : ""; });
+    var out = $("b-rate");
+    if (c.locked) { out.textContent = "??"; return; }
+    var order = dots.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; }), hit = 0;
+    if (calm) { order.forEach(function (ix, n) { dots[ix].className = n < c.rate ? "hit" : "miss"; }); out.textContent = c.rate; return; }
+    out.textContent = "0";
+    var wins = {}; order.slice(0, c.rate).forEach(function (ix) { wins[ix] = 1; });
+    dots.forEach(function (d, ix) {
+      timers.push(setTimeout(function () { d.className = wins[ix] ? "hit" : "miss"; if (wins[ix]) out.textContent = ++hit; }, 120 + ix * 11 + Math.random() * 60));
     });
-    box.append(row);
-    requestAnimationFrame(function () { setTimeout(function () { fill.style.width = c.rate + "%"; }, 60 * i); });
+    timers.push(setTimeout(function () { out.textContent = c.rate; }, 120 + 100 * 11 + 120));
+  }
+  function show(i, quiet) {
+    sel = (i + N) % N; var c = CARDS[sel], face = $("pc");
+    face.classList.toggle("locked", !!c.locked); face.classList.remove("flip"); void face.offsetWidth; face.classList.add("flip");
+    $("pc-name").textContent = c.locked ? "ACO members" : c.name;
+    $("pc-who").textContent = c.locked ? "Locked" : c.who;
+    $("pc-bin").textContent = c.locked ? "•••• •••• •••• ••••" : (c.bin ? c.bin + " ••·· ···· ····" : "several ranges");
+    var ico = $("pc-ico"); ico.hidden = !c.ico; if (c.ico) ico.src = c.ico;
+    $("b-rank").textContent = "No. " + (sel + 1) + " of " + N + (c.locked ? " · shared with members" : "");
+    $("b-count").textContent = String(sel + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+    $("b-note").textContent = c.locked ? "This one beats everything listed below it. The name, the card range and the rate are in the members' app." : c.note;
+    var cta = $("b-cta"); cta.hidden = !(c.locked || c.href);
+    if (c.locked) { cta.href = "aco.html"; cta.textContent = "How the ACO works"; cta.removeAttribute("target"); }
+    else if (c.href) { cta.href = c.href; cta.textContent = c.cta; cta.setAttribute("target", "_blank"); }
+    $("b-again").hidden = !!c.locked;
+    rows.forEach(function (r, n) { r.setAttribute("aria-pressed", n === sel ? "true" : "false"); });
+    run(c);
+    if (!quiet && innerWidth < 900) document.querySelector(".bench").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+  }
+
+  // the ranking
+  CARDS.forEach(function (c, i) {
+    var fill = el("i"); fill.style.width = (c.locked ? 100 : c.rate) + "%";
+    var r = el("button", { class: "rk" + (c.locked ? " locked" : ""), type: "button", "aria-pressed": "false" }, [
+      el("span", { class: "label", text: String(i + 1).padStart(2, "0") }),
+      el("b", { class: "disp", text: c.locked ? "Members only" : c.name }),
+      el("span", { class: "rk-who", text: c.locked ? "Higher than anything below" : c.who }),
+      el("span", { class: "rk-t" }, [fill]),
+      el("span", { class: "num", text: c.locked ? "??%" : c.rate + "%" })
+    ]);
+    r.addEventListener("click", function () { show(i); });
+    $("rank").append(r); rows.push(r);
   });
+
+  // the card leans toward the pointer
+  var stage = $("pc-stage"), face = $("pc");
+  stage.addEventListener("pointermove", function (e) {
+    if (calm) return; var b = stage.getBoundingClientRect(), x = (e.clientX - b.left) / b.width - .5, y = (e.clientY - b.top) / b.height - .5;
+    face.style.setProperty("--rx", (-y * 16).toFixed(2) + "deg"); face.style.setProperty("--ry", (x * 22).toFixed(2) + "deg"); face.style.setProperty("--sx", ((x + .5) * 100).toFixed(1) + "%");
+  });
+  stage.addEventListener("pointerleave", function () { face.style.setProperty("--rx", "0deg"); face.style.setProperty("--ry", "0deg"); });
+  $("b-prev").addEventListener("click", function () { show(sel - 1, true); }); $("b-next").addEventListener("click", function () { show(sel + 1, true); });
+  $("b-again").addEventListener("click", function () { run(CARDS[sel]); });
+  document.addEventListener("keydown", function (e) { if (e.target.closest("input, textarea")) return; if (e.key === "ArrowLeft") show(sel - 1, true); if (e.key === "ArrowRight") show(sel + 1, true); });
+  show(sel, true);
 });
 </script>
 </body>
