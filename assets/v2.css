@@ -614,3 +614,4 @@ ul.field-what li.more { color: var(--dim); }
 .bench-act { min-height: 104px; align-content: flex-start; }
 .bench-n .disp { white-space: nowrap; }
 @media (max-width: 900px) { .bench-card { padding-top: 0; } .bench-act { min-height: 0; } .bench-dl { min-height: 0; } }
+.bench-dl { min-height: 136px; } .pc-top .label { margin-left: auto; }
