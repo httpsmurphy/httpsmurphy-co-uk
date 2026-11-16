@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Murph ACO · we run the drops for you · httpsmurphy</title>
-<meta name="description" content="Murph ACO runs Pokémon Center, Topps and lowkey drops on your profiles. You pay a share of the profit, only on orders that land.">
+<meta name="description" content="Murph ACO, the largest UK cook group, runs Pokémon Center and Topps drops on your profiles. You pay a share of the profit, only on orders that land.">
 <link rel="icon" href="icons/murphaco.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,15 +18,15 @@
 
 <section class="aco-hero"><div class="wrap aco-hero-in">
   <div>
-    <span class="label"><b>Murph ACO</b> · UK checkout group</span>
+    <span class="label"><b>Murph ACO</b> · the largest UK cook group</span>
     <h1 class="disp">We run the drops. You pay when it <span>lands.</span></h1>
-    <p class="aco-lede">No bots to buy and no servers to rent. You give us your profiles, we run them the second stock goes live, and you pay 20% of the profit on what checks out. Nothing if it doesn't.</p>
+    <p class="aco-lede">No bots to buy and no servers to rent. You give us your profiles, we jig every one of them for you, we run them the second stock goes live, and you pay 20% of the profit on what checks out. Nothing if it doesn't.</p>
     <div class="hero2-btns"><a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a><a class="btn" href="https://discord.gg/murph-aco" target="_blank" rel="noopener">Join the Discord</a></div>
   </div>
 </div></section>
 
 <section class="cover" aria-label="Recent checkouts">
-  <div class="wrap cover-head"><span class="label">Success · real cards from the members' channel</span><div class="tl-keys"><button type="button" id="cv-prev" aria-label="Previous">←</button><button type="button" id="cv-next" aria-label="Next">→</button></div></div>
+  <div class="wrap cover-head"><span class="label">We don't need to call ourselves the best · <b>this is what members post</b></span><div class="tl-keys"><button type="button" id="cv-prev" aria-label="Previous">←</button><button type="button" id="cv-next" aria-label="Next">→</button></div></div>
   <div class="cover-stage" id="cover" tabindex="0"></div>
 </section>
 
@@ -37,7 +37,7 @@
       <div><span class="label">status</span><b id="w-status">Waiting</b></div>
       <div><span class="label">running</span><b class="num" id="w-run">0</b></div>
       <div><span class="label">landed</span><b class="num hot" id="w-hit">0</b></div>
-      <div><span class="label">yours</span><b class="num hot" id="w-mine">0 / 8</b></div>
+      <div><span class="label">yours</span><b class="num hot" id="w-mine">0 / 22</b></div>
       <button type="button" class="btn" id="w-play">Run it again</button>
     </div>
   </div>
@@ -64,7 +64,6 @@
 <section class="doors aco-runs"><div class="wrap">
   <div class="door rise"><span class="label">01</span><span class="disp">Pokémon Center</span><span class="door-sub">Every UK drop, pre-orders and restocks, across our machines and our runners'.</span><span></span></div>
   <div class="door rise"><span class="label">02</span><span class="disp">Topps</span><span class="door-sub">Scheduled releases on your own Topps logins. One per profile or the maximum, your choice.</span><span></span></div>
-  <div class="door rise"><span class="label">03</span><span class="disp">Lowkey drops</span><span class="door-sub">The ones that aren't on everyone's radar. Announced in the group when they're worth running.</span><span></span></div>
 </div></section>
 
 <section class="app"><div class="wrap">
@@ -111,7 +110,8 @@ var FEATS = {
     ["An assistant that helps you scale", "It knows the per-address limits, which card ranges are being run, and what's holding a profile back."],
     ["Bulk profile tools", "Edit every postcode in view, swap cards between profiles, keep spare cards ready for drop day."],
     ["War room", "See exactly which of your profiles are loaded and running, live, on every drop."],
-    ["Four per postcode", "Push an address harder on Pokémon Center when you want to, postcode by postcode."],
+    ["We jig the whole profile", "Not just the address. You give us one clean profile and we jig all of it for you, so every order stands on its own."],
+    ["Four per postcode", "Our jigs let one postcode carry four orders on Pokémon Center. You choose which postcodes to push."],
     ["Inbox linking", "Link an inbox and dispatch and cancellation emails move your orders on by themselves."],
     ["Full card data", "The complete hit rates by card range, updated after each drop."]
   ]
@@ -120,7 +120,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); };
   // success posts as a coverflow: the one in the middle faces you, the rest fan away. Drag, arrows, or leave it to turn.
   (function () {
-    var SLIPS = []; for (var q = 1; q <= 18; q++) SLIPS.push("success/s" + (q < 10 ? "0" : "") + q + ".webp");
+    // the twelve biggest cards posted in the members' channel, names and avatars hidden; ordered so the same artwork never sits side by side
+    var SLIPS = [4, 1, 5, 3, 7, 10, 2, 8, 6, 11, 12, 9].map(function (q) { return "success/s" + (q < 10 ? "0" : "") + q + ".webp"; });
     var stage = $("cover"), cards = [], pos = Math.floor(SLIPS.length / 2), held = null, moved = false, auto, calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
     SLIPS.forEach(function (src, i) {
       var n = el("button", { class: "shot", type: "button", "aria-label": "Success card " + (i + 1) + " of " + SLIPS.length }, [el("img", { src: src, alt: "A member's Murph ACO success card", width: "1000", height: "562", loading: "lazy", draggable: "false" })]);
@@ -152,21 +153,21 @@ document.addEventListener("DOMContentLoaded", function () {
   (function () {
     var grid = $("w-grid"), N = innerWidth < 700 ? 120 : 240, cells = [], mine = {}, timers = [], calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
     for (var i = 0; i < N; i++) { var c = el("i"); grid.append(c); cells.push(c); }
-    while (Object.keys(mine).length < 8) mine[Math.floor(Math.random() * N)] = 1;
+    while (Object.keys(mine).length < 22) mine[Math.floor(Math.random() * N)] = 1;
     for (var k in mine) cells[k].classList.add("mine");
     function set(id, v) { $(id).textContent = v; }
     function play() {
       timers.forEach(clearTimeout); timers = [];
       cells.forEach(function (c) { c.className = c.classList.contains("mine") ? "mine" : ""; });
-      var run = 0, hit = 0, my = 0; set("w-run", 0); set("w-hit", 0); set("w-mine", "0 / 8"); set("w-status", "Queue open"); $("w-status").className = "";
+      var run = 0, hit = 0, my = 0; set("w-run", 0); set("w-hit", 0); set("w-mine", "0 / 22"); set("w-status", "Queue open"); $("w-status").className = "";
       var order = cells.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; });
       order.forEach(function (ix, n) {
         var start = calm ? 0 : 500 + n * 9 + Math.random() * 300;
         timers.push(setTimeout(function () { cells[ix].classList.add("run"); set("w-run", ++run); if (n === 0) { set("w-status", "Live"); $("w-status").className = "hot"; } }, start));
-        var roll = Math.random(), res = roll < .58 ? "hit" : roll < .74 ? "miss" : "none";
+        var roll = Math.random(), res = mine[ix] ? "hit" : roll < .58 ? "hit" : roll < .74 ? "miss" : "none";
         timers.push(setTimeout(function () {
           cells[ix].classList.remove("run"); cells[ix].classList.add(res); set("w-run", --run);
-          if (res === "hit") { set("w-hit", ++hit); if (mine[ix]) set("w-mine", ++my + " / 8"); }
+          if (res === "hit") { set("w-hit", ++hit); if (mine[ix]) set("w-mine", ++my + " / 22"); }
         }, calm ? 0 : start + 1800 + Math.random() * 4200));
       });
       timers.push(setTimeout(function () { set("w-status", "Sold out"); $("w-status").className = ""; }, calm ? 0 : 9200));
