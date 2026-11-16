@@ -735,7 +735,9 @@ ul.field-what li { white-space: nowrap; overflow: hidden; text-overflow: ellipsi
   /* home: the number has its own fixed gap (no vh, which moves when the address bar slides), no previews on the doors */
   body.v2 .hero2.home { height: auto; min-height: 0; }
   body.v2 .hero2.home .hero2-in { gap: clamp(230px, 70vw, 300px); padding-bottom: 34px; }
-  body.v2 .hero2.home .fact { min-height: 178px; }   /* same height for a one-line and a two-line caption, so the number never jumps */
+  body.v2 .hero2.home .fact { min-height: 150px; padding-top: 22px; }
+  body.v2 .hero2.home .fact-cap { min-height: 0; }   /* the caption fits one line on a phone, so don't hold room for two */
+  body.v2 .hero2.home .fact { align-content: start; }   /* same height for a one-line and a two-line caption, so the number never jumps */
   body.v2 .door-prev { display: none; }   /* previews made the page crowded on a phone */
 
   /* setup: the spiral, sized for a phone. Cards far round the ring are clipped so they can't sit on the text,
