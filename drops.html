@@ -17,7 +17,10 @@
 <body class="v2">
 <main>
 
-<nav class="sites" aria-label="Retailer"><div class="wrap sites-in" id="sites"></div></nav>
+<section class="rip" aria-label="Pick a retailer">
+  <div class="wrap rip-head"><span class="label">Drop history · pick a retailer</span><span class="label">drag or scroll fast</span></div>
+  <div class="rip-view" id="rip" tabindex="0"><div class="rip-track" id="sites"></div></div>
+</section>
 
 <div id="soon" hidden><div class="wrap soon-in">
   <span class="label">Drop history</span>
@@ -189,16 +192,39 @@ document.addEventListener("DOMContentLoaded", function () {
   paint(); window.addEventListener("resize", paint);
 
   // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
-  var SITES = ["Pokémon Center", "Argos", "John Lewis", "Very", "Asda", "Hamleys", "Miniso", "Topps"], sbox = $("sites");
+  var SITES = [["Pokémon Center", drops.length + " drops"], ["Argos", "soon"], ["John Lewis", "soon"], ["Very", "soon"], ["Asda", "soon"], ["Hamleys", "soon"], ["Miniso", "soon"], ["Topps", "soon"], ["Selfridges", "soon"], ["Smyths", "soon"]];
+  var sbox = $("sites"), view = $("rip"), cards = [], sx = 0, sv = 0, amp = 0, rheld = null, rmoved = false, rraf = 0;
   function pickSite(n) {
-    sbox.querySelectorAll("button").forEach(function (b, i) { b.setAttribute("aria-pressed", i === n ? "true" : "false"); });
-    $("pkc").hidden = n !== 0; $("soon").hidden = n === 0; $("soon-name").textContent = SITES[n];
+    cards.forEach(function (c, i) { c.setAttribute("aria-pressed", i === n ? "true" : "false"); });
+    $("pkc").hidden = n !== 0; $("soon").hidden = n === 0; $("soon-name").textContent = SITES[n][0];
     if (n === 0) paint();
   }
-  SITES.forEach(function (name, i) {
-    var b = el("button", { type: "button", "aria-pressed": i ? "false" : "true" }, [name]); if (i) b.append(el("small", { text: "soon" }));
-    b.addEventListener("click", function () { pickSite(i); }); sbox.append(b);
+  SITES.forEach(function (site, i) {
+    var c = el("button", { class: "rip-card" + (i ? " soon" : ""), type: "button", "aria-pressed": i ? "false" : "true" }, [
+      el("span", { class: "label", text: String(i + 1).padStart(2, "0") }), el("b", { class: "disp", text: site[0] }), el("small", { text: site[1] })]);
+    c.addEventListener("click", function () { if (!rmoved) pickSite(i); });
+    sbox.append(c); cards.push(c);
   });
+  // ripple: move it quickly and a wave runs along the row; it settles when you stop
+  function limit() { return Math.max(0, sbox.scrollWidth - view.clientWidth); }
+  function rframe() {
+    sx = Math.max(-60, Math.min(limit() + 60, sx + sv)); sv *= .93;
+    if (!rheld) { if (sx < 0) sx += (0 - sx) * .2; if (sx > limit()) sx += (limit() - sx) * .2; }
+    amp += (Math.min(44, Math.abs(sv) * 2.4) - amp) * .12;
+    sbox.style.transform = "translateX(" + (-sx) + "px)";
+    cards.forEach(function (c, i) {
+      var ph = i * .85 - sx / 70;
+      c.style.transform = "translateY(" + Math.sin(ph) * amp + "px) rotate(" + Math.cos(ph) * amp * .11 + "deg) scale(" + (1 + Math.sin(ph) * amp * .0022) + ")";
+    });
+    if (Math.abs(sv) > .05 || amp > .2 || rheld || sx < 0 || sx > limit()) rraf = requestAnimationFrame(rframe); else { rraf = 0; cards.forEach(function (c) { c.style.transform = ""; }); }
+  }
+  function kick() { if (!rraf) rraf = requestAnimationFrame(rframe); }
+  view.addEventListener("pointerdown", function (e) { rheld = { x: e.clientX, last: e.clientX }; rmoved = false; document.body.classList.add("grabbing"); kick(); });
+  window.addEventListener("pointermove", function (e) { if (!rheld) return; var dx = rheld.last - e.clientX; rheld.last = e.clientX; if (Math.abs(e.clientX - rheld.x) > 5) rmoved = true; sx += dx; sv = dx; });
+  window.addEventListener("pointerup", function () { if (!rheld) return; rheld = null; document.body.classList.remove("grabbing"); kick(); setTimeout(function () { rmoved = false; }, 0); });
+  view.addEventListener("wheel", function (e) { var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0; if (!d) return; e.preventDefault(); sv += d * .12; kick(); }, { passive: false });
+  view.addEventListener("keydown", function (e) { if (e.key === "ArrowRight") { sv += 14; kick(); } if (e.key === "ArrowLeft") { sv -= 14; kick(); } });
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(function () { sv = 16; kick(); setTimeout(function () { sv = -16; kick(); }, 520); }, 500);
   $("soon-back").addEventListener("click", function () { pickSite(0); });
 
   // ---- pattern 1: window grid ----
