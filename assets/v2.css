@@ -625,3 +625,18 @@ ul.field-what li.more { color: var(--dim); }
 .soon-in { padding-top: clamp(46px, 7vw, 90px); }
 #soon { border-top: 1px solid transparent; }
 .ledger-more [hidden], .btn[hidden] { display: none; }
+
+/* ---------- moving between pages: the header stays put, the orange tab slides to the new page, the page rises in ---------- */
+@view-transition { navigation: auto; }
+.v2 .site-head { view-transition-name: site-head; }
+.v2 .nav a[aria-current="page"] { view-transition-name: nav-pill; }
+.v2 main { view-transition-name: page; }
+.v2 .site-foot { view-transition-name: site-foot; }
+::view-transition-old(page) { animation: vt-out .2s ease both; }
+::view-transition-new(page) { animation: vt-in .55s cubic-bezier(.16, 1, .3, 1) both; }
+::view-transition-old(site-foot), ::view-transition-new(site-foot) { animation: none; }
+::view-transition-group(nav-pill) { animation-duration: .5s; animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+::view-transition-old(nav-pill), ::view-transition-new(nav-pill) { height: 100%; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-14px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(34px); } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }

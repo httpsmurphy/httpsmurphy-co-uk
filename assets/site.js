@@ -1,7 +1,9 @@
 // Shared by every page: header, footer, theme switch, and the drop-history maths.
 (function () {
   const PAGES = [["index.html", "Home"], ["setup.html", "Setup"], ["aco.html", "ACO"], ["drops.html", "Drop history"], ["cards.html", "Card hit rates"]];
-  const here = (location.pathname.split("/").pop() || "index.html");
+  // the host serves /cards as well as /cards.html, so compare page names without the extension
+  const bare = s => (s || "").replace(/\.html$/, "") || "index";
+  const here = bare(location.pathname.split("/").pop());
 
   function el(tag, attrs, kids) {
     const n = document.createElement(tag);
@@ -26,7 +28,9 @@
   function header() {
     const nav = el("nav", { class: "nav", "aria-label": "Main" }, PAGES.map(([href, name]) => {
       const a = el("a", { href: href, text: name });
-      if (href === here) a.setAttribute("aria-current", "page");
+      if (bare(href) === here) a.setAttribute("aria-current", "page");
+      // fetch the page as soon as the pointer is on its link, so the switch feels instant
+      a.addEventListener("pointerenter", () => { if (!a._pre && bare(href) !== here) { a._pre = 1; document.head.append(el("link", { rel: "prefetch", href: href })); } }, { once: true });
       return a;
     }));
     const btn = el("button", { class: "theme-btn", type: "button", "aria-label": "Switch between light and dark" }, [el("span", { class: "knob", "aria-hidden": "true" })]);
