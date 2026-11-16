@@ -21,7 +21,7 @@
   }
   let saved = null;
   try { saved = localStorage.getItem("theme"); } catch (e) {}
-  setTheme(saved);
+  setTheme(saved === "light" ? "light" : "dark");          // dark is the default; light only if they chose it
 
   function header() {
     const nav = el("nav", { class: "nav", "aria-label": "Main" }, PAGES.map(([href, name]) => {
@@ -29,7 +29,7 @@
       if (href === here) a.setAttribute("aria-current", "page");
       return a;
     }));
-    const btn = el("button", { class: "theme-btn", type: "button", "aria-label": "Switch between light and dark" }, [el("span", { class: "knob", "aria-hidden": "true", text: "◐" })]);
+    const btn = el("button", { class: "theme-btn", type: "button", "aria-label": "Switch between light and dark" }, [el("span", { class: "knob", "aria-hidden": "true" })]);
     btn.addEventListener("click", () => {
       const dark = getComputedStyle(document.documentElement).colorScheme.includes("dark");
       const next = dark ? "light" : "dark";

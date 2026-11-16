@@ -257,10 +257,15 @@ body.v2 { background: var(--bg); }
 .hx-card img, .door-prev img, .stack img { -webkit-user-drag: none; user-select: none; pointer-events: none; }
 .hx-card { -webkit-user-drag: none; }
 
-/* ---------- light / dark switch: the knob drops across and bounces ---------- */
-.v2 .theme-btn { width: 58px; height: 30px; border-radius: 99px; padding: 0; position: relative; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
-.v2 .theme-btn .knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: 12px; line-height: 1;
-  transition: transform .9s linear(0, .004, .016, .035, .063, .098, .141 13.6%, .25, .391, .563, .765, 1, .891 40.9%, .848, .813, .785, .766, .754, .75, .754, .766, .785, .813, .848, .891 68.2%, 1 72.7%, .973, .953, .941, .938, .941, .953, .973, 1, .988, .984, .988, 1); }
-:root[data-theme="light"] .v2 .theme-btn .knob { transform: translateX(28px) rotate(180deg); }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .v2 .theme-btn .knob { transform: translateX(28px) rotate(180deg); } }
-@media (prefers-reduced-motion: reduce) { .v2 .theme-btn .knob { transition: none; } }
+/* ---------- setup: the action row is pinned to the bottom of the panel, so the arrows never move ---------- */
+.hx-detail { display: flex; flex-direction: column; gap: 14px; height: min(78vh, 720px); min-height: 520px; padding: clamp(28px, 6vh, 64px) 0 clamp(28px, 6vh, 56px); }
+.hx-act { margin-top: auto; padding-top: 16px; justify-content: space-between; }
+@media (max-width: 900px) { .hx-detail { height: auto; min-height: 430px; } }
+
+/* ---------- light / dark switch: upright. Down = dark (default). The ball falls and bounces; it springs back up. ---------- */
+.v2 .theme-btn { width: 26px; height: 48px; border-radius: 99px; padding: 0; position: relative; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; flex: none; }
+.v2 .theme-btn .knob { position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink);
+  transform: translateY(22px);
+  transition: transform 1.2s linear(0, .004, .016, .035, .063, .098, .141 13.6%, .25, .391, .563, .765, 1, .891 40.9%, .848, .813, .785, .766, .754, .75, .754, .766, .785, .813, .848, .891 68.2%, 1 72.7%, .973, .953, .941, .938, .941, .953, .973, 1, .988, .984, .988, 1); }
+:root[data-theme="light"] .v2 .theme-btn .knob { transform: translateY(0); transition: transform .5s cubic-bezier(.34, 1.56, .64, 1); background: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .v2 .theme-btn .knob { transition: none !important; } }
