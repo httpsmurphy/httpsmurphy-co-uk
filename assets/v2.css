@@ -507,9 +507,15 @@ body.grabbing, body.grabbing * { user-select: none !important; -webkit-user-sele
 .aco-hero h1 { max-width: 13ch; }
 .cover { border-top: 1px solid var(--line); padding: 20px 0 6px; overflow: hidden; background: radial-gradient(40% 70% at 50% 55%, var(--accent-soft), transparent 70%); }
 .cover-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-.cover-stage { position: relative; height: 380px; perspective: 1300px; cursor: grab; touch-action: pan-y; outline: none; user-select: none; -webkit-user-select: none; }
+.cover-stage { position: relative; height: 440px; perspective: 1300px; cursor: grab; touch-action: pan-y; outline: none; user-select: none; -webkit-user-select: none; }
 .cover-stage .slip { position: absolute; left: 50%; top: 50%; width: min(330px, 78vw); text-align: left; color: var(--ink); cursor: pointer; animation: none; opacity: 1; transition: transform .8s cubic-bezier(.16, 1, .3, 1), opacity .5s, box-shadow .4s, border-color .3s; will-change: transform; backface-visibility: hidden; }
 .cover-stage.drag .slip { transition: opacity .2s; }
 .cover-stage .slip.on { border-color: var(--good); box-shadow: 0 30px 90px -30px color-mix(in srgb, var(--good) 70%, transparent); }
 .cover-stage .slip:nth-child(n) { opacity: 1; }
-@media (max-width: 700px) { .cover-stage { height: 340px; } }
+@media (max-width: 700px) { .cover-stage { height: 280px; } }
+
+/* real success cards in the coverflow */
+.cover-stage .shot { position: absolute; left: 50%; top: 50%; width: min(600px, 84vw); aspect-ratio: 16 / 9; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #0b0b0c; cursor: pointer; transition: transform .8s cubic-bezier(.16, 1, .3, 1), opacity .5s, box-shadow .4s, border-color .3s, filter .4s; will-change: transform; backface-visibility: hidden; filter: brightness(.55); }
+.cover-stage .shot img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.cover-stage.drag .shot { transition: opacity .2s; }
+.cover-stage .shot.on { filter: none; border-color: var(--good); box-shadow: 0 30px 90px -30px color-mix(in srgb, var(--good) 70%, transparent); }
