@@ -23,8 +23,12 @@
     <p class="aco-lede">No bots to buy and no servers to rent. You give us your profiles, we run them the second stock goes live, and you pay 20% of the profit on what checks out. Nothing if it doesn't.</p>
     <div class="hero2-btns"><a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a><a class="btn" href="https://discord.gg/murph-aco" target="_blank" rel="noopener">Join the Discord</a></div>
   </div>
-  <div class="feed" id="feed" aria-hidden="true"></div>
 </div></section>
+
+<section class="cover" aria-label="Recent checkouts">
+  <div class="wrap cover-head"><span class="label">Success · details blanked, like the real ones we post</span><div class="tl-keys"><button type="button" id="cv-prev" aria-label="Previous">←</button><button type="button" id="cv-next" aria-label="Next">→</button></div></div>
+  <div class="cover-stage" id="cover" tabindex="0"></div>
+</section>
 
 <section class="war"><div class="wrap">
   <div class="war-head">
@@ -114,22 +118,41 @@ var FEATS = {
 };
 document.addEventListener("DOMContentLoaded", function () {
   var $ = function (id) { return document.getElementById(id); };
-  // checkout slips: a stack that keeps turning over (details blanked, like the real ones we post)
-  var SLIPS = [["Pokémon Center GB", "Guest", "30th Celebration Elite Trainer Box"], ["Topps", "Account", "Museum Collection UEFA Club Competitions"], ["Pokémon Center GB", "Guest", "Delta Reign Elite Trainer Box"], ["Argos", "Collection", "Prismatic Evolutions ETB"], ["Pokémon Center GB", "Guest", "30th Celebration Mini Tin"]];
-  var feed = $("feed"), si = 0;
-  function slip() {
-    var d = SLIPS[si++ % SLIPS.length], now = new Date();
-    var n = el("div", { class: "slip" }, [
-      el("div", { class: "slip-top" }, [el("span", { text: "✓ Successful checkout" }), el("span", { class: "label", text: now.toLocaleTimeString("en-GB") })]),
-      el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Site" }), el("b", { text: d[0] })]), el("div", {}, [el("span", { class: "label", text: "Mode" }), el("b", { text: d[1] })])]),
-      el("div", {}, [el("span", { class: "label", text: "Product" }), el("b", { text: d[2] })]),
-      el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Profile" }), el("i", { class: "blank" })]), el("div", {}, [el("span", { class: "label", text: "Order" }), el("i", { class: "blank w2" })])])
-    ]);
-    feed.prepend(n);
-    while (feed.children.length > 3) feed.lastChild.remove();
-  }
-  slip(); slip(); slip();
-  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(slip, 2600);
+  // success posts as a coverflow: the one in the middle faces you, the rest fan away. Drag, arrows, or leave it to turn.
+  (function () {
+    var SLIPS = [["Pokémon Center GB", "Guest", "30th Celebration Elite Trainer Box", "16:33"], ["Topps", "Account", "Museum Collection UEFA Club Competitions", "13:00"], ["Pokémon Center GB", "Guest", "Delta Reign Elite Trainer Box", "17:18"],
+      ["Pokémon Center GB", "Guest", "30th Celebration Booster Bundle", "18:09"], ["Topps", "Account", "Hoops Basketball Hobby Box", "15:00"], ["Pokémon Center GB", "Guest", "30th Celebration Mini Tin", "17:55"],
+      ["Pokémon Center GB", "Guest", "Pitch Black Elite Trainer Box", "17:25"], ["Topps", "Account", "Flagship Bundesliga Jumbo Box", "14:00"], ["Pokémon Center GB", "Guest", "Prismatic Evolutions Booster Bundle", "18:27"]];
+    var stage = $("cover"), cards = [], pos = Math.floor(SLIPS.length / 2), held = null, moved = false, auto, calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    SLIPS.forEach(function (d, i) {
+      var n = el("button", { class: "slip", type: "button", "aria-label": d[2] + ", " + d[0] }, [
+        el("div", { class: "slip-top" }, [el("span", { text: "✓ Successful checkout" }), el("span", { class: "label", text: d[3] })]),
+        el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Site" }), el("b", { text: d[0] })]), el("div", {}, [el("span", { class: "label", text: "Mode" }), el("b", { text: d[1] })])]),
+        el("div", {}, [el("span", { class: "label", text: "Product" }), el("b", { text: d[2] })]),
+        el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Profile" }), el("i", { class: "blank" })]), el("div", {}, [el("span", { class: "label", text: "Order" }), el("i", { class: "blank w2" })])])
+      ]);
+      n.addEventListener("click", function () { if (!moved) go(i); });
+      stage.append(n); cards.push(n);
+    });
+    function lay() {
+      var step = Math.min(210, stage.clientWidth * .2);
+      cards.forEach(function (c, i) {
+        var o = i - pos, a = Math.abs(o), dir = o < 0 ? -1 : 1, near = Math.min(a, 1);
+        c.style.transform = "translate(-50%,-50%) translateX(" + (dir * (near * step * 1.25 + Math.max(0, a - 1) * step * .62)) + "px) translateZ(" + (-near * 190 - Math.max(0, a - 1) * 70) + "px) rotateY(" + (-dir * near * 56) + "deg)";
+        c.style.opacity = String(Math.max(0, 1 - Math.max(0, a - 1.2) * .34)); c.style.zIndex = String(100 - Math.round(a * 10));
+        c.classList.toggle("on", a < .5);
+      });
+    }
+    function go(i) { pos = (Math.round(i) + SLIPS.length) % SLIPS.length; stage.classList.remove("drag"); lay(); rest(); }
+    function rest() { clearInterval(auto); if (!calm) auto = setInterval(function () { go(pos + 1); }, 3200); }
+    stage.addEventListener("pointerdown", function (e) { held = { x: e.clientX, p: pos }; moved = false; clearInterval(auto); document.body.classList.add("grabbing"); });
+    window.addEventListener("pointermove", function (e) { if (!held) return; var d = (held.x - e.clientX) / 190; if (Math.abs(d) > .05) { moved = true; stage.classList.add("drag"); } pos = Math.max(0, Math.min(SLIPS.length - 1, held.p + d)); lay(); });
+    window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!held) return; held = null; go(pos); setTimeout(function () { moved = false; }, 0); });
+    stage.addEventListener("keydown", function (e) { if (e.key === "ArrowLeft") go(pos - 1); if (e.key === "ArrowRight") go(pos + 1); });
+    $("cv-prev").addEventListener("click", function () { go(pos - 1); }); $("cv-next").addEventListener("click", function () { go(pos + 1); });
+    stage.addEventListener("pointerenter", function () { clearInterval(auto); }); stage.addEventListener("pointerleave", function () { if (!held) rest(); });
+    window.addEventListener("resize", lay); lay(); rest();
+  })();
 
   // war room demo: a made-up drop played out on a grid of profiles
   (function () {
