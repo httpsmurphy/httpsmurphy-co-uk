@@ -17,6 +17,16 @@
 <body class="v2">
 <main>
 
+<nav class="sites" aria-label="Retailer"><div class="wrap sites-in" id="sites"></div></nav>
+
+<div id="soon" hidden><div class="wrap soon-in">
+  <span class="label">Drop history</span>
+  <h1 class="disp" id="soon-name"></h1>
+  <p>No history for this one yet. It's being collected and will appear here in the same form as Pokémon Center: when it dropped, what went live, and how long it lasted.</p>
+  <button type="button" class="btn primary" id="soon-back">Back to Pokémon Center</button>
+</div></div>
+
+<div id="pkc">
 <section class="dh-top"><div class="wrap">
   <span class="label">Pokémon Center UK · drop history</span>
   <div class="since"><span class="n" id="c-d">0</span><span class="disp">days since<br>the last drop</span></div>
@@ -24,18 +34,26 @@
   <h1 class="dh-line" id="d-head"></h1>
 </div></section>
 
-<section class="tl"><div class="wrap">
-  <div class="tl-head">
-    <span class="label">Scrub through every drop · <b>taller = more products</b> · orange = pre-order</span>
-    <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
+<section class="field-wrap"><div class="wrap field-grid">
+  <div class="field" id="field" tabindex="0" role="listbox" aria-label="Every drop. Drag to move around, or use the arrow keys."></div>
+  <div class="field-read" aria-live="polite">
+    <span class="label" id="r-day"></span>
+    <div class="disp" id="r-date"></div>
+    <p class="field-what" id="r-what"></p>
+    <dl class="field-dl">
+      <div><dt class="label">queue</dt><dd class="num" id="r-q"></dd></div>
+      <div><dt class="label">went live</dt><dd class="num" id="r-live"></dd></div>
+      <div><dt class="label">sold out</dt><dd class="num" id="r-oos"></dd></div>
+    </dl>
+    <div class="field-act">
+      <div class="tl-keys"><button type="button" id="tl-prev" aria-label="Earlier drop">←</button><button type="button" id="tl-next" aria-label="Later drop">→</button></div>
+      <span class="label" id="r-count"></span>
+      <button type="button" class="btn" id="r-open">See it in the record</button>
+    </div>
   </div>
-  <div class="tl-stage" id="tl" tabindex="0" role="slider" aria-label="Drop timeline. Use the arrow keys to move between drops." aria-valuemin="1"></div>
-  <div class="tl-read">
-    <div class="when"><div class="label" id="r-day"></div><div class="disp" id="r-date"></div></div>
-    <div class="what" id="r-what"></div>
-    <div class="took" id="r-took"><div class="label" id="r-lab">products</div><div class="disp" id="r-n"></div></div>
-  </div>
-</div></section>
+</div>
+<div class="wrap"><p class="field-key label">drag the field · bigger = more products · <b>orange = pre-order</b></p></div>
+</section>
 
 <section class="dfacts"><div class="wrap">
   <div class="facts-row">
@@ -85,6 +103,7 @@
   <div class="ledger-more"><button type="button" class="btn" id="all-btn"></button><span class="label" id="count"></span></div>
   <p class="war-note">Pokémon Center UK only for now. Times are UK time, collected from public sources, and can be incomplete. Drop data from <a href="https://www.isthereadroptoday.com/drops" rel="noopener" target="_blank">isthereadroptoday.com</a>, shared under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.</p>
 </div></section>
+</div>
 
 </main>
 <script>
@@ -109,53 +128,78 @@ document.addEventListener("DOMContentLoaded", function () {
   var avg = Math.round(stats.avgGap), over = Math.floor(sinceDays) - avg;
   $("d-head").append("They drop every ", el("em", { text: avg + " days" }), " on average. ", over > 0 ? "We're " + over + " past that." : over < 0 ? "We're " + (-over) + " short of that." : "That's today.");
 
-  // ---- timeline ----
-  var stage = $("tl"), order = drops.slice().reverse(), sel = order.length - 1;
-  var t0 = Date.parse(order[0].date), t1 = Date.now(), maxItems = 1, k; order.forEach(function (d) { maxItems = Math.max(maxItems, d.items.length); });
-  var NS = "http://www.w3.org/2000/svg", bars = [], cursor;
-  function svgEl(tag, attrs) { var n = document.createElementNS(NS, tag); for (var a in attrs) n.setAttribute(a, attrs[a]); return n; }
-  function build() {
-    stage.textContent = ""; bars = [];
-    var W = stage.clientWidth, H = stage.clientHeight, base = H - 26, top = 10;
-    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, "aria-hidden": "true" });
-    svg.append(svgEl("line", { x1: 0, y1: base, x2: W, y2: base, class: "axis" }));
-    for (var y = new Date(t0).getFullYear(); y <= new Date(t1).getFullYear(); y++) {
-      var xt = Math.max(0, (Date.UTC(y, 0, 1) - t0) / (t1 - t0) * W);
-      svg.append(svgEl("line", { x1: xt, y1: top, x2: xt, y2: base + 6, class: "axis" }));
-      var lab = svgEl("text", { x: xt + 6, y: H - 4, class: "yr" }); lab.textContent = y; svg.append(lab);
-    }
-    var bw = Math.max(3, Math.min(9, W / 150));
-    order.forEach(function (d) {
-      var x = (Date.parse(d.date) - t0) / (t1 - t0) * (W - bw), h = 16 + (d.items.length / maxItems) * (base - top - 16);
-      var r = svgEl("rect", { x: x, y: base - h, width: bw, height: h, rx: 1.5, class: "bar" + (d.pre ? " has" : "") }); r._x = x + bw / 2; svg.append(r); bars.push(r);
-    });
-    cursor = svgEl("line", { y1: 0, y2: base, class: "cursor" }); svg.append(cursor);
-    stage.append(svg); stage.setAttribute("aria-valuemax", order.length); show(sel);
+  // ---- the field: every drop as a bubble you drag around; the one in the middle is the one you're reading ----
+  var field = $("field"), N = drops.length, bub = [], ox = 0, oy = 0, vx = 0, vy = 0, sel = 0, held = null, moved = false, raf = 0, maxItems = 1;
+  drops.forEach(function (d) { maxItems = Math.max(maxItems, d.items.length); });
+  // hex spiral: newest in the middle, older ones wind outwards
+  var GAP = 112, spots = [[0, 0]], ring = 1;
+  while (spots.length < N) {
+    var q = ring, r = 0, dirs = [[-1, 1], [-1, 0], [0, -1], [1, -1], [1, 0], [0, 1]];
+    for (var s6 = 0; s6 < 6 && spots.length < N; s6++) for (var st = 0; st < ring && spots.length < N; st++) { spots.push([q, r]); q += dirs[s6][0]; r += dirs[s6][1]; }
+    ring++;
   }
-  function show(i) {
-    sel = Math.max(0, Math.min(order.length - 1, i));
-    bars.forEach(function (b, n) { b.classList.toggle("on", n === sel); });
-    cursor.setAttribute("x1", bars[sel]._x); cursor.setAttribute("x2", bars[sel]._x);
-    var d = order[sel], n = d.items.length;
-    $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · queue " + d.queue;
-    $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit", timeZone: "UTC" });
-    var what = $("r-what"); what.textContent = "";
-    var names = d.items.map(function (x) { return Drops.itemName(x.name); });
-    what.append(el("b", { text: names[0] })); if (names.length > 1) what.append(" and " + (names.length - 1) + " more");
-    var live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
-    if (live) what.append(el("br"), "Live " + live.live + (oos ? ", sold out " + oos.oos : ""));
-    $("r-n").textContent = String(n); $("r-lab").textContent = n === 1 ? "product" : "products";
-    stage.setAttribute("aria-valuenow", sel + 1); stage.setAttribute("aria-valuetext", Drops.niceDate(d.date) + ", " + n + " products");
-  }
-  function nearest(cx) { var x = cx - stage.getBoundingClientRect().left, best = 0, gap = 1e9; bars.forEach(function (b, n) { var g = Math.abs(b._x - x); if (g < gap) { gap = g; best = n; } }); return best; }
-  stage.addEventListener("pointermove", function (e) { show(nearest(e.clientX)); });
-  stage.addEventListener("click", function (e) { show(nearest(e.clientX)); openRow(order[sel].date); });
-  stage.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowLeft") { show(sel - 1); e.preventDefault(); } if (e.key === "ArrowRight") { show(sel + 1); e.preventDefault(); }
-    if (e.key === "Enter") openRow(order[sel].date);
+  drops.forEach(function (d, i) {
+    var date = new Date(Date.parse(d.date));
+    var b = el("button", { class: "bub" + (d.pre ? " pre" : ""), type: "button", role: "option", "aria-label": Drops.niceDate(d.date) }, [
+      el("b", { text: String(date.getUTCDate()) }), el("small", { text: date.toLocaleDateString("en-GB", { month: "short", year: "2-digit", timeZone: "UTC" }) })]);
+    b._x = GAP * (spots[i][0] + spots[i][1] / 2); b._y = GAP * spots[i][1] * .866; b._s = .78 + .5 * d.items.length / maxItems;
+    b.addEventListener("click", function () { if (!moved) go(i); });
+    field.append(b); bub.push(b);
   });
-  $("tl-prev").addEventListener("click", function () { show(sel - 1); }); $("tl-next").addEventListener("click", function () { show(sel + 1); });
-  build(); var rz; window.addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(build, 120); });
+  function paint() {
+    var W = field.clientWidth, H = field.clientHeight, R = Math.min(W, H) * .62, best = 0, bd = 1e9;
+    bub.forEach(function (b, i) {
+      var x = b._x + ox, y = b._y + oy, d = Math.sqrt(x * x + y * y), t = Math.min(1, d / R);
+      var k = 1 - t * t * .78, pull = 1 - t * .22;                 // shrink and tuck in towards the edge, like a lens
+      b.style.transform = "translate(" + (W / 2 + x * pull) + "px," + (H / 2 + y * pull) + "px) translate(-50%,-50%) scale(" + Math.max(.16, k * b._s) + ")";
+      b.style.opacity = String(Math.max(.12, 1 - t * .85)); b.style.zIndex = String(Math.round((1 - t) * 100));
+      if (d < bd) { bd = d; best = i; }
+    });
+    if (best !== sel || !field._init) { field._init = 1; sel = best; read(sel); }
+    bub.forEach(function (b, i) { b.classList.toggle("on", i === sel); });
+  }
+  function read(i) {
+    var d = drops[i], live = d.items.filter(function (x) { return x.live; })[0], oos = d.items.filter(function (x) { return x.oos; })[0];
+    var names = d.items.map(function (x) { return Drops.itemName(x.name); });
+    $("r-day").textContent = (d.pre ? "Pre-order" : "In-stock drop") + " · " + names.length + (names.length === 1 ? " product" : " products");
+    $("r-date").textContent = new Date(Date.parse(d.date)).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    $("r-what").textContent = names[0] + (names.length > 1 ? " and " + (names.length - 1) + " more" : "");
+    $("r-q").textContent = d.queue; $("r-live").textContent = live ? live.live : "–"; $("r-oos").textContent = oos ? oos.oos : "–";
+    $("r-count").textContent = String(N - i).padStart(2, "0") + " / " + N;
+    var box = document.querySelector(".field-read"); box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
+  }
+  function glide(tx, ty) {
+    cancelAnimationFrame(raf);
+    (function step() { ox += (tx - ox) * .16; oy += (ty - oy) * .16; paint(); if (Math.abs(tx - ox) + Math.abs(ty - oy) > .5) raf = requestAnimationFrame(step); else { ox = tx; oy = ty; paint(); } })();
+  }
+  function go(i) { i = Math.max(0, Math.min(N - 1, i)); glide(-bub[i]._x, -bub[i]._y); }
+  field.addEventListener("pointerdown", function (e) { held = { x: e.clientX, y: e.clientY, ox: ox, oy: oy }; moved = false; cancelAnimationFrame(raf); document.body.classList.add("grabbing"); });
+  window.addEventListener("pointermove", function (e) {
+    if (!held) return; var dx = e.clientX - held.x, dy = e.clientY - held.y; if (Math.abs(dx) + Math.abs(dy) > 5) moved = true;
+    vx = held.ox + dx - ox; vy = held.oy + dy - oy; ox = held.ox + dx; oy = held.oy + dy; paint();
+  });
+  window.addEventListener("pointerup", function () { document.body.classList.remove("grabbing"); if (!held) return; held = null; if (moved) go(sel); setTimeout(function () { moved = false; }, 0); });
+  field.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") { go(sel + 1); e.preventDefault(); }
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") { go(sel - 1); e.preventDefault(); }
+    if (e.key === "Enter") openRow(drops[sel].date);
+  });
+  $("tl-prev").addEventListener("click", function () { go(sel + 1); }); $("tl-next").addEventListener("click", function () { go(sel - 1); });
+  $("r-open").addEventListener("click", function () { openRow(drops[sel].date); });
+  paint(); window.addEventListener("resize", paint);
+
+  // ---- retailers: Pokémon Center has data, the rest are placeholders until theirs is collected ----
+  var SITES = ["Pokémon Center", "Argos", "John Lewis", "Very", "Asda", "Hamleys", "Miniso", "Topps"], sbox = $("sites");
+  function pickSite(n) {
+    sbox.querySelectorAll("button").forEach(function (b, i) { b.setAttribute("aria-pressed", i === n ? "true" : "false"); });
+    $("pkc").hidden = n !== 0; $("soon").hidden = n === 0; $("soon-name").textContent = SITES[n];
+    if (n === 0) paint();
+  }
+  SITES.forEach(function (name, i) {
+    var b = el("button", { type: "button", "aria-pressed": i ? "false" : "true" }, [name]); if (i) b.append(el("small", { text: "soon" }));
+    b.addEventListener("click", function () { pickSite(i); }); sbox.append(b);
+  });
+  $("soon-back").addEventListener("click", function () { pickSite(0); });
 
   // ---- pattern 1: window grid ----
   var win = $("win"), hours = [14, 15, 16, 17, 18, 19, 20, 21, 22], peak = 1; for (k in stats.grid) peak = Math.max(peak, stats.grid[k]);
