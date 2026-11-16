@@ -3,63 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Murph ACO: we run the drops for you · httpsmurphy</title>
-<meta name="description" content="Murph ACO runs Pokémon Center, Topps and lowkey drops on your profiles. You pay a share of the profit only on orders that land.">
+<title>Murph ACO · we run the drops for you · httpsmurphy</title>
+<meta name="description" content="Murph ACO runs Pokémon Center, Topps and lowkey drops on your profiles. You pay a share of the profit, only on orders that land.">
 <link rel="icon" href="icons/murphaco.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/v2.css">
 <script src="assets/site.js"></script>
 </head>
-<body>
+<body class="v2">
 <main>
-<section class="hero" style="padding-bottom:28px"><div class="wrap">
-  <p class="eyebrow">Murph ACO</p>
-  <h1>We run the drops. You pay when it lands.</h1>
-  <p class="lede">No bots to buy and no servers to rent. You give us your profiles, we run them the second stock goes live, and you pay 20% of the profit on what checks out. Nothing if it doesn't.</p>
-  <div class="btn-row"><a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a><a class="btn" href="https://discord.gg/murph-aco" target="_blank" rel="noopener">Join the Discord</a></div>
+
+<section class="aco-hero"><div class="wrap aco-hero-in">
+  <div>
+    <span class="label"><b>Murph ACO</b> · UK checkout group</span>
+    <h1 class="disp">We run the drops. You pay when it <span>lands.</span></h1>
+    <p class="aco-lede">No bots to buy and no servers to rent. You give us your profiles, we run them the second stock goes live, and you pay 20% of the profit on what checks out. Nothing if it doesn't.</p>
+    <div class="hero2-btns"><a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a><a class="btn" href="https://discord.gg/murph-aco" target="_blank" rel="noopener">Join the Discord</a></div>
+  </div>
+  <div class="feed" id="feed" aria-hidden="true"></div>
 </div></section>
 
-<section class="section" style="padding-top:8px"><div class="wrap">
-  <div class="card figures">
-    <div><div class="num">3.6k+</div><p class="dim">Pokémon Center checkouts secured</p></div>
-    <div><div class="num">£850k+</div><p class="dim">profit for members</p></div>
-    <div><div class="num">20%</div><p class="dim">of profit, only on orders that land</p></div>
+<section class="calc"><div class="wrap">
+  <span class="label">Try it · what one order costs you</span>
+  <div class="calc-grid">
+    <div class="calc-in">
+      <label for="profit" class="calc-q">If an order makes <b id="c-profit">£60</b> profit</label>
+      <input id="profit" type="range" min="5" max="400" step="5" value="60">
+      <div class="calc-ends"><span class="label">£5</span><span class="label">£400</span></div>
+    </div>
+    <div class="calc-out">
+      <div><span class="label">you keep</span><div class="disp big" id="c-keep">£48</div></div>
+      <div><span class="label">we take</span><div class="disp" id="c-fee">£12</div></div>
+      <div><span class="label">if it's cancelled</span><div class="disp dim">£0</div></div>
+    </div>
   </div>
 </div></section>
 
-<section class="section"><div class="wrap">
-  <div class="section-head"><h2>What we run</h2><p>Three things, done properly.</p></div>
-  <div class="grid three">
-    <div class="card feature"><h3>Pokémon Center</h3><p>Every UK drop, pre-orders and restocks, across our machines and our runners'.</p></div>
-    <div class="card feature"><h3>Topps</h3><p>Scheduled releases, run on your own Topps logins. One per profile or the maximum, your choice.</p></div>
-    <div class="card feature"><h3>Lowkey drops</h3><p>The ones that aren't on everyone's radar. Announced in the group when they're worth running.</p></div>
-  </div>
+<section class="doors aco-runs"><div class="wrap">
+  <div class="door rise"><span class="label">01</span><span class="disp">Pokémon Center</span><span class="door-sub">Every UK drop, pre-orders and restocks, across our machines and our runners'.</span><span></span></div>
+  <div class="door rise"><span class="label">02</span><span class="disp">Topps</span><span class="door-sub">Scheduled releases on your own Topps logins. One per profile or the maximum, your choice.</span><span></span></div>
+  <div class="door rise"><span class="label">03</span><span class="disp">Lowkey drops</span><span class="door-sub">The ones that aren't on everyone's radar. Announced in the group when they're worth running.</span><span></span></div>
 </div></section>
 
-<section class="section" style="padding-top:0"><div class="wrap">
-  <div class="section-head">
-    <h2>The app</h2>
-    <p>Everything runs through our own web app. No spreadsheets, no CSV files.</p>
+<section class="app"><div class="wrap">
+  <div class="app-head">
+    <div><span class="label">The app</span><h2 class="disp">No spreadsheets. No CSV files.</h2></div>
     <div class="switch" role="group" aria-label="Which describes you">
       <button type="button" data-v="new" aria-pressed="true">I'm new to this</button>
       <button type="button" data-v="exp" aria-pressed="false">I already bot</button>
     </div>
   </div>
-  <div class="grid three" id="feat"></div>
+  <div class="app-grid" id="feat"></div>
 </div></section>
 
-<section class="section" style="padding-top:0"><div class="wrap">
-  <div class="section-head"><h2>How it works</h2></div>
-  <div class="card"><ol class="steps">
-    <li><div><h3>Give us your details</h3><p class="dim">Add your profiles in the app. It builds the address variations for you.</p></div></li>
-    <li><div><h3>Choose what you run</h3><p class="dim">Join the drops you want and pick how many profiles go on each.</p></div></li>
-    <li><div><h3>We run the drop</h3><p class="dim">Watch your profiles live in the war room while it's on.</p></div></li>
-    <li><div><h3>Pay when it lands</h3><p class="dim">One bill a week for what's been sent, with a pay link. If a retailer cancels, you owe nothing on it.</p></div></li>
-  </ol></div>
-  <div class="btn-row"><a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a></div>
+<section class="steps2"><div class="wrap">
+  <span class="label">How it works</span>
+  <ol>
+    <li><b class="disp">01</b><h3>Give us your details</h3><p>Add your profiles in the app. It builds the address variations for you.</p></li>
+    <li><b class="disp">02</b><h3>Choose what you run</h3><p>Join the drops you want and pick how many profiles go on each.</p></li>
+    <li><b class="disp">03</b><h3>We run the drop</h3><p>Watch your profiles live in the war room while it's on.</p></li>
+    <li><b class="disp">04</b><h3>Pay when it lands</h3><p>One bill a week with a pay link. If a retailer cancels, you owe nothing on it.</p></li>
+  </ol>
 </div></section>
+
+<section class="band"><div class="wrap">
+  <h2 class="disp rise">Come and <span>cook with us.</span></h2>
+  <div class="band-row rise">
+    <p>Applications go through murphaco.co.uk. Everything else runs through the Discord and the app.</p>
+    <a class="btn primary" href="https://murphaco.co.uk" target="_blank" rel="noopener">Apply at murphaco.co.uk</a>
+  </div>
+</div></section>
+
 </main>
 <script>
 var FEATS = {
@@ -81,14 +98,40 @@ var FEATS = {
   ]
 };
 document.addEventListener("DOMContentLoaded", function () {
-  var box = document.getElementById("feat");
+  var $ = function (id) { return document.getElementById(id); };
+  // checkout slips: a stack that keeps turning over (details blanked, like the real ones we post)
+  var SLIPS = [["Pokémon Center GB", "Guest", "30th Celebration Elite Trainer Box"], ["Topps", "Account", "Museum Collection UEFA Club Competitions"], ["Pokémon Center GB", "Guest", "Delta Reign Elite Trainer Box"], ["Argos", "Collection", "Prismatic Evolutions ETB"], ["Pokémon Center GB", "Guest", "30th Celebration Mini Tin"]];
+  var feed = $("feed"), si = 0;
+  function slip() {
+    var d = SLIPS[si++ % SLIPS.length], now = new Date();
+    var n = el("div", { class: "slip" }, [
+      el("div", { class: "slip-top" }, [el("span", { text: "✓ Successful checkout" }), el("span", { class: "label", text: now.toLocaleTimeString("en-GB") })]),
+      el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Site" }), el("b", { text: d[0] })]), el("div", {}, [el("span", { class: "label", text: "Mode" }), el("b", { text: d[1] })])]),
+      el("div", {}, [el("span", { class: "label", text: "Product" }), el("b", { text: d[2] })]),
+      el("div", { class: "slip-row" }, [el("div", {}, [el("span", { class: "label", text: "Profile" }), el("i", { class: "blank" })]), el("div", {}, [el("span", { class: "label", text: "Order" }), el("i", { class: "blank w2" })])])
+    ]);
+    feed.prepend(n);
+    while (feed.children.length > 3) feed.lastChild.remove();
+  }
+  slip(); slip(); slip();
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(slip, 2600);
+
+  // the fee, worked out live
+  var gbp = function (n) { return "£" + (Math.round(n * 100) / 100).toLocaleString("en-GB", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); };
+  var r = $("profit");
+  function calc() { var p = Number(r.value), fee = p * .2; $("c-profit").textContent = gbp(p); $("c-fee").textContent = gbp(fee); $("c-keep").textContent = gbp(p - fee); r.style.setProperty("--p", (p - 5) / 395 * 100 + "%"); }
+  r.addEventListener("input", calc); calc();
+
+  var box = $("feat");
   function draw(v) {
     box.textContent = "";
-    FEATS[v].forEach(function (f) { box.append(el("div", { class: "card feature" }, [el("h3", { text: f[0] }), el("p", { text: f[1] })])); });
+    FEATS[v].forEach(function (f, i) { var c = el("div", { class: "app-cell" }, [el("span", { class: "label", text: String(i + 1).padStart(2, "0") }), el("h3", { text: f[0] }), el("p", { text: f[1] })]); c.style.animationDelay = i * .05 + "s"; box.append(c); });
     document.querySelectorAll(".switch button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.v === v ? "true" : "false"); });
   }
   document.querySelectorAll(".switch button").forEach(function (b) { b.addEventListener("click", function () { draw(b.dataset.v); }); });
   draw("new");
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .15 });
+  document.querySelectorAll(".rise").forEach(function (n) { io.observe(n); });
 });
 </script>
 </body>
