@@ -118,7 +118,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     rows.forEach(function (r, n) { r.setAttribute("aria-pressed", n === sel ? "true" : "false"); });
     run(c);
-    if (!quiet && innerWidth < 900) document.querySelector(".bench-read").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    if (!quiet) {
+      if (innerWidth < 900) document.querySelector(".bench-read").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+      else { var bench = document.querySelector(".bench-card").parentNode; scrollTo({ top: Math.max(0, bench.getBoundingClientRect().top + scrollY - 96), behavior: calm ? "auto" : "smooth" }); }   // desktop: back up to the card preview
+    }
   }
 
   // the ranking
