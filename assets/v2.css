@@ -648,6 +648,9 @@ body.v2 .switch button, body.v2 .war-stats b:not(.num), body.v2 .dr span, body.v
 body.v2 .rip-card small, body.v2 #b-sites .site, body.v2 .disp { text-transform: none; }
 body.v2 h1.disp, body.v2 h2.disp, body.v2 .since .disp, body.v2 .bench-n .disp, body.v2 .rip-card .disp, body.v2 .soon-in h1 { text-transform: uppercase; }
 body.v2 .label { letter-spacing: .03em; font-size: 12.5px; display: inline-block; }
+/* the drop list header is a label too, but it has to stay a grid so its headings sit over the columns */
+body.v2 .ledger-cols { display: grid; }
+@media (max-width: 900px) { body.v2 .ledger-cols { display: none; } }
 body.v2 .label::first-letter, body.v2 .rip-card small::first-letter, body.v2 .dr span::first-letter { text-transform: uppercase; }
 body.v2 .nav a { letter-spacing: .01em; font-size: 13px; }
 body.v2 .btn { letter-spacing: .01em; font-size: 13.5px; }
